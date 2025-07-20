@@ -19,30 +19,34 @@ const ContactPage: React.FC = () => {
     {
       icon: Mail,
       title: 'Email Us',
-      details: 'community@samudaya.org',
+      details:'thasaradashanagar@gmail.com',
       description: 'Send us an email and we\'ll respond within 24 hours',
-      action: 'mailto:community@samudaya.org'
+      action: 'mailto:thasaradashanagar@gmail.com'
     },
-    {
-      icon: Phone,
-      title: 'Call Us',
-      details: '+91 98765 43210',
-      description: 'Available Monday to Friday, 9 AM to 6 PM',
-      action: 'tel:+919876543210'
-    },
+  {
+  icon: Phone,
+  title: 'Call Us',
+  phones: [
+    { number: '+91 98250 39369', tel: 'tel:+919825039369' },
+    { number: '+91 91733 95594', tel: 'tel:+919173395594' }
+  ],
+  description: 'Available Monday to Friday, 9 AM to 6 PM'
+},
+
+
     {
       icon: MapPin,
       title: 'Visit Us',
-      details: 'Community Center, Bandra West, Mumbai - 400050',
+      details: 'C/O Star Electric Company,7 Krishna Kutir,In Front OF Parsi Agyari Sayajugunj,Vadodara - 390020',
       description: 'Open for visits during event hours',
-      action: '#'
+      action: 'https://maps.app.goo.gl/YkP2qj9A6xdTgwyA6?g_st=aw'
     },
     {
       icon: MessageSquare,
       title: 'WhatsApp',
-      details: '+91 98765 43211',
+      details: '+91 91733 95594',
       description: 'Quick responses for urgent matters',
-      action: 'https://wa.me/919876543211'
+      action: 'https://wa.me/9173395594'
     }
   ];
 
@@ -120,7 +124,27 @@ useEffect(() => {
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                 {info.title}
               </h3>
-              <p className="text-primary-600 font-medium mb-2">{info.details}</p>
+             {info.phones ? (
+  <div className="space-y-1 mb-2">
+    {info.phones.map((phone, i) => (
+      <a
+        key={i}
+        href={phone.tel}
+        className="text-primary-600 hover:underline block font-medium"
+      >
+        {phone.number}
+      </a>
+    ))}
+  </div>
+) : (
+  <div className="mb-2 space-y-1 text-primary-600 font-medium leading-snug">
+  {info.details.split(',').map((line, i) => (
+    <p key={i}>{line.trim()}</p>
+  ))}
+</div>
+
+)}
+
               <p className="text-sm text-gray-600 dark:text-gray-400">{info.description}</p>
             </a>
           ))}
@@ -246,27 +270,34 @@ useEffect(() => {
               </div>
             </div>
 
-            {/* Map */}
-            <div className="card overflow-hidden">
-              <div className="h-64 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                <div className="text-center">
-                  <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-600 dark:text-gray-400">Interactive Map</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-500">
-                    Community Center Location
-                  </p>
-                </div>
-              </div>
-              <div className="p-4">
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  Community Center
-                </h4>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  Bandra West, Mumbai - 400050<br />
-                  Near Bandra Railway Station
-                </p>
-              </div>
-            </div>
+           
+{/* Map */}
+<div className="card overflow-hidden">
+  <iframe
+    title="Thasara Dashanagar Map"
+    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3719.1952219111374!2d73.17337927519583!3d22.256993343001584!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc8d2a64f12cb%3A0xc726fa683c0214a7!2sStar%20Electric%20Co!5e0!3m2!1sen!2sin!4v1721380975396!5m2!1sen!2sin"
+    width="100%"
+    height="300"
+    style={{ border: 0 }}
+    allowFullScreen
+    loading="lazy"
+    referrerPolicy="no-referrer-when-downgrade"
+    className="w-full"
+  ></iframe>
+  <div className="p-4">
+    <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
+      Vadodara Office
+    </h4>
+    <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+      C/O Star Electric Company, 7 Krishna Kutir,<br />
+      In Front Of Parsi Agyari, Sayajigunj, Vadodara - 390020
+    </p>
+  </div>
+</div>
+
+
+
+
 
             {/* Quick Links */}
             <div className="card p-6">

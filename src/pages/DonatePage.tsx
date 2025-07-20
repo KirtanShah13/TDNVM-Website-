@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Heart, Users, Star, Gift, CreditCard, Smartphone, Building, CheckCircle } from 'lucide-react';
+import CountUp from 'react-countup';
+
 
 const DonatePage: React.FC = () => {
   const [donationAmount, setDonationAmount] = useState('');
@@ -48,13 +50,13 @@ const DonatePage: React.FC = () => {
   ];
 
   const paymentMethods = [
-    {
+   /* {
       id: 'upi',
       name: 'UPI Payment',
       icon: Smartphone,
       description: 'Pay using Google Pay, PhonePe, Paytm, or any UPI app',
       details: 'samudaya@upi'
-    },
+    },*/
     {
       id: 'bank',
       name: 'Bank Transfer',
@@ -62,13 +64,13 @@ const DonatePage: React.FC = () => {
       description: 'Direct bank transfer or NEFT/RTGS',
       details: 'Account: 1234567890, IFSC: SBIN0001234'
     },
-    {
+   /* {
       id: 'card',
       name: 'Credit/Debit Card',
       icon: CreditCard,
       description: 'Secure online payment with your card',
       details: 'Powered by Razorpay'
-    }
+    }*/
   ];
 
   const handleAmountSelect = (amount: number) => {
@@ -107,28 +109,38 @@ const DonatePage: React.FC = () => {
           </p>
         </div>
 
-        {/* Impact Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-primary-600 mb-2">₹2.5L+</div>
-            <div className="text-gray-600 dark:text-gray-400">Raised This Year</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-secondary-600 mb-2">150+</div>
-            <div className="text-gray-600 dark:text-gray-400">Generous Donors</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-accent-600 mb-2">50+</div>
-            <div className="text-gray-600 dark:text-gray-400">Events Funded</div>
-          </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-orange-600 mb-2">25</div>
-            <div className="text-gray-600 dark:text-gray-400">Families Helped</div>
-          </div>
-        </div>
+       {/* Impact Stats */}
+<div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+  <div>
+    <div className="text-3xl font-bold text-[#34D399]"> {/* emerald-400 */}
+      ₹<CountUp end={2.5} decimals={1} suffix="L+" duration={2} />
+    </div>
+    <div className="text-gray-600 dark:text-gray-400 mt-1">Funds Raised</div>
+  </div>
+  <div>
+    <div className="text-3xl font-bold text-[#3B82F6]"> {/* blue-500 */}
+      <CountUp end={150} suffix="+" duration={2} />
+    </div>
+    <div className="text-gray-600 dark:text-gray-400 mt-1">Members</div>
+  </div>
+  <div>
+    <div className="text-3xl font-bold text-[#A78BFA]"> {/* violet-400 */}
+      <CountUp end={50} suffix="+" duration={2} />
+    </div>
+    <div className="text-gray-600 dark:text-gray-400 mt-1">Events Hosted</div>
+  </div>
+  <div>
+    <div className="text-3xl font-bold text-[#F472B6]"> {/* pink-400 */}
+      <CountUp end={25} suffix="+" duration={2} />
+    </div>
+    <div className="text-gray-600 dark:text-gray-400 mt-1">Workshops</div>
+  </div>
+</div>
+
+
 
         {/* How Your Money Helps */}
-        <div className="mb-16">
+        <div className="my-16">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
             How Your Donation Helps
           </h2>
@@ -288,7 +300,9 @@ const DonatePage: React.FC = () => {
               </div>
             </div>
 
+            
             {/* UPI QR Code */}
+            {/*
             <div className="card p-6 text-center">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
                 Quick UPI Payment
@@ -305,7 +319,8 @@ const DonatePage: React.FC = () => {
               <p className="text-primary-600 font-mono text-sm mt-2">
                 samudaya@upi
               </p>
-            </div>
+            </div> 
+            */}
 
             {/* Tax Benefits */}
             <div className="card p-6">

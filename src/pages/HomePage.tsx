@@ -1,55 +1,94 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Users, Camera, Heart, ArrowRight, Star } from 'lucide-react';
 import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
-import { useState, useEffect } from 'react';
+import { supabase } from '../lib/SupabaseClient'; // ✅ Your configured client
 
-
-
-
-const adImages = [
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2011.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2012.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2013.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2014.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2015.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2016.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2017.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2018.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//back%20inside.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//back%20title.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//Parivar.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//prastavna.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//report.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%201.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%202.jpg", 
+const heroImages = [
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%204.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//title.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%203.jpg",
 ];
 
-
-
-
-
-
 const HomePage: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [heroSlide, setHeroSlide] = useState(0);
+  const [adSlide, setAdSlide] = useState(0);
+  const [adImages, setAdImages] = useState<string[]>([]);
+  const [loadingAds, setLoadingAds] = useState(true);
+  const [errorAds, setErrorAds] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAds = async () => {
+      setLoadingAds(true);
+      const { data, error } = await supabase.from('ads').select('imageurl');
+      if (error) {
+        setErrorAds('Failed to load ads');
+        console.error('Supabase error:', error.message);
+      } else {
+        setAdImages(data.map((ad: { imageurl: string }) => ad.imageurl));
+        setErrorAds(null);
+      }
+      setLoadingAds(false);
+    };
+
+    fetchAds();
+  }, []);
+
+  useEffect(() => {
+  const fetchUpcomingEvents = async () => {
+    const today = new Date().toISOString();
+
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .gte('date', today)
+      .order('date', { ascending: true })
+      .limit(2);
+
+    if (error) {
+      console.error('Error fetching events:', error.message);
+    } else {
+      const formatted = data.map((event: any) => ({
+        ...event,
+        image: event.images?.[0] || '',
+        time: event.time || 'TBA',
+      }));
+      setUpcomingEvents(formatted);
+    }
+  };
+
+  fetchUpcomingEvents();
+}, []);
+
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % adImages.length);
-    }, 5000);
+      setAdSlide((prev) => (prev + 1) % Math.ceil(adImages.length / 3 || 1));
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [adImages]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeroSlide((prev) => (prev + 1) % heroImages.length);
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
-  const upcomingEvents = [
+
+  const [upcomingEvents, setUpcomingEvents] = useState<any[]>([]);
+
+  {/*
+    const upcomingEvents = [
     {
+
       id: 1,
       title: 'Diwali Celebration 2024',
       date: '2024-11-12',
       time: '6:00 PM',
       location: 'Community Hall',
-      image: 'https://images.pexels.com/photos/6479178/pexels-photo-6479178.jpeg?auto=compress&cs=tinysrgb&w=400'
+      image: 'https://images.pexels.com/photos/6479178/pexels-photo-6479178.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 2,
@@ -57,15 +96,16 @@ const HomePage: React.FC = () => {
       date: '2024-11-25',
       time: '7:00 PM',
       location: 'Open Grounds',
-      image: 'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=400'
-    }
+      image: 'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=400',
+    },
   ];
+  */}
 
   const stats = [
     { label: 'Active Members', value: 650, icon: Users },
     { label: 'Events Organized', value: 250, icon: Calendar },
     { label: 'Years of Service', value: 74, icon: Star },
-    { label: 'Community Impact', value: 1000, icon: Heart }
+    { label: 'Community Impact', value: 1000, icon: Heart },
   ];
 
   return (
@@ -92,12 +132,21 @@ const HomePage: React.FC = () => {
                 </Link>
               </div>
             </div>
+
+            {/* Hero Carousel */}
             <div className="relative">
-              <img
-                src="https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800"
-                alt="Community celebration"
-                className="rounded-2xl shadow-2xl"
-              />
+              <div className="overflow-hidden rounded-2xl shadow-2xl w-full">
+                <div
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{ transform: `translateX(-${heroSlide * 100}%)` }}
+                >
+                  {heroImages.map((img, index) => (
+                    <div key={index} className="flex-shrink-0 w-full">
+                      <img src={img} alt={`ad-${index}`} className="w-full h-full object-cover rounded-2xl" />
+                    </div>
+                  ))}
+                </div>
+              </div>
               <div className="absolute -bottom-6 -left-6 bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg">
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -136,11 +185,9 @@ const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-6">
-                Our Mission
-              </h2>
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-6">Our Mission</h2>
               <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
-                We are dedicated to preserving and celebrating Indian culture while fostering unity and support within our community. Through festivals, cultural programs, and social initiatives, we create spaces where traditions thrive and new friendships bloom.
+                We are dedicated to preserving and celebrating Indian culture while fostering unity and support within our community.
               </p>
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
@@ -158,16 +205,8 @@ const HomePage: React.FC = () => {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <img
-                src="https://images.pexels.com/photos/6479178/pexels-photo-6479178.jpeg?auto=compress&cs=tinysrgb&w=400"
-                alt="Cultural celebration"
-                className="rounded-lg shadow-lg"
-              />
-              <img
-                src="https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=400"
-                alt="Community gathering"
-                className="rounded-lg shadow-lg mt-8"
-              />
+              <img src="https://images.pexels.com/photos/6479178/pexels-photo-6479178.jpeg?auto=compress&cs=tinysrgb&w=400" className="rounded-lg shadow-lg" />
+              <img src="https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=400" className="rounded-lg shadow-lg mt-8" />
             </div>
           </div>
         </div>
@@ -177,23 +216,14 @@ const HomePage: React.FC = () => {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Upcoming Events
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              Join us for our next celebrations and cultural gatherings
-            </p>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">Upcoming Events</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400">Join us for our next celebrations and cultural gatherings</p>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
             {upcomingEvents.map((event) => (
               <div key={event.id} className="card overflow-hidden group">
                 <div className="relative">
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <img src={event.image} alt={event.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
                   <div className="absolute top-4 right-4 bg-primary-500 text-white px-3 py-1 rounded-full text-sm font-medium">
                     {new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                   </div>
@@ -210,14 +240,11 @@ const HomePage: React.FC = () => {
                       <span>{event.location}</span>
                     </div>
                   </div>
-                  <button className="mt-4 btn-primary w-full">
-                    RSVP Now
-                  </button>
+                  <button className="mt-4 btn-primary w-full">RSVP Now</button>
                 </div>
               </div>
             ))}
           </div>
-
           <div className="text-center">
             <Link to="/events" className="btn-outline inline-flex items-center space-x-2">
               <span>View All Events</span>
@@ -231,12 +258,8 @@ const HomePage: React.FC = () => {
       <section className="py-16 bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-gray-800 dark:to-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              What's New
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              Stay updated with our latest news and announcements
-            </p>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4">What's New</h2>
+            <p className="text-lg text-gray-600 dark:text-gray-400">Stay updated with our latest news and announcements</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -245,88 +268,73 @@ const HomePage: React.FC = () => {
                 <Camera className="h-8 w-8 text-primary-600" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">New Gallery</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Check out photos from our recent Navratri celebration
-              </p>
-              <Link to="/gallery" className="text-primary-600 hover:text-primary-700 font-medium">
-                View Gallery →
-              </Link>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">Check out photos from our recent Navratri celebration</p>
+              <Link to="/gallery" className="text-primary-600 hover:text-primary-700 font-medium">View Gallery →</Link>
             </div>
-
             <div className="card p-6 text-center">
               <div className="w-16 h-16 bg-secondary-100 dark:bg-secondary-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="h-8 w-8 text-secondary-600" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">New Members</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Welcome 15 new families who joined us this month
-              </p>
-              <Link to="/members" className="text-secondary-600 hover:text-secondary-700 font-medium">
-                Meet Members →
-              </Link>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">Welcome 15 new families who joined us this month</p>
+              <Link to="/members" className="text-secondary-600 hover:text-secondary-700 font-medium">Meet Members →</Link>
             </div>
-
             <div className="card p-6 text-center">
               <div className="w-16 h-16 bg-accent-100 dark:bg-accent-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Heart className="h-8 w-8 text-accent-600" />
               </div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Community Support</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Help us continue our mission with your support
-              </p>
-              <Link to="/donate" className="text-accent-600 hover:text-accent-700 font-medium">
-                Support Us →
-              </Link>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">Help us continue our mission with your support</p>
+              <Link to="/donate" className="text-accent-600 hover:text-accent-700 font-medium">Support Us →</Link>
             </div>
           </div>
         </div>
       </section>
 
-   {/* Ad Section */}
-<section className="mt-16">
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-6 py-8 text-center">
-      <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">Sponsored Content</p>
+      {/* ✅ Dynamic Ads Section */}
+      <section className="mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-6 py-8 text-center">
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">Sponsored Content</p>
 
-      {/* Carousel */}
-      <div className="relative w-full max-w-xl mx-auto">
-        <div className="overflow-hidden rounded-lg w-full">
-          <div
-            className="flex transition-transform duration-500 ease-in-out"
-            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-          >
-            {adImages.map((img, index) => (
-              <div
-                key={index}
-                className="flex-shrink-0 w-full flex justify-center items-center"
-              >
-                <img
-                  src={img}
-                  alt={`ad-${index}`}
-                  className="max-h-[400px] w-auto h-auto object-contain rounded-md"
-                />
+            {loadingAds ? (
+              <p className="text-gray-500">Loading ads...</p>
+            ) : errorAds ? (
+              <p className="text-red-500">{errorAds}</p>
+            ) : (
+              <div className="relative w-full max-w-5xl mx-auto">
+                <div className="overflow-hidden rounded-lg w-full">
+                  <div className="flex transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${adSlide * 100}%)` }}>
+                    {Array.from({ length: Math.ceil(adImages.length / 3) }).map((_, slideIndex) => (
+                      <div key={slideIndex} className="flex-shrink-0 w-full flex flex-col md:flex-row justify-center items-center gap-4 px-4">
+                        {adImages.slice(slideIndex * 3, slideIndex * 3 + 3).map((img, index) => (
+                          <div key={index} className="w-full md:w-1/3 flex justify-center items-center">
+                            <img src={img} alt={`ad-${slideIndex * 3 + index}`} className="max-h-[200px] w-full object-contain rounded-md shadow" />
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Dots */}
+                <div className="flex justify-center mt-4 space-x-2">
+                  {Array.from({ length: Math.ceil(adImages.length / 3) }).map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setAdSlide(idx)}
+                      className={`w-3 h-3 rounded-full transition-all ${
+                        adSlide === idx ? 'bg-gray-800 dark:bg-white' : 'bg-gray-400'
+                      }`}
+                    />
+                  ))}
+                </div>
               </div>
-            ))}
+            )}
           </div>
         </div>
-
-        {/* Dots */}
-        <div className="flex justify-center mt-4 space-x-2">
-          {adImages.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentSlide(idx)}
-              className={`w-3 h-3 rounded-full transition-all ${
-                currentSlide === idx ? 'bg-gray-800 dark:bg-white' : 'bg-gray-400'
-              }`}
-            />
-          ))}
-        </div>
-      </div>
+      </section>
     </div>
-  </div>
-</section>
-  </div>
   );
 };
 

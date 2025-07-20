@@ -1,31 +1,41 @@
-
-
 import React, { useState, useEffect } from 'react';
-
 import { Calendar, MapPin, Users, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { supabase } from '../lib/SupabaseClient';
 
 const EventsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
   const [currentSlide, setCurrentSlide] = useState(0);
-
-
-useEffect(() => {
-  const interval = setInterval(() => {
-    setCurrentSlide((prev) => (prev + 1) % adImages.length);
-  }, 5000);
-  return () => clearInterval(interval);
-}, []);
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
 
 
-  const adImages = [
+  const [adImages, setAdImages] = useState<string[]>([]);
+
+
+   {/*
+    const adImages = [
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2011.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2012.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2013.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2014.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2015.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2016.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2017.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2018.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//back%20inside.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//back%20title.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//Parivar.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//prastavna.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//report.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%201.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%202.jpg", 
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%201.jpg",
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%202.jpg",
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%203.jpg",
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%204.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%204.jpg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%205.jpg",
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%205.jpg",
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%206.jpg",
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%207.jpg",
@@ -36,69 +46,50 @@ useEffect(() => {
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//title.jpg", 
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%203.jpg", 
 ];
+*/}
 
-  const upcomingEvents = [
-    {
-      id: 1,
-      title: 'Diwali Celebration 2024',
-      description: 'Join us for a grand Diwali celebration with traditional performances, delicious food, and community bonding.',
-      date: '2024-11-12',
-      time: '6:00 PM - 10:00 PM',
-      location: 'Community Hall, Downtown',
-      image: 'https://images.pexels.com/photos/6479178/pexels-photo-6479178.jpeg?auto=compress&cs=tinysrgb&w=600',
-      attendees: 150,
-      category: 'Festival'
-    },
-    {
-      id: 2,
-      title: 'Cultural Music Evening',
-      description: 'An evening of classical Indian music featuring local artists and traditional instruments.',
-      date: '2024-11-25',
-      time: '7:00 PM - 9:00 PM',
-      location: 'Open Air Amphitheater',
-      image: 'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=600',
-      attendees: 80,
-      category: 'Cultural'
-    },
-    {
-      id: 3,
-      title: 'Youth Cricket Tournament',
-      description: 'Inter-community cricket tournament for youth aged 16-25. Registration required.',
-      date: '2024-12-08',
-      time: '9:00 AM - 5:00 PM',
-      location: 'Sports Complex',
-      image: 'https://images.pexels.com/photos/1661950/pexels-photo-1661950.jpeg?auto=compress&cs=tinysrgb&w=600',
-      attendees: 120,
-      category: 'Sports'
-    }
-  ];
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      setError(null);
 
-  const pastEvents = [
-    {
-      id: 4,
-      title: 'Navratri Celebration 2024',
-      description: 'Nine nights of traditional Garba and Dandiya with authentic Gujarati cuisine.',
-      date: '2024-10-15',
-      time: '7:00 PM - 11:00 PM',
-      location: 'Community Hall',
-      image: 'https://images.pexels.com/photos/6479264/pexels-photo-6479264.jpeg?auto=compress&cs=tinysrgb&w=600',
-      attendees: 200,
-      category: 'Festival',
-      recap: 'Amazing turnout with traditional dances and delicious food!'
-    },
-    {
-      id: 5,
-      title: 'Independence Day Celebration',
-      description: 'Celebrating India\'s Independence Day with flag hoisting, cultural programs, and patriotic songs.',
-      date: '2024-08-15',
-      time: '8:00 AM - 12:00 PM',
-      location: 'Community Park',
-      image: 'https://images.pexels.com/photos/7976239/pexels-photo-7976239.jpeg?auto=compress&cs=tinysrgb&w=600',
-      attendees: 180,
-      category: 'National',
-      recap: 'Proud moment for our community with inspiring speeches and performances.'
+      const { data, error } = await supabase.from('events').select('*');
+
+      if (error) {
+        setError('Failed to load events. Please try again later.');
+        setEvents([]);
+      } else {
+        setEvents(data || []);
+      }
+
+      setLoading(false);
+    };
+
+    fetchEvents();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % Math.ceil(adImages.length / 3));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [adImages.length]);
+
+
+  useEffect(() => {
+  const fetchAdImages = async () => {
+    const { data, error } = await supabase.from('ads').select('imageurl');
+
+    if (error) {
+      console.error('Error fetching ad images:', error);
+    } else {
+      setAdImages(data.map((item) => item.imageurl));
     }
-  ];
+  };
+
+  fetchAdImages();
+}, []); 
+
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -113,7 +104,7 @@ useEffect(() => {
     <div className="card overflow-hidden group">
       <div className="relative">
         <img
-          src={event.image}
+          src={event.images?.[0] || 'https://via.placeholder.com/400x200.png?text=No+Image'}
           alt={event.title}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
@@ -127,7 +118,7 @@ useEffect(() => {
       <div className="p-6">
         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{event.title}</h3>
         <p className="text-gray-600 dark:text-gray-400 mb-4">{event.description}</p>
-        
+
         <div className="space-y-2 mb-4">
           <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
             <Calendar className="h-4 w-4 text-primary-500" />
@@ -135,25 +126,19 @@ useEffect(() => {
           </div>
           <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
             <Clock className="h-4 w-4 text-primary-500" />
-            <span>{event.time}</span>
+            <span>{event.time || 'TBD'}</span>
           </div>
           <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
             <MapPin className="h-4 w-4 text-primary-500" />
-            <span>{event.location}</span>
+            <span>{event.location || 'Not specified'}</span>
           </div>
-          <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-            <Users className="h-4 w-4 text-primary-500" />
-            <span>{event.attendees} attendees</span>
-          </div>
+          {event.attendees && (
+            <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+              <Users className="h-4 w-4 text-primary-500" />
+              <span>{event.attendees} attendees</span>
+            </div>
+          )}
         </div>
-
-        {isPast && event.recap && (
-          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-3 mb-4">
-            <p className="text-green-700 dark:text-green-300 text-sm">
-              <strong>Event Recap:</strong> {event.recap}
-            </p>
-          </div>
-        )}
 
         {!isPast ? (
           <div className="flex space-x-2">
@@ -166,6 +151,10 @@ useEffect(() => {
       </div>
     </div>
   );
+
+  const now = new Date();
+  const upcomingEvents = events.filter((e) => new Date(e.date) >= now);
+  const pastEvents = events.filter((e) => new Date(e.date) < now);
 
   return (
     <div className="py-16">
@@ -207,59 +196,74 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* Events Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {activeTab === 'upcoming' 
-            ? upcomingEvents.map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))
-            : pastEvents.map((event) => (
-                <EventCard key={event.id} event={event} isPast={true} />
-              ))
-          }
+        {/* Loading/Error */}
+        {loading ? (
+          <p className="text-center text-gray-600 dark:text-gray-400">Loading events...</p>
+        ) : error ? (
+          <p className="text-center text-red-500">{error}</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {(activeTab === 'upcoming' ? upcomingEvents : pastEvents).map((event) => (
+              <EventCard key={event.id} event={event} isPast={activeTab === 'past'} />
+            ))}
+          </div>
+        )}
+
+       
+        {/* Ad Section */}
+<section className="mt-16">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-6 py-8 text-center">
+      <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">Sponsored Content</p>
+
+      {/* Carousel */}
+      <div className="relative w-full max-w-5xl mx-auto">
+        <div className="overflow-hidden rounded-lg w-full">
+          <div
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          >
+            {Array.from({ length: Math.ceil(adImages.length / 3) }).map((_, slideIndex) => (
+              <div
+                key={slideIndex}
+                className="flex-shrink-0 w-full flex flex-col md:flex-row justify-center items-center gap-4 px-4"
+              >
+                {adImages
+                  .slice(slideIndex * 3, slideIndex * 3 + 3)
+                  .map((img, index) => (
+                    <div
+                      key={index}
+                      className="w-full md:w-1/3 flex justify-center items-center"
+                    >
+                      <img
+                        src={img}
+                        alt={`ad-${slideIndex * 3 + index}`}
+                        className="max-h-[200px] w-full object-contain rounded-md shadow"
+                      />
+                    </div>
+                  ))}
+              </div>
+            ))}
+          </div>
         </div>
 
-{/* Ad Section */}
-<div className="mt-16 bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-6 text-center">
-  <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">Sponsored Content</p>
-
-  {/* Carousel */}
-  <div className="relative w-full max-w-xl mx-auto">
-    <div className="overflow-hidden rounded-lg w-full">
-      <div
-        className="flex transition-transform duration-500 ease-in-out"
-        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-      >
-        {adImages.map((img, index) => (
-          <div key={index} className="flex-shrink-0 w-full flex justify-center items-center">
-            <img
-              src={img}
-              alt={`ad-${index}`}
-              className="max-h-[400px] w-auto h-auto object-contain rounded-md"
+        {/* Dots */}
+        <div className="flex justify-center mt-4 space-x-2">
+          {Array.from({ length: Math.ceil(adImages.length / 3) }).map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              className={`w-3 h-3 rounded-full transition-all ${
+                currentSlide === idx ? 'bg-gray-800 dark:bg-white' : 'bg-gray-400'
+              }`}
             />
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
-
-    {/* Dots */}
-    <div className="flex justify-center mt-4 space-x-2">
-      {adImages.map((_, idx) => (
-        <button
-          key={idx}
-          onClick={() => setCurrentSlide(idx)}
-          className={`w-3 h-3 rounded-full transition-all ${
-            currentSlide === idx ? 'bg-gray-800 dark:bg-white' : 'bg-gray-400'
-          }`}
-        />
-      ))}
-    </div>
   </div>
-</div>
-
-
-
-
+</section>
+        
         {/* Call to Action */}
   <div className="mt-16 text-center">
   <div className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-2xl p-8">
