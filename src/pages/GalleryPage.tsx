@@ -1,176 +1,59 @@
-import React, { useState, useMemo } from 'react';
-import { X, Download, Share2, Calendar, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { supabase } from '../lib/SupabaseClient';
+import {
+  X,
+  Download,
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+  MapPin,
+} from 'lucide-react';
 
 const GalleryPage: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
+  const [galleryData, setGalleryData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [lightboxImage, setLightboxImage] = useState<any>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
 
-  const filters = ['all', '2024', '2023', '2022','2021','festivals', 'cultural', 'sports', 'community'];
-
-  const images = [
-    {
-      id: 1,
-      images: [
-        'https://wbasgeeijimgbvhduilu.supabase.co/storage/v1/object/public/tdnvm-gallery/cricket-at-2025/clay-banks-eOcwZNp3LLo-unsplash.jpg',
-        'https://wbasgeeijimgbvhduilu.supabase.co/storage/v1/object/public/tdnvm-gallery/cricket-at-2025/jay_Website.png'
-      ],
-      title: 'Patotsav 2023',
-      description: 'Beautiful moments from our grand Diwali celebration with traditional decorations and community joy.',
-      category: 'festivals',
-      year: '2023',
-      event: 'Patotsav 2023',
-      date: '2024-11-12',
-      location: 'Community Hall'
-    },
-    {
-      id: 2,
-      images: [
-        'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190300/pexels-photo-1190300.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      title: 'Patotsav 2024',
-      description: 'Mesmerizing performances by talented community artists during our cultural music evening.',
-      category: 'cultural',
-      year: '2024',
-      event: 'Patotsav',
-      date: '2024-10-25',
-      location: 'Open Air Theater'
-    },
-    {
-      id: 3,
-      images: [
-        'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190300/pexels-photo-1190300.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      title: 'Shardotsav 2023',
-      description: 'Mesmerizing performances by talented community artists during our cultural music evening.',
-      category: 'cultural',
-      year: '2023',
-      event: 'Shardotsav',
-      date: '2024-10-25',
-      location: 'Open Air Theater'
-    },
-    
-      {
-      id: 4,
-      images: [
-        'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190300/pexels-photo-1190300.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      title: 'Shardotsav 2024',
-      description: 'Mesmerizing performances by talented community artists during our cultural music evening.',
-      category: 'cultural',
-      year: '2024',
-      event: 'Shardotsav',
-      date: '2024-10-25',
-      location: 'Open Air Theater'
-    },
-
-     {
-      id: 5,
-      images: [
-        'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190300/pexels-photo-1190300.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      title: 'Shardotsav 2021',
-      description: 'Mesmerizing performances by talented community artists during our cultural music evening.',
-      category: 'cultural',
-      year: '2021',
-      event: 'Shardotsav',
-      date: '2024-10-25',
-      location: 'Open Air Theater'
-    },
-     {
-      id: 6,
-      images: [
-        'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190300/pexels-photo-1190300.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      title: 'Shardotsav 2022',
-      description: 'Mesmerizing performances by talented community artists during our cultural music evening.',
-      category: 'cultural',
-      year: '2022',
-      event: 'Shardotsav',
-      date: '2024-10-25',
-      location: 'Open Air Theater'
-    },
-     {
-      id: 7,
-      images: [
-        'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190300/pexels-photo-1190300.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      title: 'Sneh Sammelan 2022',
-      description: 'Mesmerizing performances by talented community artists during our cultural music evening.',
-      category: 'cultural',
-      year: '2022',
-      event: 'Sneh Sammelan',
-      date: '2024-10-25',
-      location: 'Open Air Theater'
-    },
-    {
-      id: 8,
-      images: [
-        'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190300/pexels-photo-1190300.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      title: 'Sneh Sammelan 2023',
-      description: 'Mesmerizing performances by talented community artists during our cultural music evening.',
-      category: 'cultural',
-      year: '2023',
-      event: 'Sneh Sammelan',
-      date: '2024-10-25',
-      location: 'Open Air Theater'
-    },
-    {
-      id: 9,
-      images: [
-        'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190300/pexels-photo-1190300.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      title: 'Undhiya Party 2022',
-      description: 'Mesmerizing performances by talented community artists during our cultural music evening.',
-      category: 'cultural',
-      year: '2022',
-      event: 'Undhiya Party',
-      date: '2024-10-25',
-      location: 'Open Air Theater'
-    },
-     {
-      id: 10,
-      images: [
-        'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190298/pexels-photo-1190298.jpeg?auto=compress&cs=tinysrgb&w=800',
-        'https://images.pexels.com/photos/1190300/pexels-photo-1190300.jpeg?auto=compress&cs=tinysrgb&w=800'
-      ],
-      title: 'Vadil Vihar 2024',
-      description: 'Mesmerizing performances by talented community artists during our cultural music evening.',
-      category: 'cultural',
-      year: '2024',
-      event: 'Vadil Vihar',
-      date: '2024-10-25',
-      location: 'Open Air Theater'
-    },
-    
-
-
+  const filters = [
+    'all',
+    '2024',
+    '2023',
+    '2022',
+    '2021',
+    'festivals',
+    'cultural',
+    'sports',
+    'community',
   ];
 
+  useEffect(() => {
+    const fetchGallery = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('gallery_events')
+        .select('*')
+        .order('date', { ascending: false });
+
+      if (error) console.error('Supabase fetch error:', error.message);
+      else setGalleryData(data || []);
+
+      setLoading(false);
+    };
+
+    fetchGallery();
+  }, []);
+
   const filteredImages = useMemo(() => {
-    if (selectedFilter === 'all') return images;
-    return images.filter(img => img.category === selectedFilter || img.year === selectedFilter);
-  }, [selectedFilter]);
+    if (selectedFilter === 'all') return galleryData;
+    return galleryData.filter(
+      (img) =>
+        img.category === selectedFilter || img.year === selectedFilter
+    );
+  }, [selectedFilter, galleryData]);
 
   const openLightbox = (image: any) => {
     setLightboxImage(image);
@@ -186,7 +69,7 @@ const GalleryPage: React.FC = () => {
     new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
 
   const handleDownload = async () => {
@@ -209,7 +92,6 @@ const GalleryPage: React.FC = () => {
     }
   };
 
-  // Swipe handlers for mobile
   const minSwipeDistance = 50;
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -230,12 +112,10 @@ const GalleryPage: React.FC = () => {
     if (Math.abs(distance) < minSwipeDistance) return;
 
     if (distance > 0) {
-      // Swipe left
       setActiveImageIndex((prev) =>
         prev === lightboxImage.images.length - 1 ? 0 : prev + 1
       );
     } else {
-      // Swipe right
       setActiveImageIndex((prev) =>
         prev === 0 ? lightboxImage.images.length - 1 : prev - 1
       );
@@ -271,42 +151,48 @@ const GalleryPage: React.FC = () => {
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredImages.map(image => (
-            <div
-              key={image.id}
-              onClick={() => openLightbox(image)}
-              className="cursor-pointer bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-3xl overflow-hidden border border-gray-700/50 hover:border-amber-500/50 shadow-lg hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-300 hover:-translate-y-2"
-            >
-              <div className="relative h-64 overflow-hidden">
-                <img
-                  src={image.images[0]}
-                  alt={image.title}
-                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-              </div>
-              <div className="p-6 space-y-3 text-white">
-                <h3 className="text-xl font-bold">{image.title}</h3>
-                <p className="text-sm text-gray-300 line-clamp-3">{image.description}</p>
-                <div className="flex flex-wrap gap-2 text-xs text-black">
-                  <span className="bg-amber-400 px-3 py-1 rounded-full">{image.year}</span>
-                  <span className="bg-orange-500 px-3 py-1 rounded-full">{image.category}</span>
+        {loading ? (
+          <p className="text-white text-center">Loading...</p>
+        ) : filteredImages.length === 0 ? (
+          <p className="text-white text-center">No events found for this filter.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredImages.map((image) => (
+              <div
+                key={image.id}
+                onClick={() => openLightbox(image)}
+                className="cursor-pointer bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-3xl overflow-hidden border border-gray-700/50 hover:border-amber-500/50 shadow-lg hover:shadow-2xl hover:shadow-amber-500/10 transition-all duration-300 hover:-translate-y-2"
+              >
+                <div className="relative h-64 overflow-hidden">
+                  <img
+                    src={image.images?.[0]}
+                    alt={image.title}
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                 </div>
-                <div className="flex flex-col space-y-1 text-sm text-gray-400">
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="h-4 w-4 text-amber-500" />
-                    <span>{formatDate(image.date)}</span>
+                <div className="p-6 space-y-3 text-white">
+                  <h3 className="text-xl font-bold">{image.title}</h3>
+                  <p className="text-sm text-gray-300 line-clamp-3">{image.description}</p>
+                  <div className="flex flex-wrap gap-2 text-xs text-black">
+                    <span className="bg-amber-400 px-3 py-1 rounded-full">{image.year}</span>
+                    <span className="bg-orange-500 px-3 py-1 rounded-full">{image.category}</span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <MapPin className="h-4 w-4 text-amber-500" />
-                    <span>{image.location}</span>
+                  <div className="flex flex-col space-y-1 text-sm text-gray-400">
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="h-4 w-4 text-amber-500" />
+                      <span>{formatDate(image.date)}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <MapPin className="h-4 w-4 text-amber-500" />
+                      <span>{image.location}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Lightbox */}
         {lightboxImage && (
@@ -322,18 +208,15 @@ const GalleryPage: React.FC = () => {
               {/* Image Display with Swipe */}
               <div className="relative">
                 <img
-                src={lightboxImage.images[activeImageIndex]}
-                alt={lightboxImage.title}
-                className="w-full max-h-[60vh] sm:max-h-[70vh] object-contain rounded-xl mt-6 sm:mt-0"
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
+                  src={lightboxImage.images?.[activeImageIndex]}
+                  alt={lightboxImage.title}
+                  className="w-full max-h-[60vh] sm:max-h-[70vh] object-contain rounded-xl mt-6 sm:mt-0"
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
                 />
-
-
-                {/* Image Counter */}
                 <div className="absolute top-4 left-4 bg-black/70 text-white text-sm px-3 py-1 rounded-full">
-                  {activeImageIndex + 1} / {lightboxImage.images.length}
+                  {activeImageIndex + 1} / {lightboxImage.images?.length}
                 </div>
 
                 {/* Arrows */}
@@ -363,7 +246,6 @@ const GalleryPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Info */}
               <h2 className="text-2xl font-bold text-white mt-4 mb-2">{lightboxImage.title}</h2>
               <p className="text-gray-300 mb-3">{lightboxImage.description}</p>
               <div className="flex flex-wrap gap-4 text-sm text-gray-400">
@@ -377,7 +259,6 @@ const GalleryPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Actions */}
               <div className="flex space-x-2 mt-4">
                 <button
                   onClick={handleDownload}
@@ -385,10 +266,6 @@ const GalleryPage: React.FC = () => {
                 >
                   <Download className="h-4 w-4" />
                   <span>Download</span>
-                </button>
-                <button className="flex items-center space-x-1 bg-white/20 hover:bg-white/30 px-3 py-1 rounded transition-colors">
-                  <Share2 className="h-4 w-4" />
-                  <span>Share</span>
                 </button>
               </div>
             </div>

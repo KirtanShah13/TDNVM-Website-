@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -92,16 +91,16 @@ const Header: React.FC = () => {
             ) : (
               <div className="hidden md:flex items-center space-x-2">
                 <Link
-                  to="/login"
-                  className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 text-sm font-semibold rounded-md shadow"
-                >
-                  Sign In
-                </Link>
-                <Link
                   to="/signup"
                   className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 text-sm font-semibold rounded-md shadow"
                 >
-                  Join Us
+                  Sign Up
+                </Link>
+                <Link
+                  to="/login"
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 text-sm font-semibold rounded-md shadow"
+                >
+                  Login
                 </Link>
               </div>
             )}
@@ -145,18 +144,18 @@ const Header: React.FC = () => {
             {!isLoggedIn && (
               <div className="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
                 <Link
-                  to="/login"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block mx-3 text-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm"
-                >
-                  Sign In
-                </Link>
-                <Link
                   to="/signup"
                   onClick={() => setIsMenuOpen(false)}
                   className="block mx-3 text-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm"
                 >
                   Join Us
+                </Link>
+                <Link
+                  to="/login"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block mx-3 text-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm"
+                >
+                  Sign In
                 </Link>
               </div>
             )}
