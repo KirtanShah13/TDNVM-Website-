@@ -148,14 +148,14 @@ const Header: React.FC = () => {
                   onClick={() => setIsMenuOpen(false)}
                   className="block mx-3 text-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm"
                 >
-                  Join Us
+                  Sign Up
                 </Link>
                 <Link
                   to="/login"
                   onClick={() => setIsMenuOpen(false)}
                   className="block mx-3 text-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm"
                 >
-                  Sign In
+                  Login
                 </Link>
               </div>
             )}
