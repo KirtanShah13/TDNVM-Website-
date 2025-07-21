@@ -1,0 +1,52 @@
+{
+  "donate.title": "Support Our Community",
+  "donate.description": "Your generous donations help us preserve our cultural heritage, organize meaningful events, and support community members in need. Every contribution makes a difference.",
+  "donate.fundsRaised": "Funds Raised",
+  "donate.members": "Members",
+  "donate.events": "Events Hosted",
+  "donate.workshops": "Workshops",
+  "donate.howHelp": "How Your Donation Helps",
+  "donate.form.title": "Make a Donation",
+  "donate.amountLabel": "Donation Amount (₹) *",
+  "donate.customAmount": "Enter custom amount",
+  "donate.name": "Full Name",
+  "donate.email": "Email Address",
+  "donate.message": "Message (Optional)",
+  "donate.messagePlaceholder": "Share why you're supporting our community...",
+  "donate.anonymous": "Make this donation anonymous",
+  "donate.submit": "Proceed to Payment",
+  "donate.payment.title": "Payment Methods",
+  "donate.payment.bank": "Bank Transfer",
+  "donate.payment.bankDesc": "Direct bank transfer or NEFT/RTGS",
+  "donate.payment.details": "Account: 1234567890, IFSC: SBIN0001234",
+  "donate.tax.title": "Tax Benefits",
+  "donate.tax.points": [
+    "80G tax exemption certificate provided",
+    "Donations are 100% tax deductible",
+    "Digital receipt sent immediately",
+    "Annual donation summary available"
+  ],
+  "donate.recent": "Recent Supporters",
+  "donate.thankYou.title": "Thank You for Your Support!",
+  "donate.thankYou.description": "Your generosity helps us continue our mission of preserving culture, building community, and supporting those in need. Together, we're making a lasting impact.",
+  "donate.buttons.impact": "View Impact Report",
+  "donate.buttons.share": "Share with Friends",
+  "donate.areas": {
+    "events": {
+      "title": "Community Events",
+      "desc": "Support cultural festivals, celebrations, and community gatherings"
+    },
+    "education": {
+      "title": "Educational Programs",
+      "desc": "Fund language classes, cultural workshops, and skill development"
+    },
+    "welfare": {
+      "title": "Community Welfare",
+      "desc": "Help families in need and emergency support programs"
+    },
+    "infra": {
+      "title": "Infrastructure",
+      "desc": "Maintain community center and upgrade facilities"
+    }
+  }
+}

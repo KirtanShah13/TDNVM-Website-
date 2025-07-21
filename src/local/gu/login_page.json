@@ -1,0 +1,13 @@
+{
+  "login.title": "પાછા આવવા માટે સ્વાગત છે",
+  "login.subtitle": "તમારું ફોન નંબર ઉપયોગ કરીને લૉગિન કરો",
+  "login.phone.label": "ફોન નંબર",
+  "login.phone.placeholder": "+91 98765 43210",
+  "login.phone.title": "એક માન્ય ભારતીય ફોન નંબર દાખલ કરો (ઉદાહરણ તરીકે +91 9876543210)",
+  "login.button.signin": "લૉગિન કરો",
+  "login.loading": "લૉગિન થઈ રહ્યું છે...",
+  "login.success": "લૉગિન સફળ! સમુદાયમાં પાછા આવવા માટે સ્વાગત છે.",
+  "login.noAccount": "હજુ એકાઉન્ટ નથી?",
+  "login.createAccount": "નવું એકાઉન્ટ બનાવો",
+  "login.backToHome": "← હોમપેજ પર પાછા જાઓ"
+}

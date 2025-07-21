@@ -1,0 +1,17 @@
+{
+  "gallery.title": "Event Gallery",
+  "gallery.subtitle": "A visual timeline of the most cherished events and cultural highlights from our community.",
+  "gallery.filters.all": "All Events",
+  "gallery.loading": "Loading...",
+  "gallery.noResults": "No events found for this filter.",
+  "gallery.download": "Download",
+
+  "gallery.filters.2024": "2024",
+  "gallery.filters.2023": "2023",
+  "gallery.filters.2022": "2022",
+  "gallery.filters.2021": "2021",
+  "gallery.filters.festivals": "Festivals",
+  "gallery.filters.cultural": "Cultural",
+  "gallery.filters.sports": "Sports",
+  "gallery.filters.community": "Community"
+}

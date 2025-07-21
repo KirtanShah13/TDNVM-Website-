@@ -1,0 +1,68 @@
+{
+  "title": "Volunteer With Us",
+  "subtitle": "Join our amazing team of volunteers and make a meaningful impact in our community. Your time, skills, and passion can help us create memorable experiences and stronger connections.",
+  "stats": {
+    "volunteers": "Active Volunteers",
+    "events": "Events Supported",
+    "hours": "Volunteer Hours",
+    "satisfaction": "Satisfaction Rate"
+  },
+  "opportunitiesTitle": "Volunteer Opportunities",
+  "areas": {
+    "cultural": {
+      "title": "Cultural Events",
+      "description": "Help organize festivals, performances, and cultural celebrations"
+    },
+    "food": {
+      "title": "Food & Catering",
+      "description": "Assist with cooking, serving, and food arrangement for events"
+    },
+    "logistics": {
+      "title": "Event Logistics",
+      "description": "Support with setup, transportation, and event coordination"
+    },
+    "social-media": {
+      "title": "Social Media",
+      "description": "Help with photography, videography, and online promotion"
+    },
+    "education": {
+      "title": "Education & Training",
+      "description": "Teach languages, skills, or cultural activities to community members"
+    },
+    "welfare": {
+      "title": "Community Welfare",
+      "description": "Support elderly, help families in need, and community outreach"
+    }
+  },
+  "benefitsTitle": "Why Volunteer With Us?",
+  "benefits": [
+    "Develop new skills and gain valuable experience",
+    "Build meaningful connections within the community",
+    "Contribute to preserving and promoting Indian culture",
+    "Flexible volunteering opportunities to fit your schedule",
+    "Recognition and certificates for your contributions",
+    "Exclusive access to volunteer appreciation events"
+  ],
+  "testimonialsTitle": "What Our Volunteers Say",
+  "formTitle": "Join Our Volunteer Team",
+  "form": {
+    "name": "Full Name *",
+    "email": "Email Address *",
+    "phone": "Phone Number",
+    "areaOfInterest": "Area of Interest *",
+    "availability": "Availability",
+    "experience": "Relevant Experience or Skills",
+    "experiencePlaceholder": "Tell us about any relevant experience, skills, or why you'd like to volunteer...",
+    "newsletter": "Subscribe to volunteer newsletters and updates",
+    "submit": "Submit Application"
+  },
+  "formSuccess": "Thank you for your interest in volunteering! We will contact you soon.",
+  "select": {
+    "area": "Select an area",
+    "availability": "Select availability",
+    "weekends": "Weekends Only",
+    "weekdays": "Weekday Evenings",
+    "flexible": "Flexible Schedule",
+    "eventsOnly": "Events Only"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "signup.title": "Join Our Community",
+  "signup.subtitle": "Create your member account",
+  "signup.firstName": "First Name *",
+  "signup.lastName": "Last Name *",
+  "signup.phone": "Phone Number *",
+  "signup.city": "City *",
+  "signup.state": "State *",
+  "signup.stateSelect": "Select state",
+  "signup.states": {
+    "Maharashtra": "Maharashtra",
+    "Karnataka": "Karnataka",
+    "TamilNadu": "Tamil Nadu",
+    "Delhi": "Delhi",
+    "Gujarat": "Gujarat",
+    "Rajasthan": "Rajasthan",
+    "WestBengal": "West Bengal",
+    "UttarPradesh": "Uttar Pradesh",
+    "Other": "Other"
+  },
+  "signup.agreeTo": "I agree to the",
+  "signup.terms": "Terms of Service",
+  "signup.and": "and",
+  "signup.privacy": "Privacy Policy",
+  "signup.submit": "Create Account",
+  "signup.loading": "Registering...",
+  "signup.loginPrompt": "Already have an account?",
+  "signup.loginLink": "Login here",
+  "signup.backHome": "← Back to Homepage",
+  "signup.success": "Registration successful! Welcome to Samudaya community."
+}

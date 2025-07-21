@@ -1,0 +1,22 @@
+{
+  "events.title": "Community Events",
+  "events.subtitle": "Discover and participate in our vibrant community events that celebrate culture, build connections, and create lasting memories.",
+  "events.tabs.upcoming": "Upcoming Events",
+  "events.tabs.past": "Past Events",
+  "events.loading": "Loading events...",
+  "events.error": "Failed to load events. Please try again later.",
+  "events.rsvp": "RSVP Now",
+  "events.share": "Share",
+  "events.photos": "View Photos",
+  "events.time.tbd": "TBD",
+  "events.location.unknown": "Not specified",
+  "events.attendees": "{{count}} attendees",
+
+  "ads.title": "Sponsored Content",
+  "ads.loading": "Loading ads...",
+  "ads.error": "Failed to load ads",
+
+  "cta.title": "Want to Organize an Event?",
+  "cta.description": "Have an idea for a community event? We'd love to hear from you and help make it happen!",
+  "cta.button": "Propose an Event"
+}
