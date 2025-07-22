@@ -1,0 +1,31 @@
+{
+  "signup.title": "અમારા સમુદાયમાં જોડાઓ",
+  "signup.subtitle": "તમારું સભ્ય ખાતું બનાવો",
+  "signup.firstName": "પ્રથમ નામ *",
+  "signup.lastName": "અંતિમ નામ *",
+  "signup.phone": "ફોન નંબર *",
+  "signup.city": "શહેર *",
+  "signup.state": "રાજ્ય *",
+  "signup.stateSelect": "રાજ્ય પસંદ કરો",
+  "signup.states": {
+    "Maharashtra": "મહારાષ્ટ્ર",
+    "Karnataka": "કર્ણાટક",
+    "TamilNadu": "તમિલ નાડુ",
+    "Delhi": "દિલ્હી",
+    "Gujarat": "ગુજરાત",
+    "Rajasthan": "રાજસ્થાન",
+    "WestBengal": "પશ્ચિમ બંગાળ",
+    "UttarPradesh": "ઉત્તર પ્રદેશ",
+    "Other": "અન્ય"
+  },
+  "signup.agreeTo": "હું સંમત છું",
+  "signup.terms": "સેવાની શરતો",
+  "signup.and": "અને",
+  "signup.privacy": "ગોપનીયતા નીતિ",
+  "signup.submit": "ખાતું બનાવો",
+  "signup.loading": "નોંધણી થઈ રહી છે...",
+  "signup.loginPrompt": "પહેલેથી જ એક ખાતું છે?",
+  "signup.loginLink": "અહીં લૉગિન કરો",
+  "signup.backHome": "← મુખ્ય પૃષ્ઠ પર પાછા જાવ",
+  "signup.success": "નોંધણી સફળ! સમુદાયમાં તમારું સ્વાગત છે."
+}

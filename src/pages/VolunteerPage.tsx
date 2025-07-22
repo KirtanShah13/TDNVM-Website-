@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import { Heart, Users, Calendar, Clock, Star, CheckCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
+
+
+
+
 
 const VolunteerPage: React.FC = () => {
+  const { t } = useTranslation('volunteer');
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -13,49 +21,42 @@ const VolunteerPage: React.FC = () => {
   });
 
   const volunteerAreas = [
-    {
-      id: 'cultural',
-      title: 'Cultural Events',
-      description: 'Help organize festivals, performances, and cultural celebrations',
-      icon: '🎭',
-      volunteers: 45
-    },
-    {
-      id: 'food',
-      title: 'Food & Catering',
-      description: 'Assist with cooking, serving, and food arrangement for events',
-      icon: '🍽️',
-      volunteers: 32
-    },
-    {
-      id: 'logistics',
-      title: 'Event Logistics',
-      description: 'Support with setup, transportation, and event coordination',
-      icon: '📦',
-      volunteers: 28
-    },
-    {
-      id: 'social-media',
-      title: 'Social Media',
-      description: 'Help with photography, videography, and online promotion',
-      icon: '📱',
-      volunteers: 15
-    },
-    {
-      id: 'education',
-      title: 'Education & Training',
-      description: 'Teach languages, skills, or cultural activities to community members',
-      icon: '📚',
-      volunteers: 20
-    },
-    {
-      id: 'welfare',
-      title: 'Community Welfare',
-      description: 'Support elderly, help families in need, and community outreach',
-      icon: '🤝',
-      volunteers: 25
-    }
-  ];
+  {
+    id: 'cultural',
+    icon: '🎭',
+    volunteers: 45
+  },
+  {
+    id: 'food',
+    icon: '🍽️',
+    volunteers: 32
+  },
+  {
+    id: 'logistics',
+    icon: '📦',
+    volunteers: 28
+  },
+  {
+    id: 'social-media',
+    icon: '📱',
+    volunteers: 15
+  },
+  {
+    id: 'education',
+    icon: '📚',
+    volunteers: 20
+  },
+  {
+    id: 'welfare',
+    icon: '🤝',
+    volunteers: 25
+  }
+].map((area) => ({
+  ...area,
+  title: t(`areas.${area.id}.title`),
+  description: t(`areas.${area.id}.description`)
+}));
+
 
   const testimonials = [
     {
@@ -107,7 +108,7 @@ const VolunteerPage: React.FC = () => {
     e.preventDefault();
     console.log('Volunteer form submitted:', formData);
     // Handle form submission here
-    alert('Thank you for your interest in volunteering! We will contact you soon.');
+    alert(t('formSuccess'));
   };
 
   return (
@@ -116,11 +117,10 @@ const VolunteerPage: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Volunteer With Us
+           {t('title')}
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            Join our amazing team of volunteers and make a meaningful impact in our community. 
-            Your time, skills, and passion can help us create memorable experiences and stronger connections.
+           {t('subtitle')}
           </p>
         </div>
 
@@ -131,35 +131,35 @@ const VolunteerPage: React.FC = () => {
               <Users className="h-8 w-8 text-primary-600" />
             </div>
             <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">165+</div>
-            <div className="text-gray-600 dark:text-gray-400">Active Volunteers</div>
+            <div className="text-gray-600 dark:text-gray-400">{t('stats.volunteers')}</div>
           </div>
           <div className="text-center">
             <div className="w-16 h-16 bg-secondary-100 dark:bg-secondary-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Calendar className="h-8 w-8 text-secondary-600" />
             </div>
             <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">50+</div>
-            <div className="text-gray-600 dark:text-gray-400">Events Supported</div>
+            <div className="text-gray-600 dark:text-gray-400">{t('stats.events')}</div>
           </div>
           <div className="text-center">
             <div className="w-16 h-16 bg-accent-100 dark:bg-accent-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Clock className="h-8 w-8 text-accent-600" />
             </div>
             <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">2000+</div>
-            <div className="text-gray-600 dark:text-gray-400">Volunteer Hours</div>
+            <div className="text-gray-600 dark:text-gray-400">{t('stats.hours')}</div>
           </div>
           <div className="text-center">
             <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Heart className="h-8 w-8 text-orange-600" />
             </div>
             <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">98%</div>
-            <div className="text-gray-600 dark:text-gray-400">Satisfaction Rate</div>
+            <div className="text-gray-600 dark:text-gray-400">{t('stats.satisfaction')}</div>
           </div>
         </div>
 
         {/* Volunteer Areas */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
-            Volunteer Opportunities
+             {t('opportunitiesTitle')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {volunteerAreas.map((area) => (
@@ -189,22 +189,23 @@ const VolunteerPage: React.FC = () => {
         {/* Benefits */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
-            Why Volunteer With Us?
+            {t('benefitsTitle')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {benefits.map((benefit, index) => (
-              <div key={index} className="flex items-start space-x-3">
-                <CheckCircle className="h-6 w-6 text-primary-500 mt-1 flex-shrink-0" />
-                <span className="text-gray-700 dark:text-gray-300">{benefit}</span>
-              </div>
-            ))}
+            {(t('benefits', { returnObjects: true }) as string[]).map((benefit, index) => (
+  <div key={index} className="flex items-start space-x-3">
+    <CheckCircle className="h-6 w-6 text-primary-500 mt-1 flex-shrink-0" />
+    <span className="text-gray-700 dark:text-gray-300">{benefit}</span>
+  </div>
+))}
+
           </div>
         </div>
 
         {/* Testimonials */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
-            What Our Volunteers Say
+            {t('testimonialsTitle')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial) => (
@@ -242,13 +243,13 @@ const VolunteerPage: React.FC = () => {
         <div className="bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-8">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6 text-center">
-              Join Our Volunteer Team
+              {t('formTitle')}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Full Name *
+                    {t('form.name')}
                   </label>
                   <input
                     type="text"
@@ -262,7 +263,7 @@ const VolunteerPage: React.FC = () => {
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Email Address *
+                    {t('form.email')}
                   </label>
                   <input
                     type="email"
@@ -278,7 +279,7 @@ const VolunteerPage: React.FC = () => {
 
               <div>
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Phone Number
+                  {t('form.phone')}
                 </label>
                 <input
                   type="tel"
@@ -292,7 +293,7 @@ const VolunteerPage: React.FC = () => {
 
               <div>
                 <label htmlFor="areaOfInterest" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Area of Interest *
+                 {t('form.areaOfInterest')}
                 </label>
                 <select
                   id="areaOfInterest"
@@ -302,7 +303,7 @@ const VolunteerPage: React.FC = () => {
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 >
-                  <option value="">Select an area</option>
+                  <option value="">{t('select.area')}</option>
                   {volunteerAreas.map((area) => (
                     <option key={area.id} value={area.id}>
                       {area.title}
@@ -313,7 +314,7 @@ const VolunteerPage: React.FC = () => {
 
               <div>
                 <label htmlFor="availability" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Availability
+                  {t('form.availability')}
                 </label>
                 <select
                   id="availability"
@@ -322,17 +323,17 @@ const VolunteerPage: React.FC = () => {
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 >
-                  <option value="">Select availability</option>
-                  <option value="weekends">Weekends Only</option>
-                  <option value="weekdays">Weekday Evenings</option>
-                  <option value="flexible">Flexible Schedule</option>
-                  <option value="events-only">Events Only</option>
+                 <option value="">{t('select.availability')}</option>
+                <option value="weekends">{t('select.weekends')}</option>
+                <option value="weekdays">{t('select.weekdays')}</option>
+                <option value="flexible">{t('select.flexible')}</option>
+                <option value="events-only">{t('select.eventsOnly')}</option>
                 </select>
               </div>
 
               <div>
                 <label htmlFor="experience" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Relevant Experience or Skills
+                  {t('form.experience')}
                 </label>
                 <textarea
                   id="experience"
@@ -340,7 +341,7 @@ const VolunteerPage: React.FC = () => {
                   rows={4}
                   value={formData.experience}
                   onChange={handleInputChange}
-                  placeholder="Tell us about any relevant experience, skills, or why you'd like to volunteer..."
+                  placeholder={t('form.experiencePlaceholder')}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 ></textarea>
               </div>
@@ -355,7 +356,7 @@ const VolunteerPage: React.FC = () => {
                   className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                 />
                 <label htmlFor="newsletter" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                  Subscribe to volunteer newsletters and updates
+                  {t('form.newsletter')}s
                 </label>
               </div>
 
@@ -363,7 +364,8 @@ const VolunteerPage: React.FC = () => {
                 type="submit"
                 className="w-full btn-primary py-3 text-lg font-medium"
               >
-                Submit Application
+                {t('form.submit')}
+
               </button>
             </form>
           </div>

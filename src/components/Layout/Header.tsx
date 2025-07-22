@@ -2,37 +2,41 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
 import React, { useState, useEffect } from 'react';
-
+import { useTranslation } from 'react-i18next';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  useEffect(() => {
-  if (isMenuOpen) {
-    document.body.style.overflow = 'hidden';
-  } else {
-    document.body.style.overflow = '';
-  }
 
-  return () => {
-    document.body.style.overflow = '';
-  };
-}, [isMenuOpen]);
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
 
   const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
 
+  // ✅ Use only 'nav' namespace
+  const { t, i18n } = useTranslation('nav');
+
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'gu' : 'en';
+    i18n.changeLanguage(newLang);
+  };
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState({ name: 'John Michael Doe', email: 'john@example.com' });
 
+  // ✅ Removed 'nav.' prefix since we're already in the 'nav' namespace
   const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'Events', href: '/events' },
-    { name: 'Gallery', href: '/gallery' },
-    { name: 'Members', href: '/members' },
-    { name: 'Core Team', href: '/core-team' },
-    { name: 'Volunteer', href: '/volunteer' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Contact', href: '/contact' },
+    { name: t('home'), href: '/' },
+    { name: t('events'), href: '/events' },
+    { name: t('gallery'), href: '/gallery' },
+    { name: t('members'), href: '/members' },
+    { name: t('coreTeam'), href: '/core-team' },
+    { name: t('volunteer'), href: '/volunteer' },
+    { name: t('contact'), href: '/contact' },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -41,8 +45,7 @@ const Header: React.FC = () => {
     <header className="fixed top-0 left-0 right-0 z-50 w-full bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 w-full">
-
-          {/* Left: Logo */}
+          {/* Logo */}
           <div className="flex items-center min-w-max">
             <Link to="/" className="flex items-center space-x-2">
               <img
@@ -54,14 +57,12 @@ const Header: React.FC = () => {
             </Link>
           </div>
 
-          {/* Center: Navigation */}
-        
+          {/* Desktop Navigation */}
           <div className="hidden lg:flex flex-1 justify-center overflow-x-auto">
             <nav className="flex space-x-6">
-
               {navigation.map((item) => (
                 <Link
-                  key={item.name}
+                  key={item.href}
                   to={item.href}
                   className={`px-3 py-2 text-sm font-medium transition-colors whitespace-nowrap ${
                     isActive(item.href)
@@ -75,8 +76,9 @@ const Header: React.FC = () => {
             </nav>
           </div>
 
-          {/* Right: Theme + Auth + Donate */}
+          {/* Right Icons */}
           <div className="flex items-center justify-end space-x-2 min-w-max">
+            {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
               className="p-2 rounded-md text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
@@ -84,6 +86,18 @@ const Header: React.FC = () => {
               {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
 
+            {/* Language Toggle */}
+            <button
+              onClick={toggleLanguage}
+              className="p-2 rounded-md text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
+              aria-label="Toggle Language"
+            >
+              <span className="text-sm font-semibold uppercase">
+                {i18n.language === 'en' ? 'GU' : 'EN'}
+              </span>
+            </button>
+
+            {/* Auth */}
             {isLoggedIn ? (
               <div className="hidden md:block text-sm text-gray-800 dark:text-gray-100 font-medium whitespace-nowrap">
                 Welcome {user.name}
@@ -91,16 +105,16 @@ const Header: React.FC = () => {
             ) : (
               <div className="hidden md:flex items-center space-x-2">
                 <Link
-                  to="/login"
-                  className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 text-sm font-semibold rounded-md shadow"
-                >
-                  Sign In
-                </Link>
-                <Link
                   to="/signup"
                   className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 text-sm font-semibold rounded-md shadow"
                 >
-                  Join Us
+                  Sign Up
+                </Link>
+                <Link
+                  to="/login"
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 text-sm font-semibold rounded-md shadow"
+                >
+                  Login
                 </Link>
               </div>
             )}
@@ -112,6 +126,7 @@ const Header: React.FC = () => {
               Donate
             </Link>
 
+            {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="lg:hidden p-2 rounded-md text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
@@ -124,11 +139,11 @@ const Header: React.FC = () => {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-       <div className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 max-h-[80vh] overflow-y-auto">
-        <div className="px-2 pt-2 pb-6 space-y-1">
+        <div className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 max-h-[80vh] overflow-y-auto">
+          <div className="px-2 pt-2 pb-6 space-y-1">
             {navigation.map((item) => (
               <Link
-                key={item.name}
+                key={item.href}
                 to={item.href}
                 onClick={() => setIsMenuOpen(false)}
                 className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
@@ -141,15 +156,16 @@ const Header: React.FC = () => {
               </Link>
             ))}
 
+            {/* Language Toggle */}
+            <button
+              onClick={toggleLanguage}
+              className="block mx-3 mt-2 text-center border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-4 py-2 rounded-md text-sm font-medium"
+            >
+              {i18n.language === 'en' ? 'Gujarati (GU)' : 'English (EN)'}
+            </button>
+
             {!isLoggedIn && (
               <div className="pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
-                <Link
-                  to="/login"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="block mx-3 text-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm"
-                >
-                  Sign In
-                </Link>
                 <Link
                   to="/signup"
                   onClick={() => setIsMenuOpen(false)}
@@ -157,8 +173,16 @@ const Header: React.FC = () => {
                 >
                   Join Us
                 </Link>
+                <Link
+                  to="/login"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block mx-3 text-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm"
+                >
+                  Sign In
+                </Link>
               </div>
             )}
+
             <Link
               to="/donate"
               onClick={() => setIsMenuOpen(false)}

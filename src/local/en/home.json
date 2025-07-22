@@ -1,0 +1,39 @@
+{
+  "hero.title": "Welcome",
+  "hero.subtitle": "We celebrate the preservation of Indian heritage and strengthen community bonds through cultural events, festivals, and meaningful connections.",
+  "hero.cta.viewEvents": "View Events",
+  "hero.cta.joinUs": "Join Us",
+  "hero.status": "Active Community",
+
+  "stats.activeMembers": "Active Members",
+  "stats.eventsOrganized": "Events Organized",
+  "stats.yearsOfService": "Years of Service",
+  "stats.communityImpact": "Community Impact",
+
+  "mission.title": "Our Mission",
+  "mission.description": "We are dedicated to preserving and celebrating Indian culture while fostering unity and support within our community.",
+  "mission.point1": "Preserve and promote Indian cultural heritage",
+  "mission.point2": "Build strong community connections",
+  "mission.point3": "Support members of the community in need",
+
+  "events.title": "Upcoming Events",
+  "events.subtitle": "Join us for our upcoming festivals and cultural programs",
+  "events.cta": "Attend",
+  "events.viewAll": "View All Events",
+
+  "whatsnew.title": "What’s New",
+  "whatsnew.subtitle": "Stay updated with our latest news and announcements",
+  "whatsnew.gallery.title": "New Gallery",
+  "whatsnew.gallery.desc": "See photos from our recent Navratri celebration",
+  "whatsnew.gallery.link": "View Gallery →",
+  "whatsnew.members.title": "New Members",
+  "whatsnew.members.desc": "Welcome to 15 new families who joined this month",
+  "whatsnew.members.link": "Meet Members →",
+  "whatsnew.support.title": "Community Support",
+  "whatsnew.support.desc": "Your support helps us continue our mission",
+  "whatsnew.support.link": "Support Us →",
+
+  "ads.sponsored": "Sponsored Content",
+  "ads.loading": "Loading ads...",
+  "ads.failed": "Failed to load ads"
+}

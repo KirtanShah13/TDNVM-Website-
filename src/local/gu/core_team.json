@@ -1,0 +1,20 @@
+{
+  "coreTeam.title": "મૂળ ટીમ",
+  "coreTeam.description": "અમે આપણા સમુદાયને આગળ વધારતા સમર્પિત નેતાઓને મળો. અમારી મુખ્ય ટીમમાં તે ઉત્સાહી સ્વયંસેવકોનો સમાવેશ થાય છે જેઓ સંસ્કૃતિ જાળવવા, જોડાણો બનાવવા અને સમુદાયમાં મહત્વપૂર્ણ અસર ઊભી કરવામાં પ્રતિબદ્ધ છે.",
+  "coreTeam.stats.members": "મૂળ સભ્યો",
+  "coreTeam.stats.experience": "એકંદર અનુભવ વર્ષો",
+  "coreTeam.stats.events": "સફળ કાર્યક્રમો",
+  "coreTeam.card.experience": "અનુભવ",
+  "coreTeam.card.achievements": "સાધનાઓ",
+  "coreTeam.leadershipMessage.title": "અમારા નેતૃત્વ તરફથી સંદેશ",
+  "coreTeam.leadershipMessage.quote": "અમારું બળ અમારી એકતા અને સાંઝા દ્રષ્ટિકોણમાં છે. આપણે માત્ર અમારી સાંસ્કૃતિક વારસાને જાળવી રહ્યા નથી પણ ભવિષ્યની પેઢીઓ માટે વારસો ઊભો કરી રહ્યા છીએ. અમારા મુખ્ય ટીમના દરેક સભ્ય સમુદાયની સેવા માટે અનન્ય કૌશલ્ય અને અવિરત સમર્પણ લાવે છે.",
+  "coreTeam.leadershipMessage.name": "- બેંકિમ શાહ, પ્રમુખ",
+  "coreTeam.leadershipHistory.title": "નેતૃત્વ ઇતિહાસ",
+  "coreTeam.leadershipHistory.loading": "નેતૃત્વ ઇતિહાસ લોડ થઇ રહ્યો છે...",
+  "coreTeam.leadershipHistory.empty": "નેતૃત્વ ઇતિહાસ મળ્યો નથી.",
+  "coreTeam.table.headers.srNo": "ક્ર. સં.",
+  "coreTeam.table.headers.presidentName": "પ્રમુખ નું નામ",
+  "coreTeam.table.headers.presidencyYear": "પ્રમુખ તરીકેના વર્ષો",
+  "coreTeam.table.headers.secretaryName": "સચિવ નું નામ",
+  "coreTeam.table.headers.secretaryYear": "સચિવ તરીકેના વર્ષો"
+}

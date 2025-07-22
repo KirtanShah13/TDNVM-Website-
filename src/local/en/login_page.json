@@ -1,0 +1,13 @@
+{
+  "login.title": "Welcome Back",
+  "login.subtitle": "Login using your phone number",
+  "login.phone.label": "Phone Number",
+  "login.phone.placeholder": "+91 98765 43210",
+  "login.phone.title": "Enter a valid Indian phone number (e.g. +91 9876543210)",
+  "login.button.signin": "Sign In",
+  "login.loading": "Logging in...",
+  "login.success": "Login successful! Welcome back to Samudaya.",
+  "login.noAccount": "Don't have an account?",
+  "login.createAccount": "Create a new account",
+  "login.backToHome": "← Back to Homepage"
+}

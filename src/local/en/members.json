@@ -1,0 +1,13 @@
+{
+  "members.title": "Community Members",
+  "members.subtitle": "Meet the amazing people who make our community vibrant and strong. Each member contributes uniquely to our shared mission and values.",
+  "members.search.placeholder": "Search by name, address, or birth month/year...",
+  "members.filter.role": "All Roles",
+  "members.filter.region": "All Regions",
+  "members.address.label": "Address",
+  "members.birthdate.label": "Birth Date",
+  "members.notFound.title": "No members found",
+  "members.notFound.subtitle": "Try adjusting your search terms or filters to find what you're looking for.",
+  "members.pagination.previous": "Previous",
+  "members.pagination.next": "Next"
+}

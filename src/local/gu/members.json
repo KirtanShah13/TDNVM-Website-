@@ -1,0 +1,13 @@
+{
+  "members.title": "સમુદાયના સભ્યો",
+  "members.subtitle": "આશ્ચર્યજનક લોકોને મળો જેઓ આપણા સમુદાયને જીવંત અને મજબૂત બનાવે છે. દરેક સભ્ય આપણા સાઝા ધ્યેય અને મૂલ્યોમાં અનન્ય યોગદાન આપે છે.",
+  "members.search.placeholder": "નામ, સરનામું અથવા જન્મ મહિનાથી શોધો...",
+  "members.filter.role": "બધા ભૂમિકા",
+  "members.filter.region": "બધા પ્રદેશો",
+  "members.address.label": "સરનામું",
+  "members.birthdate.label": "જન્મ તારીખ",
+  "members.notFound.title": "કોઈ સભ્યો મળ્યાં નથી",
+  "members.notFound.subtitle": "તમે શોધવા માંગો છો તે માટે તમારા શોધ શબ્દો અથવા ફિલ્ટરો બદલો.",
+  "members.pagination.previous": "પાછળ",
+  "members.pagination.next": "આગળ"
+}

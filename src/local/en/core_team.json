@@ -1,0 +1,20 @@
+{
+  "coreTeam.title": "Core Team",
+  "coreTeam.description": "Meet the dedicated leaders who drive our community forward. Our core team consists of passionate volunteers committed to preserving culture, building connections, and creating meaningful impact in our community.",
+  "coreTeam.stats.members": "Core Members",
+  "coreTeam.stats.experience": "Years Combined Experience",
+  "coreTeam.stats.events": "Successful Events",
+  "coreTeam.card.experience": "Experience",
+  "coreTeam.card.achievements": "Achievements",
+  "coreTeam.leadershipMessage.title": "A Message from Our Leadership",
+  "coreTeam.leadershipMessage.quote": "Our strength lies in our unity and shared vision. Together, we're not just preserving our cultural heritage, but actively building a legacy for future generations. Every member of our core team brings unique skills and unwavering dedication to serve our community.",
+  "coreTeam.leadershipMessage.name": "- Bankim Shah, President",
+  "coreTeam.leadershipHistory.title": "Leadership History",
+  "coreTeam.leadershipHistory.loading": "Loading leadership history...",
+  "coreTeam.leadershipHistory.empty": "No leadership history found.",
+  "coreTeam.table.headers.srNo": "Sr. No.",
+  "coreTeam.table.headers.presidentName": "President Name",
+  "coreTeam.table.headers.presidencyYear": "Presidency Year",
+  "coreTeam.table.headers.secretaryName": "Secretary Name",
+  "coreTeam.table.headers.secretaryYear": "Secretary Year"
+}

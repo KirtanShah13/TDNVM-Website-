@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/SupabaseClient';
-import { Search, Filter, MapPin, Calendar, Users, Award } from 'lucide-react';
+import { Search, Filter, MapPin, Calendar, Users } from 'lucide-react';
 import Fuse from 'fuse.js';
+import { useTranslation } from 'react-i18next';
 
-const DEFAULT_PHOTO = 'https://wbasgeeijimgbvhduilu.supabase.co/storage/v1/object/public/members/clay-banks-eOcwZNp3LLo-unsplash.jpg';
 
 interface Member {
   [key: string]: any;
@@ -16,7 +16,22 @@ interface Member {
   Role?: string;
 }
 
+const BANNER_IMAGES = [
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im1..webp",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im10.jpeg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im3..webp",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im11.jpeg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im5..webp",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im11.jpeg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im13.jpeg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im6.jpeg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im7.jpeg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im8.jpeg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im9.jpeg",
+];
+
 const MembersPage: React.FC = () => {
+   const { t } = useTranslation(['members']);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [regionFilter, setRegionFilter] = useState('all');
@@ -25,6 +40,7 @@ const MembersPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 20;
+  const membersRef = useRef<HTMLDivElement>(null); // ✅ scroll target
 
   const roles = ['all', 'President', 'Treasurer', 'Secretary', 'Coordinator', 'Member', 'Volunteer'];
   const regions = ['all', 'Mumbai', 'Pune', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad'];
@@ -33,12 +49,10 @@ const MembersPage: React.FC = () => {
     const fetchMembers = async () => {
       setLoading(true);
       const { data, error } = await supabase.from('members_details').select('*');
-
       if (error) setError(error.message);
       else setMembers(data || []);
       setLoading(false);
     };
-
     fetchMembers();
   }, []);
 
@@ -56,71 +70,111 @@ const MembersPage: React.FC = () => {
       { name: 'Address', weight: 0.4 },
       { name: 'BIRTH DATE', weight: 0.2 },
     ],
-    threshold: 0.3,
+    threshold: 0.2,
     includeScore: true,
+    ignoreLocation: true,
+    useExtendedSearch: true,
   });
 
-  const normalizedSearch = searchTerm.trim();
+  const buildSearchQuery = (input: string) => {
+    if (!input.trim()) return '';
+    return `'${input.trim()}`;
+  };
+
+  const normalizedSearch = buildSearchQuery(searchTerm);
   const searchedMembers = normalizedSearch
     ? fuse.search(normalizedSearch).map((result) => result.item)
     : members;
 
-  const roleFiltered = roleFilter === 'all' ? searchedMembers : searchedMembers.filter((member) => member?.Role === roleFilter);
-  const regionFiltered = regionFilter === 'all' ? roleFiltered : roleFiltered.filter((member) => member?.Address?.includes(regionFilter));
+  const roleFiltered =
+    roleFilter === 'all'
+      ? searchedMembers
+      : searchedMembers.filter((member) => member?.Role === roleFilter);
+
+  const regionFiltered =
+    regionFilter === 'all'
+      ? roleFiltered
+      : roleFiltered.filter((member) => member?.Address?.includes(regionFilter));
 
   const startIndex = (page - 1) * pageSize;
   const endIndex = startIndex + pageSize;
   const paginatedMembers = regionFiltered.slice(startIndex, endIndex);
+  const hasNextPage = endIndex < regionFiltered.length;
+
+  const getRandomImage = (index: number): string => {
+    return BANNER_IMAGES[index % BANNER_IMAGES.length];
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+    membersRef.current?.scrollIntoView({ behavior: 'smooth' }); // ✅ scroll on page change
+  };
 
   return (
-    <div className="py-16">
+    <div ref={membersRef} className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Community Members
+            {t('members.title')}
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Meet the amazing people who make our community vibrant and strong.
-            Each member contributes uniquely to our shared mission and values.
+            {t('members.subtitle')}.
           </p>
         </div>
 
+        {/* Filters */}
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-8 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search by name, address, or birth month/year..."
+                placeholder={t('members.search.placeholder')}
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                onChange={(e) => {
+                  setPage(1);
+                  setSearchTerm(e.target.value);
+                }}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
               />
             </div>
+
+            {/* Role Filter */}
             <div className="relative">
               <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <select
                 value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white appearance-none"
+                onChange={(e) => {
+                  setPage(1);
+                  setRoleFilter(e.target.value);
+                }}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white appearance-none"
               >
                 {roles.map((role) => (
                   <option key={role} value={role}>
-                    {role === 'all' ? 'All Roles' : role}
+                    {role === 'all' ? t('members.filter.role') : role}
+
                   </option>
                 ))}
               </select>
             </div>
+
+            {/* Region Filter */}
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <select
                 value={regionFilter}
-                onChange={(e) => setRegionFilter(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white appearance-none"
+                onChange={(e) => {
+                  setPage(1);
+                  setRegionFilter(e.target.value);
+                }}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white appearance-none"
               >
                 {regions.map((region) => (
                   <option key={region} value={region}>
-                    {region === 'all' ? 'All Regions' : region}
+                    {region === 'all' ? t('members.filter.region') : region}
+
                   </option>
                 ))}
               </select>
@@ -128,18 +182,7 @@ const MembersPage: React.FC = () => {
           </div>
         </div>
 
-        {loading && (
-          <div className="text-center py-12">
-            <span className="text-gray-500 dark:text-gray-300">Loading members...</span>
-          </div>
-        )}
-
-        {error && (
-          <div className="text-center py-12">
-            <span className="text-red-500">{error}</span>
-          </div>
-        )}
-
+        {/* Members Grid */}
         {!loading && !error && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
             {paginatedMembers.map((member, index) => (
@@ -149,7 +192,7 @@ const MembersPage: React.FC = () => {
               >
                 <div
                   className="h-24 w-full bg-cover bg-center"
-                  style={{ backgroundImage: `url(${DEFAULT_PHOTO})` }}
+                  style={{ backgroundImage: `url(${getRandomImage(index)})` }}
                 ></div>
                 <div className="p-6 text-center">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
@@ -173,29 +216,32 @@ const MembersPage: React.FC = () => {
           </div>
         )}
 
+        {/* No Members Found */}
         {!loading && !error && regionFiltered.length === 0 && (
           <div className="text-center py-12">
             <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No members found</h3>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('members.notFound.title')}</h3>
             <p className="text-gray-600 dark:text-gray-400">
-              Try adjusting your search terms or filters to find what you're looking for.
+              {t('members.notFound.subtitle')}
             </p>
           </div>
         )}
 
+        {/* Pagination */}
         <div className="flex justify-center space-x-4 mt-8">
           <button
-            onClick={() => setPage((p) => Math.max(p - 1, 1))}
+            onClick={() => handlePageChange(Math.max(page - 1, 1))}
             className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50"
             disabled={page === 1}
           >
-            Previous
+            {t('members.pagination.previous')}
           </button>
           <button
-            onClick={() => setPage((p) => p + 1)}
-            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded"
+            onClick={() => handlePageChange(page + 1)}
+            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50"
+            disabled={!hasNextPage}
           >
-            Next
+           {t('members.pagination.next')}
           </button>
         </div>
       </div>
