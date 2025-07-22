@@ -21,21 +21,6 @@ const BANNER_IMAGES = [
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im3..webp",
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im11.jpeg",
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im5..webp",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im11.jpeg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im13.jpeg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im6.jpeg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im7.jpeg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im8.jpeg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im9.jpeg",
-];
-
-const BANNER_IMAGES = [
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im1..webp",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im10.jpeg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im3..webp",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im11.jpeg",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im5..webp",
-  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im11.jpeg",
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im13.jpeg",
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im6.jpeg",
   "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/member-banner1//im7.jpeg",
@@ -44,7 +29,7 @@ const BANNER_IMAGES = [
 ];
 
 const MembersPage: React.FC = () => {
-   const { t } = useTranslation(['members']);
+  const { t } = useTranslation(['members']);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [regionFilter, setRegionFilter] = useState('all');
@@ -53,8 +38,7 @@ const MembersPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 20;
-  const membersRef = useRef<HTMLDivElement>(null); // ✅ scroll target
-  const membersRef = useRef<HTMLDivElement>(null); // ✅ scroll target
+  const membersRef = useRef<HTMLDivElement>(null);
 
   const roles = ['all', 'President', 'Treasurer', 'Secretary', 'Coordinator', 'Member', 'Volunteer'];
   const regions = ['all', 'Mumbai', 'Pune', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad'];
@@ -85,7 +69,6 @@ const MembersPage: React.FC = () => {
       { name: 'BIRTH DATE', weight: 0.2 },
     ],
     threshold: 0.2,
-    threshold: 0.2,
     includeScore: true,
     ignoreLocation: true,
     useExtendedSearch: true,
@@ -95,30 +78,13 @@ const MembersPage: React.FC = () => {
     if (!input.trim()) return '';
     return `'${input.trim()}`;
   };
-    ignoreLocation: true,
-    useExtendedSearch: true,
-  });
-
-  const buildSearchQuery = (input: string) => {
-    if (!input.trim()) return '';
-    return `'${input.trim()}`;
-  };
 
   const normalizedSearch = buildSearchQuery(searchTerm);
-  const normalizedSearch = buildSearchQuery(searchTerm);
+
   const searchedMembers = normalizedSearch
     ? fuse.search(normalizedSearch).map((result) => result.item)
     : members;
 
-  const roleFiltered =
-    roleFilter === 'all'
-      ? searchedMembers
-      : searchedMembers.filter((member) => member?.Role === roleFilter);
-
-  const regionFiltered =
-    regionFilter === 'all'
-      ? roleFiltered
-      : roleFiltered.filter((member) => member?.Address?.includes(regionFilter));
   const roleFiltered =
     roleFilter === 'all'
       ? searchedMembers
@@ -140,21 +106,10 @@ const MembersPage: React.FC = () => {
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
-    membersRef.current?.scrollIntoView({ behavior: 'smooth' }); // ✅ scroll on page change
-  };
-  const hasNextPage = endIndex < regionFiltered.length;
-
-  const getRandomImage = (index: number): string => {
-    return BANNER_IMAGES[index % BANNER_IMAGES.length];
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    membersRef.current?.scrollIntoView({ behavior: 'smooth' }); // ✅ scroll on page change
+    membersRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <div ref={membersRef} className="py-16">
     <div ref={membersRef} className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
@@ -167,10 +122,8 @@ const MembersPage: React.FC = () => {
         </div>
 
         {/* Filters */}
-        {/* Filters */}
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-8 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Search */}
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -183,15 +136,8 @@ const MembersPage: React.FC = () => {
                   setSearchTerm(e.target.value);
                 }}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
-                onChange={(e) => {
-                  setPage(1);
-                  setSearchTerm(e.target.value);
-                }}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
               />
             </div>
-
-            {/* Role Filter */}
 
             {/* Role Filter */}
             <div className="relative">
@@ -203,22 +149,14 @@ const MembersPage: React.FC = () => {
                   setRoleFilter(e.target.value);
                 }}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white appearance-none"
-                onChange={(e) => {
-                  setPage(1);
-                  setRoleFilter(e.target.value);
-                }}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white appearance-none"
               >
                 {roles.map((role) => (
                   <option key={role} value={role}>
                     {role === 'all' ? t('members.filter.role') : role}
-
                   </option>
                 ))}
               </select>
             </div>
-
-            {/* Region Filter */}
 
             {/* Region Filter */}
             <div className="relative">
@@ -230,16 +168,10 @@ const MembersPage: React.FC = () => {
                   setRegionFilter(e.target.value);
                 }}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white appearance-none"
-                onChange={(e) => {
-                  setPage(1);
-                  setRegionFilter(e.target.value);
-                }}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white appearance-none"
               >
                 {regions.map((region) => (
                   <option key={region} value={region}>
                     {region === 'all' ? t('members.filter.region') : region}
-
                   </option>
                 ))}
               </select>
@@ -247,7 +179,6 @@ const MembersPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Members Grid */}
         {/* Members Grid */}
         {!loading && !error && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
@@ -258,7 +189,6 @@ const MembersPage: React.FC = () => {
               >
                 <div
                   className="h-24 w-full bg-cover bg-center"
-                  style={{ backgroundImage: `url(${getRandomImage(index)})` }}
                   style={{ backgroundImage: `url(${getRandomImage(index)})` }}
                 ></div>
                 <div className="p-6 text-center">
@@ -284,7 +214,6 @@ const MembersPage: React.FC = () => {
         )}
 
         {/* No Members Found */}
-        {/* No Members Found */}
         {!loading && !error && regionFiltered.length === 0 && (
           <div className="text-center py-12">
             <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
@@ -296,10 +225,8 @@ const MembersPage: React.FC = () => {
         )}
 
         {/* Pagination */}
-        {/* Pagination */}
         <div className="flex justify-center space-x-4 mt-8">
           <button
-            onClick={() => handlePageChange(Math.max(page - 1, 1))}
             onClick={() => handlePageChange(Math.max(page - 1, 1))}
             className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50"
             disabled={page === 1}
@@ -310,11 +237,8 @@ const MembersPage: React.FC = () => {
             onClick={() => handlePageChange(page + 1)}
             className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50"
             disabled={!hasNextPage}
-            onClick={() => handlePageChange(page + 1)}
-            className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50"
-            disabled={!hasNextPage}
           >
-           {t('members.pagination.next')}
+            {t('members.pagination.next')}
           </button>
         </div>
       </div>

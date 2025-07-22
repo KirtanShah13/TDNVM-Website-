@@ -14,9 +14,8 @@ import {
 
 const GalleryPage: React.FC = () => {
    const { t } = useTranslation(['gallery']);
+
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [galleryData, setGalleryData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [galleryData, setGalleryData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [lightboxImage, setLightboxImage] = useState<any>(null);
@@ -52,17 +51,7 @@ const GalleryPage: React.FC = () => {
 
     fetchGallery();
   }, []);
-  const filters = [
-    'all',
-    '2024',
-    '2023',
-    '2022',
-    '2021',
-    'festivals',
-    'cultural',
-    'sports',
-    'community',
-  ];
+ 
 
   useEffect(() => {
     const fetchGallery = async () => {

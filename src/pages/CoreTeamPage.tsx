@@ -1,21 +1,17 @@
-import React, { useEffect, useState }, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Mail, Phone, Linkedin, Calendar, Award, Users } from 'lucide-react';
 import { supabase } from '../lib/SupabaseClient';
 import CountUp from 'react-countup';
 import { useTranslation } from 'react-i18next';
 
-
 const CoreTeamPage: React.FC = () => {
-  const { t } = useTranslation('coreTeam'); // ✅ Correct: top-level in component
+  const { t } = useTranslation('coreTeam');
 
   const [coreTeam, setCoreTeam] = useState<any[]>([]);
   const [leaders, setLeaders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch core team data from Supabase
   useEffect(() => {
- 
-
     const fetchCoreTeam = async () => {
       const { data, error } = await supabase
         .from('core_team')
@@ -56,8 +52,8 @@ const CoreTeamPage: React.FC = () => {
             {t('coreTeam.title')}
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-             {t('coreTeam.description')}
-          /</p>   
+            {t('coreTeam.description')}
+          </p>
         </div>
 
         {/* Team Stats */}
@@ -78,7 +74,7 @@ const CoreTeamPage: React.FC = () => {
             <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               <CountUp end={25} duration={2} suffix="+" />
             </div>
-            <div className="text-gray-600 dark:text-gray-400"> {t('coreTeam.stats.experience')}</div>
+            <div className="text-gray-600 dark:text-gray-400">{t('coreTeam.stats.experience')}</div>
           </div>
           <div className="text-center">
             <div className="w-16 h-16 bg-accent-100 dark:bg-accent-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -129,45 +125,32 @@ const CoreTeamPage: React.FC = () => {
                       <span className="text-xs">{member.achievements}</span>
                     </div>
                   )}
-                  {member.experience && (
-                    <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-                      <Calendar className="h-4 w-4 text-primary-500" />
-                      <span>Experience: {member.experience}</span>
-                    </div>
-                  )}
-                  {member.achievements && (
-                    <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-                      <Award className="h-4 w-4 text-primary-500" />
-                      <span className="text-xs">{member.achievements}</span>
-                    </div>
-                  )}
                 </div>
 
                 <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                 <div className="flex space-x-3">
-                      <a
-                        href={`mailto:${member.email}`}
-                        className="flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-gray-700 hover:bg-primary-100 dark:hover:bg-primary-900/20 rounded-full transition-colors"
-                        title="Email"
-                      >
-                        <Mail className="h-4 w-4 text-gray-600 dark:text-gray-400 hover:text-primary-600" />
-                      </a>
-                      <a
-                        href={`tel:${member.phone}`}
-                        className="flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-gray-700 hover:bg-primary-100 dark:hover:bg-primary-900/20 rounded-full transition-colors"
-                        title="Phone"
-                      >
-                        <Phone className="h-4 w-4 text-gray-600 dark:text-gray-400 hover:text-primary-600" />
-                      </a>
-                      <a
-                        href={member.linkedin}
-                        className="flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-gray-700 hover:bg-primary-100 dark:hover:bg-primary-900/20 rounded-full transition-colors"
-                        title="LinkedIn"
-                      >
-                        <Linkedin className="h-4 w-4 text-gray-600 dark:text-gray-400 hover:text-primary-600" />
-                      </a>
-                    </div>
-
+                  <div className="flex space-x-3">
+                    <a
+                      href={`mailto:${member.email}`}
+                      className="flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-gray-700 hover:bg-primary-100 dark:hover:bg-primary-900/20 rounded-full transition-colors"
+                      title="Email"
+                    >
+                      <Mail className="h-4 w-4 text-gray-600 dark:text-gray-400 hover:text-primary-600" />
+                    </a>
+                    <a
+                      href={`tel:${member.phone}`}
+                      className="flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-gray-700 hover:bg-primary-100 dark:hover:bg-primary-900/20 rounded-full transition-colors"
+                      title="Phone"
+                    >
+                      <Phone className="h-4 w-4 text-gray-600 dark:text-gray-400 hover:text-primary-600" />
+                    </a>
+                    <a
+                      href={member.linkedin}
+                      className="flex items-center justify-center w-8 h-8 bg-gray-100 dark:bg-gray-700 hover:bg-primary-100 dark:hover:bg-primary-900/20 rounded-full transition-colors"
+                      title="LinkedIn"
+                    >
+                      <Linkedin className="h-4 w-4 text-gray-600 dark:text-gray-400 hover:text-primary-600" />
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -181,60 +164,58 @@ const CoreTeamPage: React.FC = () => {
               {t('coreTeam.leadershipMessage.title')}
             </h2>
             <blockquote className="text-lg text-gray-700 dark:text-gray-300 italic max-w-3xl mx-auto mb-6">
-             {t('coreTeam.leadershipMessage.quote')}
+              {t('coreTeam.leadershipMessage.quote')}
             </blockquote>
             <cite className="text-primary-600 font-medium">{t('coreTeam.leadershipMessage.name')}</cite>
           </div>
         </div>
 
-        
         {/* Leadership History Table */}
-      <section className="bg-white dark:bg-gray-900 py-16 px-4 sm:px-6 lg:px-8 rounded-xl shadow-lg">
-  <div className="max-w-6xl mx-auto text-center">
-    <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-      {t('coreTeam.table.title')}
-    </h2>
-    {loading ? (
-      <p className="text-gray-500 dark:text-gray-400">
-        {t('coreTeam.table.loading')}
-      </p>
-    ) : (
-      <div className="overflow-x-auto rounded-lg shadow border border-gray-200 dark:border-gray-700">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-100 dark:bg-gray-800">
-            <tr>
-              <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.srNo')}</th>
-              <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.presidentName')}</th>
-              <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.presidencyYear')}</th>
-              <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.secretaryName')}</th>
-              <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.secretaryYear')}</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-            {leaders.length > 0 ? (
-              leaders.map((entry, index) => (
-                <tr key={entry.no || index} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                  <td className="border border-gray-300 px-2 py-1">{entry.no}</td>
-                  <td className="border border-gray-300 px-2 py-1">{entry["President Name"]}</td>
-                  <td className="border border-gray-300 px-2 py-1">{entry["Presidency Year"]}</td>
-                  <td className="border border-gray-300 px-2 py-1">{entry["Secretary Name"]}</td>
-                  <td className="border border-gray-300 px-2 py-1">{entry["Secretary Year"]}</td>
-                </tr>
-              ))
+        <section className="bg-white dark:bg-gray-900 py-16 px-4 sm:px-6 lg:px-8 rounded-xl shadow-lg">
+          <div className="max-w-6xl mx-auto text-center">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+              {t('coreTeam.table.title')}
+            </h2>
+            {loading ? (
+              <p className="text-gray-500 dark:text-gray-400">
+                {t('coreTeam.table.loading')}
+              </p>
             ) : (
-              <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                  {t('coreTeam.table.empty')}
-                </td>
-              </tr>
+              <div className="overflow-x-auto rounded-lg shadow border border-gray-200 dark:border-gray-700">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-100 dark:bg-gray-800">
+                    <tr>
+                      <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.srNo')}</th>
+                      <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.presidentName')}</th>
+                      <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.presidencyYear')}</th>
+                      <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.secretaryName')}</th>
+                      <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.secretaryYear')}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                    {leaders.length > 0 ? (
+                      leaders.map((entry, index) => (
+                        <tr key={entry.no || index} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                          <td className="border border-gray-300 px-2 py-1">{entry.no}</td>
+                          <td className="border border-gray-300 px-2 py-1">{entry["President Name"]}</td>
+                          <td className="border border-gray-300 px-2 py-1">{entry["Presidency Year"]}</td>
+                          <td className="border border-gray-300 px-2 py-1">{entry["Secretary Name"]}</td>
+                          <td className="border border-gray-300 px-2 py-1">{entry["Secretary Year"]}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                          {t('coreTeam.table.empty')}
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             )}
-          </tbody>
-        </table>
-      </div>
-    )}
-  </div>
-</section>
-
+          </div>
+        </section>
       </div>
     </div>
   );

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Users, Camera, Heart, ArrowRight, Star } from 'lucide-react';
 import CountUp from 'react-countup';
@@ -111,7 +110,7 @@ const { t } = useTranslation('home'); // ✅ ADD THIS
     },
   ];
   */}
-  */}
+
 
 const stats = [
   { label: t('stats.activeMembers'), value: 650, icon: Users },
@@ -149,18 +148,6 @@ const stats = [
 
             {/* Hero Carousel */}
             <div className="relative">
-              <div className="overflow-hidden rounded-2xl shadow-2xl w-full">
-                <div
-                  className="flex transition-transform duration-500 ease-in-out"
-                  style={{ transform: `translateX(-${heroSlide * 100}%)` }}
-                >
-                  {heroImages.map((img, index) => (
-                    <div key={index} className="flex-shrink-0 w-full">
-                      <img src={img} alt={`ad-${index}`} className="w-full h-full object-cover rounded-2xl" />
-                    </div>
-                  ))}
-                </div>
-              </div>
               <div className="overflow-hidden rounded-2xl shadow-2xl w-full">
                 <div
                   className="flex transition-transform duration-500 ease-in-out"

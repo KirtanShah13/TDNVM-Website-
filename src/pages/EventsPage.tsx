@@ -1,72 +1,101 @@
 import React, { useState, useEffect } from 'react';
-import React, { useState, useEffect } from 'react';
 import { Calendar, MapPin, Users, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { supabase } from '../lib/SupabaseClient';
+import { useTranslation } from 'react-i18next';
+
 
 const EventsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation(['home', 'ads', 'events', 'stats']);
 
-  const upcomingEvents = [
-    {
-      id: 1,
-      title: 'Diwali Celebration 2024',
-      description: 'Join us for a grand Diwali celebration with traditional performances, delicious food, and community bonding.',
-      date: '2024-11-12',
-      time: '6:00 PM - 10:00 PM',
-      location: 'Community Hall, Downtown',
-      image: 'https://images.pexels.com/photos/6479178/pexels-photo-6479178.jpeg?auto=compress&cs=tinysrgb&w=600',
-      attendees: 150,
-      category: 'Festival'
-    },
-    {
-      id: 2,
-      title: 'Cultural Music Evening',
-      description: 'An evening of classical Indian music featuring local artists and traditional instruments.',
-      date: '2024-11-25',
-      time: '7:00 PM - 9:00 PM',
-      location: 'Open Air Amphitheater',
-      image: 'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=600',
-      attendees: 80,
-      category: 'Cultural'
-    },
-    {
-      id: 3,
-      title: 'Youth Cricket Tournament',
-      description: 'Inter-community cricket tournament for youth aged 16-25. Registration required.',
-      date: '2024-12-08',
-      time: '9:00 AM - 5:00 PM',
-      location: 'Sports Complex',
-      image: 'https://images.pexels.com/photos/1661950/pexels-photo-1661950.jpeg?auto=compress&cs=tinysrgb&w=600',
-      attendees: 120,
-      category: 'Sports'
-    }
-  ];
+  const [errorAds, setErrorAds] = useState<string | null>(null);
 
-  const pastEvents = [
-    {
-      id: 4,
-      title: 'Navratri Celebration 2024',
-      description: 'Nine nights of traditional Garba and Dandiya with authentic Gujarati cuisine.',
-      date: '2024-10-15',
-      time: '7:00 PM - 11:00 PM',
-      location: 'Community Hall',
-      image: 'https://images.pexels.com/photos/6479264/pexels-photo-6479264.jpeg?auto=compress&cs=tinysrgb&w=600',
-      attendees: 200,
-      category: 'Festival',
-      recap: 'Amazing turnout with traditional dances and delicious food!'
-    },
-    {
-      id: 5,
-      title: 'Independence Day Celebration',
-      description: 'Celebrating India\'s Independence Day with flag hoisting, cultural programs, and patriotic songs.',
-      date: '2024-08-15',
-      time: '8:00 AM - 12:00 PM',
-      location: 'Community Park',
-      image: 'https://images.pexels.com/photos/7976239/pexels-photo-7976239.jpeg?auto=compress&cs=tinysrgb&w=600',
-      attendees: 180,
-      category: 'National',
-      recap: 'Proud moment for our community with inspiring speeches and performances.'
+
+
+
+  const [adImages, setAdImages] = useState<string[]>([]);
+
+
+   {/*
+    const adImages = [
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2011.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2012.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2013.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2014.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2015.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2016.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2017.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2018.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//back%20inside.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//back%20title.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//Parivar.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//prastavna.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//report.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%201.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%202.jpg", 
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%201.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%202.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%203.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%204.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%205.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%206.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%207.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%208.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%209.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2010.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%204.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//title.jpg", 
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%203.jpg", 
+];
+*/}
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+      setError(null);
+
+      const { data, error } = await supabase.from('events').select('*');
+
+      if (error) {
+        setError(t('events.error'));
+        setEvents([]);
+      } else {
+        setEvents(data || []);
+      }
+
+      setLoading(false);
+    };
+
+    fetchEvents();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % Math.ceil(adImages.length / 3));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [adImages.length]);
+
+
+  useEffect(() => {
+  const fetchAdImages = async () => {
+    const { data, error } = await supabase.from('ads').select('imageurl');
+
+    if (error) {
+      setErrorAds(t('ads.error'));
+    } else {
+      setAdImages(data.map((item) => item.imageurl));
     }
-  ];
+  };
+
+  fetchAdImages();
+}, []); 
+
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -82,7 +111,6 @@ const EventsPage: React.FC = () => {
       <div className="relative">
         <img
           src={event.images?.[0] || 'https://via.placeholder.com/400x200.png?text=No+Image'}
-          src={event.images?.[0] || 'https://via.placeholder.com/400x200.png?text=No+Image'}
           alt={event.title}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
@@ -97,7 +125,6 @@ const EventsPage: React.FC = () => {
         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{event.title}</h3>
         <p className="text-gray-600 dark:text-gray-400 mb-4">{event.description}</p>
 
-
         <div className="space-y-2 mb-4">
           <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
             <Calendar className="h-4 w-4 text-primary-500" />
@@ -106,19 +133,11 @@ const EventsPage: React.FC = () => {
           <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
             <Clock className="h-4 w-4 text-primary-500" />
             <span>{event.time || 'TBD'}</span>
-            <span>{event.time || 'TBD'}</span>
           </div>
           <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
             <MapPin className="h-4 w-4 text-primary-500" />
             <span>{event.location || 'Not specified'}</span>
-            <span>{event.location || 'Not specified'}</span>
           </div>
-          {event.attendees && (
-            <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-              <Users className="h-4 w-4 text-primary-500" />
-              <span>{event.attendees} attendees</span>
-            </div>
-          )}
           {event.attendees && (
             <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
               <Users className="h-4 w-4 text-primary-500" />
@@ -138,10 +157,6 @@ const EventsPage: React.FC = () => {
       </div>
     </div>
   );
-
-  const now = new Date();
-  const upcomingEvents = events.filter((e) => new Date(e.date) >= now);
-  const pastEvents = events.filter((e) => new Date(e.date) < now);
 
   const now = new Date();
   const upcomingEvents = events.filter((e) => new Date(e.date) >= now);
@@ -271,6 +286,6 @@ const EventsPage: React.FC = () => {
       </div>
     </div>
   );
-}     
+}
 
 export default EventsPage;
