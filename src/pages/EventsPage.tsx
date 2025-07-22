@@ -1,8 +1,39 @@
-import React, { useState } from 'react';
+
+
+import React, { useState, useEffect } from 'react';
+
 import { Calendar, MapPin, Users, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const EventsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    setCurrentSlide((prev) => (prev + 1) % adImages.length);
+  }, 5000);
+  return () => clearInterval(interval);
+}, []);
+
+
+
+  const adImages = [
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%201.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%202.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%203.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%204.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%205.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%206.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%207.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%208.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%209.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2010.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%204.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//title.jpg", 
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%203.jpg", 
+];
 
   const upcomingEvents = [
     {
@@ -186,30 +217,61 @@ const EventsPage: React.FC = () => {
           }
         </div>
 
-        {/* Ad Section */}
-        <div className="mt-16 bg-gray-100 dark:bg-gray-800 rounded-lg p-8 text-center">
-          <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">Sponsored Content</p>
-          <div className="bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-lg p-8">
-            <h3 className="text-2xl font-bold mb-2">Event Sponsors Welcome!</h3>
-            <p className="text-purple-100 mb-4">Support our community events and get your business featured.</p>
-            <button className="bg-white text-purple-600 px-6 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-              Learn More
-            </button>
+{/* Ad Section */}
+<div className="mt-16 bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-6 text-center">
+  <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">Sponsored Content</p>
+
+  {/* Carousel */}
+  <div className="relative w-full max-w-xl mx-auto">
+    <div className="overflow-hidden rounded-lg w-full">
+      <div
+        className="flex transition-transform duration-500 ease-in-out"
+        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+      >
+        {adImages.map((img, index) => (
+          <div key={index} className="flex-shrink-0 w-full flex justify-center items-center">
+            <img
+              src={img}
+              alt={`ad-${index}`}
+              className="max-h-[400px] w-auto h-auto object-contain rounded-md"
+            />
           </div>
-        </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Dots */}
+    <div className="flex justify-center mt-4 space-x-2">
+      {adImages.map((_, idx) => (
+        <button
+          key={idx}
+          onClick={() => setCurrentSlide(idx)}
+          className={`w-3 h-3 rounded-full transition-all ${
+            currentSlide === idx ? 'bg-gray-800 dark:bg-white' : 'bg-gray-400'
+          }`}
+        />
+      ))}
+    </div>
+  </div>
+</div>
+
+
+
 
         {/* Call to Action */}
-        <div className="mt-16 text-center">
-          <div className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-2xl p-8">
-            <h2 className="text-2xl font-bold mb-4">Want to Organize an Event?</h2>
-            <p className="text-primary-100 mb-6">
-              Have an idea for a community event? We'd love to hear from you and help make it happen!
-            </p>
-            <button className="bg-white text-primary-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-              Propose an Event
-            </button>
-          </div>
-        </div>
+  <div className="mt-16 text-center">
+  <div className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-2xl p-8">
+    <h2 className="text-2xl font-bold mb-4">Want to Organize an Event?</h2>
+    <p className="text-primary-100 mb-6">
+      Have an idea for a community event? We'd love to hear from you and help make it happen!
+    </p>
+    <Link to="/contact?topic=Event%20Proposal">
+      <button className="bg-white text-primary-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+        Propose an Event
+      </button>
+    </Link>
+  </div>
+</div>
       </div>
     </div>
   );

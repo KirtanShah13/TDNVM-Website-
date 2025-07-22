@@ -3,8 +3,45 @@ import { Link } from 'react-router-dom';
 import { Calendar, Users, Camera, Heart, ArrowRight, Star } from 'lucide-react';
 import CountUp from 'react-countup';
 import { useInView } from 'react-intersection-observer';
+import { useState, useEffect } from 'react';
+
+
+
+
+const adImages = [
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2011.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2012.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2013.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2014.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2015.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2016.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2017.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//adv%2018.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//back%20inside.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//back%20title.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//Parivar.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//prastavna.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//report.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%201.jpg",
+  "https://qhalttjlytvfjxpvuyit.supabase.co/storage/v1/object/public/ads//shradd%202.jpg", 
+];
+
+
+
+
+
 
 const HomePage: React.FC = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % adImages.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const upcomingEvents = [
     {
       id: 1,
@@ -245,19 +282,51 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Ad Banner */}
-      <section className="py-8 bg-gray-100 dark:bg-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white dark:bg-gray-700 rounded-lg p-6 text-center shadow-sm">
-            <p className="text-gray-600 dark:text-gray-400 text-sm mb-2">Advertisement</p>
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-8">
-              <h3 className="text-2xl font-bold mb-2">Support Local Businesses</h3>
-              <p className="text-blue-100">Your advertisement could be here. Contact us for sponsorship opportunities.</p>
-            </div>
+   {/* Ad Section */}
+<section className="mt-16">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-6 py-8 text-center">
+      <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">Sponsored Content</p>
+
+      {/* Carousel */}
+      <div className="relative w-full max-w-xl mx-auto">
+        <div className="overflow-hidden rounded-lg w-full">
+          <div
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          >
+            {adImages.map((img, index) => (
+              <div
+                key={index}
+                className="flex-shrink-0 w-full flex justify-center items-center"
+              >
+                <img
+                  src={img}
+                  alt={`ad-${index}`}
+                  className="max-h-[400px] w-auto h-auto object-contain rounded-md"
+                />
+              </div>
+            ))}
           </div>
         </div>
-      </section>
+
+        {/* Dots */}
+        <div className="flex justify-center mt-4 space-x-2">
+          {adImages.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              className={`w-3 h-3 rounded-full transition-all ${
+                currentSlide === idx ? 'bg-gray-800 dark:bg-white' : 'bg-gray-400'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
     </div>
+  </div>
+</section>
+  </div>
   );
 };
 

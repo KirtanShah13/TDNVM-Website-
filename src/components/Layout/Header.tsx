@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
+import React, { useState, useEffect } from 'react';
+
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  useEffect(() => {
+  if (isMenuOpen) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
+
+  return () => {
+    document.body.style.overflow = '';
+  };
+}, [isMenuOpen]);
+
   const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
 
@@ -42,8 +55,10 @@ const Header: React.FC = () => {
           </div>
 
           {/* Center: Navigation */}
-          <div className="flex-1 flex justify-center overflow-x-auto">
+        
+          <div className="hidden lg:flex flex-1 justify-center overflow-x-auto">
             <nav className="flex space-x-6">
+
               {navigation.map((item) => (
                 <Link
                   key={item.name}
@@ -109,8 +124,8 @@ const Header: React.FC = () => {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-          <div className="px-2 pt-2 pb-3 space-y-1">
+       <div className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 max-h-[80vh] overflow-y-auto">
+        <div className="px-2 pt-2 pb-6 space-y-1">
             {navigation.map((item) => (
               <Link
                 key={item.name}
