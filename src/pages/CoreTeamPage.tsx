@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState }, { useEffect, useState } from 'react';
 import { Mail, Phone, Linkedin, Calendar, Award, Users } from 'lucide-react';
 import { supabase } from '../lib/SupabaseClient';
 import CountUp from 'react-countup';
@@ -117,6 +117,18 @@ const CoreTeamPage: React.FC = () => {
                 </p>
 
                 <div className="space-y-2 mb-4 text-sm">
+                  {member.experience && (
+                    <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+                      <Calendar className="h-4 w-4 text-primary-500" />
+                      <span>Experience: {member.experience}</span>
+                    </div>
+                  )}
+                  {member.achievements && (
+                    <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+                      <Award className="h-4 w-4 text-primary-500" />
+                      <span className="text-xs">{member.achievements}</span>
+                    </div>
+                  )}
                   {member.experience && (
                     <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
                       <Calendar className="h-4 w-4 text-primary-500" />

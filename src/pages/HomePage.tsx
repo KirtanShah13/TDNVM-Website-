@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Calendar, Users, Camera, Heart, ArrowRight, Star } from 'lucide-react';
 import CountUp from 'react-countup';
@@ -89,11 +90,13 @@ const { t } = useTranslation('home'); // ✅ ADD THIS
     const upcomingEvents = [
     {
 
+
       id: 1,
       title: 'Diwali Celebration 2024',
       date: '2024-11-12',
       time: '6:00 PM',
       location: 'Community Hall',
+      image: 'https://images.pexels.com/photos/6479178/pexels-photo-6479178.jpeg?auto=compress&cs=tinysrgb&w=400',
       image: 'https://images.pexels.com/photos/6479178/pexels-photo-6479178.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
@@ -104,7 +107,10 @@ const { t } = useTranslation('home'); // ✅ ADD THIS
       location: 'Open Grounds',
       image: 'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
+      image: 'https://images.pexels.com/photos/1190297/pexels-photo-1190297.jpeg?auto=compress&cs=tinysrgb&w=400',
+    },
   ];
+  */}
   */}
 
 const stats = [
@@ -143,6 +149,18 @@ const stats = [
 
             {/* Hero Carousel */}
             <div className="relative">
+              <div className="overflow-hidden rounded-2xl shadow-2xl w-full">
+                <div
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{ transform: `translateX(-${heroSlide * 100}%)` }}
+                >
+                  {heroImages.map((img, index) => (
+                    <div key={index} className="flex-shrink-0 w-full">
+                      <img src={img} alt={`ad-${index}`} className="w-full h-full object-cover rounded-2xl" />
+                    </div>
+                  ))}
+                </div>
+              </div>
               <div className="overflow-hidden rounded-2xl shadow-2xl w-full">
                 <div
                   className="flex transition-transform duration-500 ease-in-out"
@@ -388,6 +406,5 @@ const stats = [
 </section>
     </div>
   );
-} 
-
+};
 export default HomePage;

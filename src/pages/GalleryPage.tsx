@@ -17,11 +17,41 @@ const GalleryPage: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [galleryData, setGalleryData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [galleryData, setGalleryData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [lightboxImage, setLightboxImage] = useState<any>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
 
+  const filters = [
+    'all',
+    '2024',
+    '2023',
+    '2022',
+    '2021',
+    'festivals',
+    'cultural',
+    'sports',
+    'community',
+  ];
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('gallery_events')
+        .select('*')
+        .order('date', { ascending: false });
+
+      if (error) console.error('Supabase fetch error:', error.message);
+      else setGalleryData(data || []);
+
+      setLoading(false);
+    };
+
+    fetchGallery();
+  }, []);
   const filters = [
     'all',
     '2024',
@@ -221,6 +251,7 @@ const GalleryPage: React.FC = () => {
                   onTouchEnd={handleTouchEnd}
                 />
                 <div className="absolute top-4 left-4 bg-black/70 text-white text-sm px-3 py-1 rounded-full">
+                  {activeImageIndex + 1} / {lightboxImage.images?.length}
                   {activeImageIndex + 1} / {lightboxImage.images?.length}
                 </div>
 

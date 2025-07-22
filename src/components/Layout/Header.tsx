@@ -1,8 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../../contexts/ThemeContext';
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -60,6 +58,7 @@ const Header: React.FC = () => {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex flex-1 justify-center overflow-x-auto">
             <nav className="flex space-x-6">
+
               {navigation.map((item) => (
                 <Link
                   key={item.href}
@@ -139,8 +138,8 @@ const Header: React.FC = () => {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 max-h-[80vh] overflow-y-auto">
-          <div className="px-2 pt-2 pb-6 space-y-1">
+        <div className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+          <div className="px-2 pt-2 pb-3 space-y-1">
             {navigation.map((item) => (
               <Link
                 key={item.href}
@@ -171,14 +170,14 @@ const Header: React.FC = () => {
                   onClick={() => setIsMenuOpen(false)}
                   className="block mx-3 text-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm"
                 >
-                  Join Us
+                  Sign In
                 </Link>
                 <Link
                   to="/login"
                   onClick={() => setIsMenuOpen(false)}
                   className="block mx-3 text-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm"
                 >
-                  Sign In
+                  Join Us
                 </Link>
               </div>
             )}

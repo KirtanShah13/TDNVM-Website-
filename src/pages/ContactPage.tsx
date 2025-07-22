@@ -100,6 +100,22 @@ useEffect(() => {
 }, [location]);
 
 
+  const location = useLocation();
+
+useEffect(() => {
+  if (location.hash === '#event-form') {
+    const element = document.querySelector(location.hash);
+    if (element) {
+      setTimeout(() => {
+        const yOffset = -120; // adjust this value based on your header height
+        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }, 200);
+    }
+  }
+}, [location]);
+
+
   return (
     <div className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -148,6 +164,27 @@ useEffect(() => {
 
 )}
 
+             {info.phones ? (
+  <div className="space-y-1 mb-2">
+    {info.phones.map((phone, i) => (
+      <a
+        key={i}
+        href={phone.tel}
+        className="text-primary-600 hover:underline block font-medium"
+      >
+        {phone.number}
+      </a>
+    ))}
+  </div>
+) : (
+  <div className="mb-2 space-y-1 text-primary-600 font-medium leading-snug">
+  {info.details.split(',').map((line, i) => (
+    <p key={i}>{line.trim()}</p>
+  ))}
+</div>
+
+)}
+
               <p className="text-sm text-gray-600 dark:text-gray-400">{info.description}</p>
             </a>
           ))}
@@ -155,7 +192,9 @@ useEffect(() => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
 
+
           {/* Contact Form */}
+          <div id="event-form" className="card p-8">
           <div id="event-form" className="card p-8">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
               {t('contact.form.title')}
