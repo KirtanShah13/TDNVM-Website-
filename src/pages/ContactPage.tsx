@@ -26,22 +26,22 @@ const ContactPage: React.FC = () => {
       icon: Phone,
       title: t('contact.methods.call.title'),
       phones: [
-        { number: '+91 98250 39369', tel: 'tel:+919825039369' },
-        { number: '+91 91733 95594', tel: 'tel:+919173395594' }
+         { number: t('contact.methods.call.phone1'), tel: 'tel:+919825039369' },
+      { number: t('contact.methods.call.phone2'), tel: 'tel:+919173395594' }
       ],
       description: t('contact.methods.call.description')
     },
     {
       icon: MapPin,
       title: t('contact.methods.visit.title'),
-      details: 'C/O Star Electric Company,7 Krishna Kutir,In Front OF Parsi Agyari Sayajugunj,Vadodara - 390020',
+      details: t('contact.methods.visit.details'),
       description: t('contact.methods.visit.description'),
       action: 'https://maps.app.goo.gl/YkP2qj9A6xdTgwyA6?g_st=aw'
     },
     {
       icon: MessageSquare,
       title: t('contact.methods.whatsapp.title'),
-      details: '+91 91733 95594',
+      details: t('contact.methods.whatsapp.details'),
       description: t('contact.methods.whatsapp.description'),
       action: 'https://wa.me/9173395594'
     }
@@ -59,9 +59,9 @@ const ContactPage: React.FC = () => {
   ];
 
   const officeHours = [
-    { day: t('contact.officeHours.monFri'), hours: '9:00 AM - 6:00 PM' },
-    { day: t('contact.officeHours.sat'), hours: '10:00 AM - 4:00 PM' },
-    { day: t('contact.officeHours.sun'), hours: 'By Appointment Only' },
+    { day: t('contact.officeHours.monFri'),  hours: t('contact.officeHours.monFriHours') },
+    { day: t('contact.officeHours.sat'), hours: t('contact.officeHours.satHours') },
+    { day: t('contact.officeHours.sun'), hours: t('contact.officeHours.sunHours') },
     { day: 'Event Days', hours: t('contact.officeHours.event') }
   ];
 

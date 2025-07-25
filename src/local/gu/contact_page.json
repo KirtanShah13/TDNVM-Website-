@@ -32,5 +32,20 @@
   "contact.cta.title": "શું તમે અમારી સમુદાયમાં જોડાવા તૈયાર છો?",
   "contact.cta.description": "અમારા જીવંત સમુદાયનો હિસ્સો બનો અને સાંસ્કૃતિક ઉજવણીઓ, અર્થપૂર્ણ સંબંધો અને પરંપરાઓનો આનંદ માણો.",
   "contact.cta.join": "સભ્ય તરીકે જોડાઓ",
-  "contact.cta.learnMore": "વધુ જાણો"
+  "contact.cta.learnMore": "વધુ જાણો",
+
+"contact.methods.call.phone1": "+૯૧ ૯૮૨૫૦ ૩૯૩૬૯",
+"contact.methods.call.phone2": "+૯૧ ૯૧૭૩૩ ૯૫૫૯૪",
+"contact.methods.visit.details": "સ્ટાર ઇલેક્ટ્રિક કંપની, 7 કૃષ્ણ કૂટિર, પારસી અગિયારી સામે, સયાજીગંજ, વડોદરા - 390020",
+"contact.methods.whatsapp.phone": "+૯૧ ૯૧૭૩૩ ૯૫૫૯૪",
+
+"contact.officeHours.monFriHours": "સવારે ૯:૦૦ થી સાંજે ૬:૦૦",
+"contact.officeHours.satHours": "સવારે ૧૦:૦૦ થી સાંજે ૪:૦૦",
+"contact.officeHours.sunHours": "ફક્ત અપોઇન્ટમેન્ટથી",
+
+
+
+  "contact.methods.whatsapp.details": "+૯૧ ૯૧૭૩૩ ૯૫૫૯૪"
+
+
 }

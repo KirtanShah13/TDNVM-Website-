@@ -32,5 +32,24 @@
   "contact.cta.title": "Ready to Join Our Community?",
   "contact.cta.description": "Become part of our vibrant community and experience the joy of cultural celebrations, meaningful connections, and shared traditions.",
   "contact.cta.join": "Join as Member",
-  "contact.cta.learnMore": "Learn More"
+  "contact.cta.learnMore": "Learn More",
+
+  "contact.methods.whatsapp.details": "+91 91733 95594",
+
+
+  
+  "contact.methods.call.phone1": "+91 98250 39369",
+  "contact.methods.call.phone2": "+91 91733 95594",
+  "contact.methods.visit.details": "Star Electric Company, 7 Krishna Kutir, Opp. Parsi Agiyari, Sayajigunj, Vadodara - 390020",
+  "contact.methods.whatsapp.phone": "+91 91733 95594",
+
+  "contact.officeHours.monFriHours": "9:00 AM to 6:00 PM",
+  "contact.officeHours.satHours": "10:00 AM to 4:00 PM",
+  "contact.officeHours.sunHours": "By Appointment Only"
+
+
+
+
+
+
 }
