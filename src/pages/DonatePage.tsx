@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { Heart, Users, Star, Gift, CreditCard, Smartphone, Building, CheckCircle } from 'lucide-react';
 import CountUp from 'react-countup';
+import { useTranslation } from 'react-i18next';
 
 
 const DonatePage: React.FC = () => {
+  const { t } = useTranslation('donate');
+
+
   const [donationAmount, setDonationAmount] = useState('');
   const [donorInfo, setDonorInfo] = useState({
     name: '',
@@ -17,26 +21,26 @@ const DonatePage: React.FC = () => {
   const impactAreas = [
     {
       icon: Users,
-      title: 'Community Events',
-      description: 'Support cultural festivals, celebrations, and community gatherings',
+      title: t('donate.areas.events.title') ,
+      description: t('donate.areas.events.desc'),
       percentage: 40
     },
     {
       icon: Gift,
-      title: 'Educational Programs',
-      description: 'Fund language classes, cultural workshops, and skill development',
+      title: t('donate.areas.education.title'),
+      description: t('donate.areas.education.desc'),
       percentage: 25
     },
     {
       icon: Heart,
-      title: 'Community Welfare',
-      description: 'Help families in need and emergency support programs',
+      title: t('donate.areas.welfare.title'),
+      description:  t('donate.areas.welfare.desc'),
       percentage: 20
     },
     {
       icon: Building,
-      title: 'Infrastructure',
-      description: 'Maintain community center and upgrade facilities',
+      title: t('donate.areas.infra.title'),
+      description: t('donate.areas.infra.desc'),
       percentage: 15
     }
   ];
@@ -101,11 +105,10 @@ const DonatePage: React.FC = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Support Our Community
+            {t('donate.title')}
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            Your generous donations help us preserve our cultural heritage, organize meaningful events, 
-            and support community members in need. Every contribution makes a difference.
+            {t('donate.description')}
           </p>
         </div>
 
@@ -115,25 +118,25 @@ const DonatePage: React.FC = () => {
     <div className="text-3xl font-bold text-[#34D399]"> {/* emerald-400 */}
       ₹<CountUp end={2.5} decimals={1} suffix="L+" duration={2} />
     </div>
-    <div className="text-gray-600 dark:text-gray-400 mt-1">Funds Raised</div>
+    <div className="text-gray-600 dark:text-gray-400 mt-1">{t('donate.fundsRaised')}</div>
   </div>
   <div>
     <div className="text-3xl font-bold text-[#3B82F6]"> {/* blue-500 */}
       <CountUp end={150} suffix="+" duration={2} />
     </div>
-    <div className="text-gray-600 dark:text-gray-400 mt-1">Members</div>
+    <div className="text-gray-600 dark:text-gray-400 mt-1">{t('donate.members')}</div>
   </div>
   <div>
     <div className="text-3xl font-bold text-[#A78BFA]"> {/* violet-400 */}
       <CountUp end={50} suffix="+" duration={2} />
     </div>
-    <div className="text-gray-600 dark:text-gray-400 mt-1">Events Hosted</div>
+    <div className="text-gray-600 dark:text-gray-400 mt-1">{t('donate.events')}</div>
   </div>
   <div>
     <div className="text-3xl font-bold text-[#F472B6]"> {/* pink-400 */}
       <CountUp end={25} suffix="+" duration={2} />
     </div>
-    <div className="text-gray-600 dark:text-gray-400 mt-1">Workshops</div>
+    <div className="text-gray-600 dark:text-gray-400 mt-1">{t('donate.workshops')} </div>
   </div>
 </div>
 
@@ -142,7 +145,7 @@ const DonatePage: React.FC = () => {
         {/* How Your Money Helps */}
         <div className="my-16">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
-            How Your Donation Helps
+           {t('donate.howHelp')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {impactAreas.map((area, index) => (
@@ -168,14 +171,14 @@ const DonatePage: React.FC = () => {
           {/* Donation Form */}
           <div className="card p-8">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Make a Donation
+             {t('donate.form.title')}
             </h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Amount Selection */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                  Donation Amount (₹) *
+                {t('donate.amountLabel')} (₹) *
                 </label>
                 <div className="grid grid-cols-3 gap-3 mb-4">
                   {predefinedAmounts.map((amount) => (
@@ -196,7 +199,7 @@ const DonatePage: React.FC = () => {
                 <input
                   type="number"
                   name="amount"
-                  placeholder="Enter custom amount"
+                  placeholder={t('donate.customAmount')}
                   value={donationAmount}
                   onChange={handleInputChange}
                   min="100"
@@ -209,7 +212,7 @@ const DonatePage: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Full Name
+                    {t('donate.name')}
                   </label>
                   <input
                     type="text"
@@ -222,7 +225,7 @@ const DonatePage: React.FC = () => {
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Email Address
+                    {t('donate.email')}
                   </label>
                   <input
                     type="email"
@@ -237,7 +240,7 @@ const DonatePage: React.FC = () => {
 
               <div>
                 <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Message (Optional)
+                {t('donate.message')} (Optional)
                 </label>
                 <textarea
                   id="message"
@@ -245,7 +248,7 @@ const DonatePage: React.FC = () => {
                   rows={3}
                   value={donorInfo.message}
                   onChange={handleInputChange}
-                  placeholder="Share why you're supporting our community..."
+                  placeholder={t('donate.messagePlaceholder')}
                   className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 ></textarea>
               </div>
@@ -260,7 +263,7 @@ const DonatePage: React.FC = () => {
                   className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                 />
                 <label htmlFor="anonymous" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                  Make this donation anonymous
+                 {t('donate.anonymous')}
                 </label>
               </div>
 
@@ -268,7 +271,7 @@ const DonatePage: React.FC = () => {
                 type="submit"
                 className="w-full btn-primary py-3 text-lg font-medium"
               >
-                Proceed to Payment
+               {t('donate.submit')}
               </button>
             </form>
           </div>
@@ -278,7 +281,7 @@ const DonatePage: React.FC = () => {
             {/* Payment Methods */}
             <div className="card p-6">
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                Payment Methods
+                {t('donate.payment.title')}
               </h3>
               <div className="space-y-4">
                 {paymentMethods.map((method) => (
@@ -286,14 +289,14 @@ const DonatePage: React.FC = () => {
                     <div className="flex items-center mb-2">
                       <method.icon className="h-5 w-5 text-primary-600 mr-2" />
                       <h4 className="font-semibold text-gray-900 dark:text-white">
-                        {method.name}
+                        {t('donate.payment.bank')}
                       </h4>
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                      {method.description}
+                     {t('donate.payment.bankDesc')}
                     </p>
                     <p className="text-xs text-primary-600 font-mono">
-                      {method.details}
+                      {t('donate.payment.details')}
                     </p>
                   </div>
                 ))}
@@ -327,15 +330,24 @@ const DonatePage: React.FC = () => {
               <div className="flex items-center mb-3">
                 <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                  Tax Benefits
+                  {t('donate.tax.title')}
                 </h3>
               </div>
               <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
-                <li>• 80G tax exemption certificate provided</li>
-                <li>• Donations are 100% tax deductible</li>
-                <li>• Digital receipt sent immediately</li>
-                <li>• Annual donation summary available</li>
-              </ul>
+                {(() => {
+                  const taxPoints = t('donate.tax.points', { returnObjects: true });
+                  if (Array.isArray(taxPoints)) {
+                    return taxPoints.map((point, index) => (
+                      <li key={index}>• {point}</li>
+                    ));
+                  } else if (typeof taxPoints === 'string') {
+                    return <li>• {taxPoints}</li>;
+                  } else {
+                    return <li>• {t('donate.tax.default', 'Tax benefits available')}</li>;
+                  }
+                })()}
+                </ul>
+
             </div>
           </div>
         </div>
@@ -343,7 +355,7 @@ const DonatePage: React.FC = () => {
         {/* Recent Donors */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
-            Recent Supporters
+            {t('donate.recent')}
           </h2>
           <div className="card p-6">
             <div className="space-y-4">
@@ -381,17 +393,16 @@ const DonatePage: React.FC = () => {
         {/* Thank You Message */}
         <div className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-2xl p-8 text-center">
           <Star className="h-16 w-16 mx-auto mb-4 text-yellow-300" />
-          <h2 className="text-2xl font-bold mb-4">Thank You for Your Support!</h2>
+          <h2 className="text-2xl font-bold mb-4">{t('donate.thankYou.title')}</h2>
           <p className="text-primary-100 mb-6 max-w-2xl mx-auto">
-            Your generosity helps us continue our mission of preserving culture, building community, 
-            and supporting those in need. Together, we're making a lasting impact.
+            {t('donate.thankYou.description')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-white text-primary-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-              View Impact Report
+              {t('donate.buttons.impact')}
             </button>
             <button className="border-2 border-white text-white px-8 py-3 rounded-lg font-medium hover:bg-white hover:text-primary-600 transition-colors">
-              Share with Friends
+             {t('donate.buttons.share')}
             </button>
           </div>
         </div>

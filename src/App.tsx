@@ -14,6 +14,11 @@ import DonatePage from './pages/DonatePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import FAQPage from './pages/faq';
+import PrivacyPolicy from './pages/privacy_policy';
+import TermsAndConditions from './pages/terms_&_conditions';
+
+
 
 function App() {
   return (
@@ -35,8 +40,11 @@ function App() {
                 <Route path="/members" element={<MembersPage />} />
                 <Route path="/core-team" element={<CoreTeamPage />} />
                 <Route path="/volunteer" element={<VolunteerPage />} />
-                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/contact" element={<ContactPage />} /> 
                 <Route path="/donate" element={<DonatePage />} />
+                <Route path="/faq" element={<FAQPage />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
               </Routes>
             </Layout>
           } />

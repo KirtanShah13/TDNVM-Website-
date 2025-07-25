@@ -48,9 +48,14 @@ const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold mb-4">Community</h3>
             <ul className="space-y-2">
               <li><Link to="/core-team" className="text-gray-400 hover:text-white transition-colors">Core Team</Link></li>
-              <li><Link to="/blog" className="text-gray-400 hover:text-white transition-colors">Blog</Link></li>
+            
               <li><Link to="/donate" className="text-gray-400 hover:text-white transition-colors">Support Us</Link></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+            
+              <li><Link to="/faq" className="text-gray-400 hover:text-white transition-colors">FAQ</Link></li>
+              <li><Link to="/terms-and-conditions" className="text-gray-400 hover:text-white transition-colors">Terms & Conditions</Link></li>  
+              <li> <Link to="/privacy-policy" className="text-gray-400 hover:text-white transition-colors"> Privacy Policy</Link></li>
+              
+
             </ul>
           </div>
 
