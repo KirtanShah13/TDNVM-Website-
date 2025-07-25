@@ -1,8 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, Mail, Phone, MapPin, Facebook, Instagram, Youtube } from 'lucide-react';
+import { useTranslation } from "react-i18next";
+
 
 const Footer: React.FC = () => {
+
+   const { t } = useTranslation('footer');
   return (
     <footer className="bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -13,10 +17,10 @@ const Footer: React.FC = () => {
               <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
                 <Heart className="h-6 w-6 text-white" />
               </div>
-              <span className="text-xl font-bold">TDNVM Vadodara</span>
+              <span className="text-xl font-bold">{t("footer.brand_name")}</span>
             </div>
             <p className="text-gray-400 mb-4">
-              Building bridges, celebrating culture, and strengthening our community bonds through meaningful connections and shared experiences.
+             {t("footer.brand_tagline")}
             </p>
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-primary-400 transition-colors">
@@ -33,47 +37,43 @@ const Footer: React.FC = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+            <h3 className="text-lg font-semibold mb-4">{t("footer.quick_links")}</h3>
             <ul className="space-y-2">
-              <li><Link to="/" className="text-gray-400 hover:text-white transition-colors">Home</Link></li>
-              <li><Link to="/events" className="text-gray-400 hover:text-white transition-colors">Events</Link></li>
-              <li><Link to="/gallery" className="text-gray-400 hover:text-white transition-colors">Gallery</Link></li>
-              <li><Link to="/members" className="text-gray-400 hover:text-white transition-colors">Members</Link></li>
-              <li><Link to="/volunteer" className="text-gray-400 hover:text-white transition-colors">Volunteer</Link></li>
+              <li><Link to="/" className="text-gray-400 hover:text-white transition-colors">{t("footer.home")}</Link></li>
+              <li><Link to="/events" className="text-gray-400 hover:text-white transition-colors">{t("footer.events")}</Link></li>
+              <li><Link to="/gallery" className="text-gray-400 hover:text-white transition-colors">{t("footer.gallery")}</Link></li>
+              <li><Link to="/members" className="text-gray-400 hover:text-white transition-colors">{t("footer.members")}</Link></li>
+              <li><Link to="/volunteer" className="text-gray-400 hover:text-white transition-colors">{t("footer.volunteer")}</Link></li>
             </ul>
           </div>
 
           {/* Community */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Community</h3>
+            <h3 className="text-lg font-semibold mb-4">{t("footer.community")}</h3>
             <ul className="space-y-2">
-              <li><Link to="/core-team" className="text-gray-400 hover:text-white transition-colors">Core Team</Link></li>
-            
-              <li><Link to="/donate" className="text-gray-400 hover:text-white transition-colors">Support Us</Link></li>
-            
-              <li><Link to="/faq" className="text-gray-400 hover:text-white transition-colors">FAQ</Link></li>
-              <li><Link to="/terms-and-conditions" className="text-gray-400 hover:text-white transition-colors">Terms & Conditions</Link></li>  
-              <li> <Link to="/privacy-policy" className="text-gray-400 hover:text-white transition-colors"> Privacy Policy</Link></li>
-              
-
+              <li><Link to="/core-team">{t("footer.core_team")}</Link></li>
+              <li><Link to="/donate">{t("footer.support_us")}</Link></li>
+              <li><Link to="/faq">{t("footer.faq")}</Link></li>
+              <li><Link to="/terms-and-conditions">{t("footer.terms")}</Link></li>
+              <li><Link to="/privacy-policy">{t("footer.privacy")}</Link></li>
             </ul>
           </div>
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Contact Info</h3>
+            <h3 className="text-lg font-semibold mb-4">{t("footer.contact_info")}</h3>
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-primary-400" />
-                <span className="text-gray-400">thasaradashanagar@gmail.com</span>
+                <span className="text-gray-400">{t("footer.email")}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4 text-primary-400" />
-                <span className="text-gray-400">+91 91733 95594</span>
+                <span className="text-gray-400">{t("footer.phone")}</span>
               </div>
               <div className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4 text-primary-400" />
-                <span className="text-gray-400">Vadodara,Gujarat</span>
+                <span className="text-gray-400">{t("footer.address")}</span>
               </div>
             </div>
           </div>
@@ -98,7 +98,7 @@ const Footer: React.FC = () => {
 
         <div className="border-t border-gray-800 pt-8 mt-8 text-center">
           <p className="text-gray-400">
-            © {new Date().getFullYear()} Samudaya Community. Made with ❤️ for our community.
+            © {t("footer.rights", { year: new Date().getFullYear() })}
           </p>
         </div>
       </div>

@@ -10,6 +10,10 @@ import enCoreTeam from './local/en/core_team.json';
 import enVolunteer from './local/en/volunteer.json';
 import enContact from './local/en/contact_page.json';
 import enDonate from './local/en/donate.json';
+import enFooter from './local/en/footer.json';  // 👈 NEW
+
+
+
 
 
 
@@ -28,6 +32,7 @@ import guCoreTeam from './local/gu/core_team.json';
 import guVolunteer from './local/gu/volunteer.json';
 import guContact from './local/gu/contact_page.json'; // ✅ Gujarati
 import guDonate from './local/gu/donate.json';
+import guFooter from './local/gu/footer.json';  // 👈 NEW
 
  // 👈 NEW
 
@@ -45,6 +50,7 @@ i18n
         volunteer: enVolunteer,
         contact: enContact,
         donate: enDonate,
+        footer: enFooter,
 
       },
       gu: {
@@ -57,12 +63,13 @@ i18n
         volunteer: guVolunteer,
         contact: guContact,
         donate: guDonate,
+        footer: guFooter, // 👈 NEW
 
       },
     },
     lng: 'en', // Default language
     fallbackLng: 'en',
-    ns: ['nav', 'home', 'ads', 'events', 'members', 'coreTeam', 'gallery', 'volunteer', 'contact', 'donate'],   // 👈 Add 'gallery'
+    ns: ['nav', 'home', 'ads', 'events', 'members', 'coreTeam', 'gallery', 'volunteer', 'contact', 'donate', 'footer'],   // 👈 Add 'gallery'
     defaultNS: 'home',
     interpolation: {
     escapeValue: false,
