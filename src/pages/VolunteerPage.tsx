@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Heart, Users, Calendar, Clock, Star, CheckCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import CountUp from 'react-countup';
 
 
 
@@ -9,6 +10,9 @@ import { useTranslation } from 'react-i18next';
 
 const VolunteerPage: React.FC = () => {
   const { t } = useTranslation('volunteer');
+
+  const { i18n } = useTranslation();
+  const isGujarati = i18n.language === 'gu';
 
   const [formData, setFormData] = useState({
     name: '',
@@ -130,28 +134,40 @@ const VolunteerPage: React.FC = () => {
             <div className="w-16 h-16 bg-primary-100 dark:bg-primary-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Users className="h-8 w-8 text-primary-600" />
             </div>
-            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">165+</div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              
+              {isGujarati ? t('stats.volunteer_count') : <CountUp end={165} duration={2} suffix="+" />}
+              
+              </div>
             <div className="text-gray-600 dark:text-gray-400">{t('stats.volunteers')}</div>
           </div>
           <div className="text-center">
             <div className="w-16 h-16 bg-secondary-100 dark:bg-secondary-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Calendar className="h-8 w-8 text-secondary-600" />
             </div>
-            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">50+</div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              
+             {isGujarati ? t('stats.event_count') : <CountUp end={50} duration={2} suffix="+" />}
+              
+              </div>
             <div className="text-gray-600 dark:text-gray-400">{t('stats.events')}</div>
           </div>
           <div className="text-center">
             <div className="w-16 h-16 bg-accent-100 dark:bg-accent-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Clock className="h-8 w-8 text-accent-600" />
             </div>
-            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">2000+</div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              
+              {isGujarati ? t('stats.hour_count') : <CountUp end={2000} duration={2} suffix="+" />}
+              
+              </div>
             <div className="text-gray-600 dark:text-gray-400">{t('stats.hours')}</div>
           </div>
           <div className="text-center">
             <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Heart className="h-8 w-8 text-orange-600" />
             </div>
-            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">98%</div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{t('stats.satisfaction_rate')}</div>
             <div className="text-gray-600 dark:text-gray-400">{t('stats.satisfaction')}</div>
           </div>
         </div>

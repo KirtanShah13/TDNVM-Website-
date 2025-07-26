@@ -98,7 +98,7 @@ const Footer: React.FC = () => {
 
         <div className="border-t border-gray-800 pt-8 mt-8 text-center">
           <p className="text-gray-400">
-            © {t("footer.rights", { year: new Date().getFullYear() })}
+            © {t("rights", { year: new Date().getFullYear() })}
           </p>
         </div>
       </div>

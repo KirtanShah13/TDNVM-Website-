@@ -16,5 +16,9 @@
   "coreTeam.table.headers.presidentName": "પ્રમુખ નું નામ",
   "coreTeam.table.headers.presidencyYear": "પ્રમુખ તરીકેના વર્ષો",
   "coreTeam.table.headers.secretaryName": "સચિવ નું નામ",
-  "coreTeam.table.headers.secretaryYear": "સચિવ તરીકેના વર્ષો"
+  "coreTeam.table.headers.secretaryYear": "સચિવ તરીકેના વર્ષો",
+
+  "coreTeam.stats.values.members": "૧૪",
+  "coreTeam.stats.values.experience": "૨૫+",
+  "coreTeam.stats.values.events": "૧૦૦+"
 }

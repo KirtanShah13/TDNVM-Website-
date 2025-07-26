@@ -16,6 +16,9 @@ const heroImages = [
 const HomePage: React.FC = () => {
 const { t } = useTranslation('home'); // ✅ ADD THIS
 
+const { i18n } = useTranslation();
+const isGujarati = i18n.language === 'gu';
+
 
   const [heroSlide, setHeroSlide] = useState(0);
   const [adSlide, setAdSlide] = useState(0);
@@ -113,11 +116,32 @@ const { t } = useTranslation('home'); // ✅ ADD THIS
 
 
 const stats = [
-  { label: t('stats.activeMembers'), value: 650, icon: Users },
-  { label: t('stats.eventsOrganized'), value: 250, icon: Calendar },
-  { label: t('stats.yearsOfService'), value: 74, icon: Star },
-  { label: t('stats.communityImpact'), value: 1000, icon: Heart },
+  {
+    label: t('stats.activeMembers'),
+    valueEn: Number(t('statsData.activeMembers')),
+    valueGu: t('statsData.activeMembers'),
+    icon: Users,
+  },
+  {
+    label: t('stats.eventsOrganized'),
+    valueEn: Number(t('statsData.eventsOrganized')),
+    valueGu: t('statsData.eventsOrganized'),
+    icon: Calendar,
+  },
+  {
+    label: t('stats.yearsOfService'),
+    valueEn: Number(t('statsData.yearsOfService')),
+    valueGu: t('statsData.yearsOfService'),
+    icon: Star,
+  },
+  {
+    label: t('stats.communityImpact'),
+    valueEn: Number(t('statsData.communityImpact')),
+    valueGu: t('statsData.communityImpact'),
+    icon: Heart,
+  },
 ];
+
 
 
 
@@ -173,27 +197,37 @@ const stats = [
 
       {/* Stats Section */}
       <section className="py-16 bg-white dark:bg-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat, index) => {
-              const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
-              return (
-                <div key={index} ref={ref} className="text-center animate-slide-up" style={{ animationDelay: `${index * 0.1}s` }}>
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 dark:bg-primary-900/20 rounded-full mb-4">
-                    <stat.icon className="h-8 w-8 text-primary-600" />
-                  </div>
-                  <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    {inView ? <CountUp end={stat.value} duration={3.5} separator="," /> : '0'}+
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-400">{stat.label}</div>
-                </div>
-              );
-            })}
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+      {stats.map((stat, index) => {
+        const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
+        return (
+          <div
+            key={index}
+            ref={ref}
+            className="text-center animate-slide-up"
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 dark:bg-primary-900/20 rounded-full mb-4">
+              <stat.icon className="h-8 w-8 text-primary-600" />
+            </div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              {isGujarati ? (
+                <>{stat.valueGu}+</>
+              ) : (
+                inView ? <CountUp end={stat.valueEn} duration={3.5} separator="," /> : '0'
+              )}
+            </div>
+            <div className="text-gray-600 dark:text-gray-400">{stat.label}</div>
           </div>
-        </div>
-      </section>
+        );
+      })}
+    </div>
+  </div>
+</section>
 
-      {/* Mission Section */}
+
+      
       {/* Mission Section */}
 <section className="py-16 bg-gray-50 dark:bg-gray-900">
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

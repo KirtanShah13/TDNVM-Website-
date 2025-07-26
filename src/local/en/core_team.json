@@ -16,5 +16,10 @@
   "coreTeam.table.headers.presidentName": "President Name",
   "coreTeam.table.headers.presidencyYear": "Presidency Year",
   "coreTeam.table.headers.secretaryName": "Secretary Name",
-  "coreTeam.table.headers.secretaryYear": "Secretary Year"
+  "coreTeam.table.headers.secretaryYear": "Secretary Year",
+  
+  "coreTeam.stats.values.members": "14",
+  "coreTeam.stats.values.experience": "25+",
+  "coreTeam.stats.values.events": "100+"
 }
+

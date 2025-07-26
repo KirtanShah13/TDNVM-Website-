@@ -11,7 +11,7 @@ const EventsPage: React.FC = () => {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { t } = useTranslation(['home', 'ads', 'events', 'stats']);
+  const { t } = useTranslation(['events']);
 
   const [errorAds, setErrorAds] = useState<string | null>(null);
 

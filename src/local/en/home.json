@@ -35,5 +35,13 @@
 
   "ads.sponsored": "Sponsored Content",
   "ads.loading": "Loading ads...",
-  "ads.failed": "Failed to load ads"
+  "ads.failed": "Failed to load ads",
+
+  
+  "statsData.activeMembers": "650",
+  "statsData.eventsOrganized": "250",
+  "statsData.yearsOfService": "74",
+  "statsData.communityImpact": "1000"
+
+
 }

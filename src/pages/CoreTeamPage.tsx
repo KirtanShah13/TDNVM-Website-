@@ -4,8 +4,13 @@ import { supabase } from '../lib/SupabaseClient';
 import CountUp from 'react-countup';
 import { useTranslation } from 'react-i18next';
 
+
+
 const CoreTeamPage: React.FC = () => {
   const { t } = useTranslation('coreTeam');
+
+  const { i18n } = useTranslation();
+const isGujarati = i18n.language === 'gu';
 
   const [coreTeam, setCoreTeam] = useState<any[]>([]);
   const [leaders, setLeaders] = useState<any[]>([]);
@@ -63,7 +68,8 @@ const CoreTeamPage: React.FC = () => {
               <Users className="h-8 w-8 text-primary-600" />
             </div>
             <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              <CountUp end={coreTeam.length} duration={2} />
+            {isGujarati ? t('coreTeam.stats.values.members') : <CountUp end={14} duration={2} />}
+
             </div>
             <div className="text-gray-600 dark:text-gray-400">{t('coreTeam.stats.members')}</div>
           </div>
@@ -72,7 +78,12 @@ const CoreTeamPage: React.FC = () => {
               <Calendar className="h-8 w-8 text-secondary-600" />
             </div>
             <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              <CountUp end={25} duration={2} suffix="+" />
+
+             {isGujarati
+              ? t('coreTeam.stats.values.events')
+              : <CountUp end={100} duration={2} suffix="+" />
+              }
+
             </div>
             <div className="text-gray-600 dark:text-gray-400">{t('coreTeam.stats.experience')}</div>
           </div>
@@ -81,7 +92,13 @@ const CoreTeamPage: React.FC = () => {
               <Award className="h-8 w-8 text-accent-600" />
             </div>
             <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-              <CountUp end={100} duration={2} suffix="+" />
+
+              {isGujarati
+                ? t('coreTeam.stats.values.experience')
+                : <CountUp end={25} duration={2} suffix="+" />
+            }
+
+
             </div>
             <div className="text-gray-600 dark:text-gray-400">{t('coreTeam.stats.events')}</div>
           </div>
