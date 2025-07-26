@@ -11,6 +11,13 @@ import enVolunteer from './local/en/volunteer.json';
 import enContact from './local/en/contact_page.json';
 import enDonate from './local/en/donate.json';
 import enFooter from './local/en/footer.json';  // 👈 NEW
+import enFAQ from './local/en/faq.json'; // 👈 NEW
+import enPrivacy from './local/en/privacy.json';
+import enTerms from './local/en/t&c.json';
+
+
+
+
 
 
 
@@ -33,6 +40,9 @@ import guVolunteer from './local/gu/volunteer.json';
 import guContact from './local/gu/contact_page.json'; // ✅ Gujarati
 import guDonate from './local/gu/donate.json';
 import guFooter from './local/gu/footer.json';  // 👈 NEW
+import guFAQ from './local/gu/faq.json'; // 👈 NEW
+import guPrivacy from './local/gu/privacy.json';
+import guTerms from './local/gu/t&c.json';
 
  // 👈 NEW
 
@@ -51,6 +61,9 @@ i18n
         contact: enContact,
         donate: enDonate,
         footer: enFooter,
+         faq: enFAQ, // 👈
+          privacy: enPrivacy,
+           terms: enTerms,
 
       },
       gu: {
@@ -64,12 +77,15 @@ i18n
         contact: guContact,
         donate: guDonate,
         footer: guFooter, // 👈 NEW
+         faq: guFAQ, // 👈 NEW
+           privacy: guPrivacy,
+            terms: guTerms,
 
       },
     },
     lng: 'en', // Default language
     fallbackLng: 'en',
-    ns: ['nav', 'home', 'ads', 'events', 'members', 'coreTeam', 'gallery', 'volunteer', 'contact', 'donate', 'footer'],   // 👈 Add 'gallery'
+    ns: ['nav', 'home', 'ads', 'events', 'members', 'coreTeam', 'gallery', 'volunteer', 'contact', 'donate', 'footer' , 'faq', 'privacy','t&c' ],   // 👈 Add 'gallery'
     defaultNS: 'home',
     interpolation: {
     escapeValue: false,
