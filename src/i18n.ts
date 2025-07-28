@@ -14,6 +14,9 @@ import enFooter from './local/en/footer.json';  // 👈 NEW
 import enFAQ from './local/en/faq.json'; // 👈 NEW
 import enPrivacy from './local/en/privacy.json';
 import enTerms from './local/en/t&c.json';
+import enHeader from './local/en/header.json';
+import enSignup from './local/en/signup.json';
+import enLogin from './local/en/login.json';
 
 
 
@@ -43,6 +46,9 @@ import guFooter from './local/gu/footer.json';  // 👈 NEW
 import guFAQ from './local/gu/faq.json'; // 👈 NEW
 import guPrivacy from './local/gu/privacy.json';
 import guTerms from './local/gu/t&c.json';
+import guHeader from './local/gu/header.json';
+import guSignup from './local/gu/signup.json';
+import guLogin from './local/gu/login.json';
 
  // 👈 NEW
 
@@ -64,6 +70,9 @@ i18n
          faq: enFAQ, // 👈
           privacy: enPrivacy,
            terms: enTerms,
+           header: enHeader, // 👈 NEW
+         signup: enSignup,
+          login: enLogin,
 
       },
       gu: {
@@ -77,15 +86,18 @@ i18n
         contact: guContact,
         donate: guDonate,
         footer: guFooter, // 👈 NEW
-         faq: guFAQ, // 👈 NEW
-           privacy: guPrivacy,
-            terms: guTerms,
+        faq: guFAQ, // 👈 NEW
+        privacy: guPrivacy,
+        terms: guTerms,
+        header: guHeader, // 👈 NEW
+        signup: guSignup,
+        login: guLogin,
 
       },
     },
     lng: 'en', // Default language
     fallbackLng: 'en',
-    ns: ['nav', 'home', 'ads', 'events', 'members', 'coreTeam', 'gallery', 'volunteer', 'contact', 'donate', 'footer' , 'faq', 'privacy','t&c' ],   // 👈 Add 'gallery'
+    ns: ['nav', 'home', 'ads', 'events', 'members', 'coreTeam', 'gallery', 'volunteer', 'contact', 'donate', 'footer' , 'faq', 'privacy','t&c' , 'contact', 'signup', 'login'],   // 👈 Add 'gallery'
     defaultNS: 'home',
     interpolation: {
     escapeValue: false,

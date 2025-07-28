@@ -1,0 +1,16 @@
+{
+  "title": "Sign in to your account",
+  "subtitle": "Enter your phone number to continue",
+  "phone": {
+    "label": "Phone Number",
+    "placeholder": "+91 9876543210",
+    "title": "Please enter a valid Indian phone number starting with +91"
+  },
+  "button": {
+    "signin": "Sign In"
+  },
+  "loading": "Signing in...",
+  "noAccount": "Don't have an account?",
+  "createAccount": "Create one",
+  "backToHome": "← Back to Home"
+}

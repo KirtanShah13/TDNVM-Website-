@@ -9,7 +9,7 @@
   "donate.form.title": "દાન કરો",
   "donate.amountLabel": "દાનની રકમ (₹) *",
   "donate.customAmount": "પોતાની રકમ દાખલ કરો",
-  "donate.name": "पूरું નામ",
+  "donate.name": "પૂરું નામ",
   "donate.email": "ઇમેઇલ સરનામું",
   "donate.message": "સંદેશ (ઇચ્છાસૂચક)",
   "donate.messagePlaceholder": "તમે કેમ સમુદાયને સહારો આપી રહ્યા છો તે જણાવો...",
@@ -48,5 +48,11 @@
       "title": "મુલભૂત ઢાંખણું",
       "desc": "સમુદાય કેન્દ્ર જાળવો અને સુવિધાઓ સુધારો"
     }
+  },
+  
+    "fundsRaised": "૨.૫લ+",
+    "members": "૧૫૦+",
+    "events": "૫૦+",
+    "workshops": "૨૫+"
   }
-}
+

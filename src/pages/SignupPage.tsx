@@ -1,49 +1,63 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { User, Phone, MapPin, Heart, CheckCircle } from 'lucide-react';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { User, Phone, MapPin, Heart, CheckCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
+
+interface FormData {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  city: string;
+  state: string;
+  agreeToTerms: boolean;
+}
 
 const SignupPage: React.FC = () => {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    city: '',
-    state: '',
-    interests: [] as string[],
-    agreeToTerms: false,
-    subscribeNewsletter: true
-  });
+  const { t } = useTranslation("signup");
   const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    city: "",
+    state: "",
+    agreeToTerms: false,
+  });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const stateOptions = [
+    { value: "maharashtra", label: t("states.Maharashtra") },
+    { value: "karnataka", label: t("states.Karnataka") },
+    { value: "tamilNadu", label: t("states.TamilNadu") },
+    { value: "delhi", label: t("states.Delhi") },
+    { value: "gujarat", label: t("states.Gujarat") },
+    { value: "rajasthan", label: t("states.Rajasthan") },
+    { value: "westBengal", label: t("states.WestBengal") },
+    { value: "uttarPradesh", label: t("states.UttarPradesh") },
+    { value: "other", label: t("states.Other") },
+  ];
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value, type } = e.target;
-    if (type === 'checkbox') {
-      const target = e.target as HTMLInputElement;
-      if (name === 'interests') {
-        const interestValue = target.value;
-        setFormData(prev => ({
-          ...prev,
-          interests: target.checked
-            ? [...prev.interests, interestValue]
-            : prev.interests.filter(interest => interest !== interestValue)
-        }));
-      } else {
-        setFormData(prev => ({ ...prev, [name]: target.checked }));
-      }
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
-    }
+    setFormData((prev) => ({
+      ...prev,
+      [name]:
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setTimeout(() => {
-      console.log('Registration data:', formData);
-      alert('Registration successful! Welcome to Samudaya community.');
+    try {
+      console.log("Form submitted:", formData);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -54,89 +68,206 @@ const SignupPage: React.FC = () => {
             <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
               <Heart className="h-7 w-7 text-white" />
             </div>
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">Samudaya</span>
+            <span className="text-2xl font-bold text-gray-900 dark:text-white">
+              Samudaya
+            </span>
           </Link>
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Join Our Community</h2>
-          <p className="text-gray-600 dark:text-gray-400">Create your member account</p>
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+            {t("title")}
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400">{t("subtitle")}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="card p-8 space-y-6">
+          {/* First and Last Name */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">First Name *</label>
+              <label
+                htmlFor="firstName"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
+                {t("firstName")}
+              </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input type="text" id="firstName" name="firstName" required value={formData.firstName} onChange={handleInputChange} className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white" placeholder="First name" />
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  required
+                  placeholder={t("placeholders.firstName")}
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                />
               </div>
             </div>
+
             <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Last Name *</label>
-              <input type="text" id="lastName" name="lastName" required value={formData.lastName} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white" placeholder="Last name" />
+              <label
+                htmlFor="lastName"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
+                {t("lastName")}
+              </label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  required
+                  placeholder={t("placeholders.lastName")}
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                />
+              </div>
             </div>
           </div>
 
+          {/* Phone */}
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number *</label>
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              {t("phone")}
+            </label>
             <div className="relative">
               <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input type="tel" id="phone" name="phone" required value={formData.phone} onChange={handleInputChange} className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white" placeholder="+91 98765 43210" />
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                required
+                placeholder={t("placeholders.phone")}
+                value={formData.phone}
+                onChange={handleInputChange}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+              />
             </div>
           </div>
 
+          {/* City and State in the same row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label htmlFor="city" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">City *</label>
+              <label
+                htmlFor="city"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
+                {t("city")}
+              </label>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input type="text" id="city" name="city" required value={formData.city} onChange={handleInputChange} className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white" placeholder="Your city" />
+                <input
+                  type="text"
+                  id="city"
+                  name="city"
+                  required
+                  placeholder={t("placeholders.city")}
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                />
               </div>
             </div>
+
             <div>
-              <label htmlFor="state" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">State *</label>
-              <select id="state" name="state" required value={formData.state} onChange={handleInputChange} className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
-                <option value="">Select state</option>
-                <option value="Maharashtra">Maharashtra</option>
-                <option value="Karnataka">Karnataka</option>
-                <option value="Tamil Nadu">Tamil Nadu</option>
-                <option value="Delhi">Delhi</option>
-                <option value="Gujarat">Gujarat</option>
-                <option value="Rajasthan">Rajasthan</option>
-                <option value="West Bengal">West Bengal</option>
-                <option value="Uttar Pradesh">Uttar Pradesh</option>
-                <option value="Other">Other</option>
+              <label
+                htmlFor="state"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
+                {t("state")}
+              </label>
+              <select
+                id="state"
+                name="state"
+                required
+                value={formData.state}
+                onChange={handleInputChange}
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+              >
+                <option value="">{t("placeholders.selectState")}</option>
+                {stateOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
 
+          {/* Terms and Conditions */}
           <div className="space-y-3">
             <label className="flex items-start space-x-2 cursor-pointer">
-              <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleInputChange} required className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1" />
+              <input
+                type="checkbox"
+                name="agreeToTerms"
+                checked={formData.agreeToTerms}
+                onChange={handleInputChange}
+                required
+                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1"
+              />
               <span className="text-sm text-gray-700 dark:text-gray-300">
-                I agree to the <Link to="/terms" className="text-primary-600 hover:text-primary-500">Terms of Service</Link> and <Link to="/privacy" className="text-primary-600 hover:text-primary-500">Privacy Policy</Link>
+                {t("terms")}{" "}
+                <Link
+                  to="/terms-and-conditions"
+                  className="text-primary-600 hover:text-primary-500"
+                >
+                  {t("terms")}
+                </Link>{" "}
+                {t("and")}{" "}
+                <Link
+                  to="/privacy-policy"
+                  className="text-primary-600 hover:text-primary-500"
+                >
+                  {t("privacy")}
+                </Link>
               </span>
             </label>
           </div>
 
-          <button type="submit" disabled={isLoading || !formData.agreeToTerms} className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 w-full justify-center">
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={isLoading || !formData.agreeToTerms}
+            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 w-full justify-center"
+          >
             {isLoading ? (
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <>
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <span>{t("loading")}</span>
+              </>
             ) : (
               <>
-                <span>Create Account</span>
+                <span>{t("submit")}</span>
                 <CheckCircle className="h-5 w-5" />
               </>
             )}
           </button>
 
+          {/* Login Link */}
           <div className="mt-6 text-center">
-            <span className="text-gray-600 dark:text-gray-400">Already have an account? </span>
-            <Link to="/login" className="text-primary-600 hover:text-primary-500 dark:text-primary-400 font-medium">Login  here</Link>
+            <span className="text-gray-600 dark:text-gray-400">
+              {t("loginPrompt")}{" "}
+            </span>
+            <Link
+              to="/login"
+              className="text-primary-600 hover:text-primary-500 dark:text-primary-400 font-medium"
+            >
+              {t("loginLink")}
+            </Link>
           </div>
         </form>
 
+        {/* Back to Home */}
         <div className="text-center">
-          <Link to="/" className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-sm">
-            ← Back to Homepage
+          <Link
+            to="/"
+            className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-sm"
+          >
+            {t("backHome")}
           </Link>
         </div>
       </div>

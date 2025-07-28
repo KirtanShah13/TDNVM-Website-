@@ -5,7 +5,11 @@ import { useTranslation } from 'react-i18next';
 
 
 const DonatePage: React.FC = () => {
-  const { t } = useTranslation('donate');
+
+const { t, i18n } = useTranslation('donate'); // ✅ MAKE SURE 'donate' is passed here
+const isGujarati = i18n.language === 'gu';
+
+
 
 
   const [donationAmount, setDonationAmount] = useState('');
@@ -114,38 +118,56 @@ const DonatePage: React.FC = () => {
 
        {/* Impact Stats */}
 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+  {/* Funds Raised */}
   <div>
-    <div className="text-3xl font-bold text-[#34D399]"> {/* emerald-400 */}
-      ₹<CountUp end={2.5} decimals={1} suffix="L+" duration={2} />
+    <div className="text-3xl font-bold text-[#34D399]">
+      {isGujarati
+        ? `₹${t('fundsRaised')}`
+        : <>₹<CountUp end={2.5} decimals={1} suffix="L+" duration={2} /></>
+      }
     </div>
     <div className="text-gray-600 dark:text-gray-400 mt-1">{t('donate.fundsRaised')}</div>
   </div>
+
+  {/* Members */}
   <div>
-    <div className="text-3xl font-bold text-[#3B82F6]"> {/* blue-500 */}
-      <CountUp end={150} suffix="+" duration={2} />
+    <div className="text-3xl font-bold text-[#3B82F6]">
+      {isGujarati
+        ? t('members')
+        : <CountUp end={150} suffix="+" duration={2} />}
     </div>
     <div className="text-gray-600 dark:text-gray-400 mt-1">{t('donate.members')}</div>
   </div>
+
+  {/* Events */}
   <div>
-    <div className="text-3xl font-bold text-[#A78BFA]"> {/* violet-400 */}
-      <CountUp end={50} suffix="+" duration={2} />
+    <div className="text-3xl font-bold text-[#A78BFA]">
+      {isGujarati
+        ? t('events')
+        : <CountUp end={50} suffix="+" duration={2} />}
     </div>
     <div className="text-gray-600 dark:text-gray-400 mt-1">{t('donate.events')}</div>
   </div>
+
+  {/* Workshops */}
   <div>
-    <div className="text-3xl font-bold text-[#F472B6]"> {/* pink-400 */}
-      <CountUp end={25} suffix="+" duration={2} />
+    <div className="text-3xl font-bold text-[#F472B6]">
+      {isGujarati
+        ? t('workshops')
+        : <CountUp end={25} suffix="+" duration={2} />}
     </div>
-    <div className="text-gray-600 dark:text-gray-400 mt-1">{t('donate.workshops')} </div>
+    <div className="text-gray-600 dark:text-gray-400 mt-1">{t('donate.workshops')}</div>
   </div>
 </div>
+
+
 
 
 
         {/* How Your Money Helps */}
         <div className="my-16">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
-           {t('donate.howHelp')}
+           {t('donate.howHelps')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {impactAreas.map((area, index) => (
@@ -352,7 +374,9 @@ const DonatePage: React.FC = () => {
           </div>
         </div>
 
+      
         {/* Recent Donors */}
+         {/*
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
             {t('donate.recent')}
@@ -389,6 +413,7 @@ const DonatePage: React.FC = () => {
             </div>
           </div>
         </div>
+        */}
 
         {/* Thank You Message */}
         <div className="bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-2xl p-8 text-center">

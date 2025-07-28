@@ -1,34 +1,34 @@
 {
   "donate.title": "Support Our Community",
-  "donate.description": "Your generous donations help us preserve our cultural heritage, organize meaningful events, and support community members in need. Every contribution makes a difference.",
+  "donate.description": "With your generous donation, we can preserve our culture, organize important events, and support community members in need. Every contribution matters.",
   "donate.fundsRaised": "Funds Raised",
   "donate.members": "Members",
-  "donate.events": "Events Hosted",
+  "donate.events": "Events Organized",
   "donate.workshops": "Workshops",
   "donate.howHelp": "How Your Donation Helps",
-  "donate.form.title": "Make a Donation",
+  "donate.form.title": "Donate",
   "donate.amountLabel": "Donation Amount (₹) *",
-  "donate.customAmount": "Enter custom amount",
+  "donate.customAmount": "Enter your own amount",
   "donate.name": "Full Name",
   "donate.email": "Email Address",
   "donate.message": "Message (Optional)",
-  "donate.messagePlaceholder": "Share why you're supporting our community...",
+  "donate.messagePlaceholder": "Tell us why you are supporting the community...",
   "donate.anonymous": "Make this donation anonymous",
   "donate.submit": "Proceed to Payment",
   "donate.payment.title": "Payment Methods",
   "donate.payment.bank": "Bank Transfer",
-  "donate.payment.bankDesc": "Direct bank transfer or NEFT/RTGS",
+  "donate.payment.bankDesc": "Direct transfer via NEFT/RTGS",
   "donate.payment.details": "Account: 1234567890, IFSC: SBIN0001234",
   "donate.tax.title": "Tax Benefits",
   "donate.tax.points": [
-    "80G tax exemption certificate provided",
-    "Donations are 100% tax deductible",
-    "Digital receipt sent immediately",
+    "80G tax exemption certificate available",
+    "Donations are eligible for 100% tax deduction",
+    "Instant digital receipt is sent",
     "Annual donation summary available"
   ],
-  "donate.recent": "Recent Supporters",
+  "donate.recent": "Recent Donors",
   "donate.thankYou.title": "Thank You for Your Support!",
-  "donate.thankYou.description": "Your generosity helps us continue our mission of preserving culture, building community, and supporting those in need. Together, we're making a lasting impact.",
+  "donate.thankYou.description": "Your generous contribution helps us preserve our culture, build the community, and support those in need. Together, we are making a lasting impact.",
   "donate.buttons.impact": "View Impact Report",
   "donate.buttons.share": "Share with Friends",
   "donate.areas": {
@@ -38,15 +38,21 @@
     },
     "education": {
       "title": "Educational Programs",
-      "desc": "Fund language classes, cultural workshops, and skill development"
+      "desc": "Fund language classes, workshops, and skill development"
     },
     "welfare": {
       "title": "Community Welfare",
-      "desc": "Help families in need and emergency support programs"
+      "desc": "Support needy families and emergency assistance"
     },
     "infra": {
-      "title": "Infrastructure",
-      "desc": "Maintain community center and upgrade facilities"
+      "title": "Basic Infrastructure",
+      "desc": "Maintain community center and improve facilities"
     }
-  }
+  },
+
+
+  "fundsRaised": "2.5L+",
+  "members": "150+",
+  "events": "50+",
+  "workshops": "25+"
 }

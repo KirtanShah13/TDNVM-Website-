@@ -12,6 +12,9 @@ const CoreTeamPage: React.FC = () => {
   const { i18n } = useTranslation();
 const isGujarati = i18n.language === 'gu';
 
+
+
+
   const [coreTeam, setCoreTeam] = useState<any[]>([]);
   const [leaders, setLeaders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

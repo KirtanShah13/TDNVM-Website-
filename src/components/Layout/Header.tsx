@@ -1,39 +1,42 @@
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Sun, Moon } from 'lucide-react';
-import { useTheme } from '../../contexts/ThemeContext';
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, Sun, Moon } from "lucide-react";
+import { useTheme } from "../../contexts/ThemeContext";
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+    document.body.style.overflow = isMenuOpen ? "hidden" : "";
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     };
   }, [isMenuOpen]);
 
   const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
-  const { t, i18n } = useTranslation('nav');
+  const { t, i18n } = useTranslation("header");
 
   const toggleLanguage = () => {
-    const newLang = i18n.language === 'en' ? 'gu' : 'en';
+    const newLang = i18n.language === "en" ? "gu" : "en";
     i18n.changeLanguage(newLang);
   };
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user] = useState({ name: 'John Michael Doe', email: 'john@example.com' });
+  const [user] = useState({
+    name: "John Michael Doe",
+    email: "john@example.com",
+  });
 
   const navigation = [
-    { name: t('home'), href: '/' },
-    { name: t('events'), href: '/events' },
-    { name: t('gallery'), href: '/gallery' },
-    { name: t('members'), href: '/members' },
-    { name: t('coreTeam'), href: '/core-team' },
-    { name: t('volunteer'), href: '/volunteer' },
-    { name: t('contact'), href: '/contact' },
+    { name: t("home"), href: "/" },
+    { name: t("events"), href: "/events" },
+    { name: t("gallery"), href: "/gallery" },
+    { name: t("members"), href: "/members" },
+    { name: t("coreTeam"), href: "/core-team" },
+    { name: t("volunteer"), href: "/volunteer" },
+    { name: t("contact"), href: "/contact" },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -65,8 +68,8 @@ const Header: React.FC = () => {
                   to={item.href}
                   className={`px-3 py-2 text-sm font-medium transition-colors whitespace-nowrap ${
                     isActive(item.href)
-                      ? 'text-primary-600 bg-primary-50 dark:bg-primary-900/20 dark:text-primary-400 rounded-md'
-                      : 'text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400'
+                      ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20 dark:text-primary-400 rounded-md"
+                      : "text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
                   }`}
                 >
                   {item.name}
@@ -82,7 +85,11 @@ const Header: React.FC = () => {
               onClick={toggleTheme}
               className="p-2 rounded-md text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
             >
-              {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              {isDark ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
             </button>
 
             {/* Language Toggle */}
@@ -92,14 +99,14 @@ const Header: React.FC = () => {
               aria-label="Toggle Language"
             >
               <span className="text-sm font-semibold uppercase">
-                {i18n.language === 'en' ? 'GU' : 'EN'}
+                {i18n.language === "en" ? "GU" : "EN"}
               </span>
             </button>
 
             {/* Auth Buttons */}
             {isLoggedIn ? (
               <div className="hidden md:block text-sm text-gray-800 dark:text-gray-100 font-medium whitespace-nowrap">
-                Welcome {user.name}
+                {t("welcome")} {user.name}
               </div>
             ) : (
               <div className="hidden md:flex items-center space-x-2">
@@ -107,13 +114,13 @@ const Header: React.FC = () => {
                   to="/signup"
                   className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 text-sm font-semibold rounded-md shadow"
                 >
-                  Sign Up
+                  {t("signup")}
                 </Link>
                 <Link
                   to="/login"
                   className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 text-sm font-semibold rounded-md shadow"
                 >
-                  Login
+                  {t("login")}
                 </Link>
               </div>
             )}
@@ -123,7 +130,7 @@ const Header: React.FC = () => {
               to="/donate"
               className="hidden md:inline-flex bg-gradient-to-r from-amber-400 to-orange-500 hover:from-orange-500 hover:to-amber-600 text-white px-5 py-2 text-sm font-semibold rounded-md shadow-md"
             >
-              Donate
+              {t("donate")}
             </Link>
 
             {/* Mobile Menu Toggle */}
@@ -131,7 +138,11 @@ const Header: React.FC = () => {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="lg:hidden p-2 rounded-md text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
@@ -148,8 +159,8 @@ const Header: React.FC = () => {
                 onClick={() => setIsMenuOpen(false)}
                 className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
                   isActive(item.href)
-                    ? 'text-primary-600 bg-primary-50 dark:bg-primary-900/20 dark:text-primary-400'
-                    : 'text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400'
+                    ? "text-primary-600 bg-primary-50 dark:bg-primary-900/20 dark:text-primary-400"
+                    : "text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400"
                 }`}
               >
                 {item.name}
@@ -161,7 +172,7 @@ const Header: React.FC = () => {
               onClick={toggleLanguage}
               className="block mx-3 mt-2 text-center border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-4 py-2 rounded-md text-sm font-medium"
             >
-              {i18n.language === 'en' ? 'Gujarati (GU)' : 'English (EN)'}
+              {i18n.language === "en" ? "Gujarati (GU)" : "English (EN)"}
             </button>
 
             {!isLoggedIn && (
@@ -171,14 +182,14 @@ const Header: React.FC = () => {
                   onClick={() => setIsMenuOpen(false)}
                   className="block mx-3 text-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm"
                 >
-                  Sign Up
+                  {t("signup")}
                 </Link>
                 <Link
                   to="/login"
                   onClick={() => setIsMenuOpen(false)}
                   className="block mx-3 text-center bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm"
                 >
-                  Login
+                  {t("login")}
                 </Link>
               </div>
             )}
@@ -188,7 +199,7 @@ const Header: React.FC = () => {
               onClick={() => setIsMenuOpen(false)}
               className="block mx-3 mt-4 text-center bg-gradient-to-r from-amber-400 to-orange-500 hover:from-orange-500 hover:to-amber-600 text-white px-4 py-2 rounded-md text-sm font-semibold shadow-md"
             >
-              Donate
+              {t("donate")}
             </Link>
           </div>
         </div>
