@@ -8,19 +8,39 @@ const LoginPage: React.FC = () => {
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  
 
-    setTimeout(() => {
-      console.log("Login attempt with phone:", phone);
-      alert("Login successful! Welcome back to Samudaya.");
-      setIsLoading(false);
-    }, 1500);
-  };
+  {/* Handle form submission */}
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsLoading(true);
+
+  setTimeout(() => {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
+      alert("No account found. Please sign up first.");
+    } else {
+      const user = JSON.parse(storedUser);
+      const cleanedInput = phone.replace(/\s+/g, "");
+      const cleanedStored = user.phone.replace(/\s+/g, "");
+
+      if (cleanedInput === cleanedStored || `+91${cleanedInput}` === cleanedStored) {
+        alert("Login successful! Welcome back to Samudaya.");
+        // Optionally set login flag
+        localStorage.setItem("isLoggedIn", "true");
+      } else {
+        alert("Invalid phone number. Please try again.");
+      }
+    }
+    setIsLoading(false);
+  }, 1000);
+};
+
+
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+   <div className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-flex items-center space-x-2 mb-6">

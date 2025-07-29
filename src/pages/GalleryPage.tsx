@@ -146,7 +146,8 @@ const GalleryPage: React.FC = () => {
   };
 
   return (
-    <div className="py-20 bg-gradient-to-br from-gray-900 via-gray-800 to-black bg-indian-pattern min-h-screen">
+    <div className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold text-white mb-4">{t('gallery.title')}</h1>

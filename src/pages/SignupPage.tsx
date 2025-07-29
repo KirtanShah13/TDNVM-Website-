@@ -47,21 +47,29 @@ const SignupPage: React.FC = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      console.log("Form submitted:", formData);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-    } catch (error) {
-      console.error("Error submitting form:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  {/* Handle form submission */}
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsLoading(true);
+  try {
+    // Simulate API delay
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    
+    // Save user data to localStorage
+    localStorage.setItem("user", JSON.stringify(formData));
+    alert("Signup successful! You can now log in.");
+  } catch (error) {
+    console.error("Error submitting form:", error);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+   <div className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+
+
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-flex items-center space-x-2 mb-6">
