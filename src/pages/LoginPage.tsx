@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { Phone, Heart, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Link, useNavigate } from "react-router-dom";
+
 
 const LoginPage: React.FC = () => {
   const { t } = useTranslation("login");
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
 
   
 
-  {/* Handle form submission */}
- const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setIsLoading(true);
 
@@ -26,8 +28,8 @@ const LoginPage: React.FC = () => {
 
       if (cleanedInput === cleanedStored || `+91${cleanedInput}` === cleanedStored) {
         alert("Login successful! Welcome back to Samudaya.");
-        // Optionally set login flag
         localStorage.setItem("isLoggedIn", "true");
+        navigate("/");
       } else {
         alert("Invalid phone number. Please try again.");
       }
@@ -35,6 +37,7 @@ const LoginPage: React.FC = () => {
     setIsLoading(false);
   }, 1000);
 };
+
 
 
 
@@ -75,7 +78,7 @@ const LoginPage: React.FC = () => {
                   id="phone"
                   name="phone"
                   required
-                  pattern="^\\+91\\s?[6-9]\\d{9}$"
+                  pattern="^(\+91\s?)?[6-9]\d{9}$"
                   title={t("phone.title")}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}

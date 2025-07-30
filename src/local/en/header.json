@@ -10,6 +10,7 @@
     "signup": "Sign Up",
     "login": "Login",
     "donate": "Donate",
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+     "logout": "Logout"
   
 }

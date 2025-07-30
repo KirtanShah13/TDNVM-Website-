@@ -19,7 +19,7 @@ import PrivacyPolicy from './pages/privacy_policy';
 import TermsAndConditions from './pages/terms_&_conditions';
  
 
-import { Navigate } from 'react-router-dom';
+
 
 
 

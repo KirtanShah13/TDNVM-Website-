@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { User, Phone, MapPin, Heart, CheckCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+
 
 interface FormData {
   firstName: string;
@@ -47,23 +49,28 @@ const SignupPage: React.FC = () => {
     }));
   };
 
-  {/* Handle form submission */}
- const handleSubmit = async (e: React.FormEvent) => {
+const navigate = useNavigate();
+
+const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setIsLoading(true);
   try {
-    // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
     
-    // Save user data to localStorage
+    // Save user data only
     localStorage.setItem("user", JSON.stringify(formData));
-    alert("Signup successful! You can now log in.");
+
+    // ✅ Do NOT set isLoggedIn here
+    alert("Signup successful! Please log in.");
+    navigate("/login");
   } catch (error) {
     console.error("Error submitting form:", error);
   } finally {
     setIsLoading(false);
   }
 };
+
+
 
 
   return (
