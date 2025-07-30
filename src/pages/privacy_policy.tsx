@@ -5,7 +5,7 @@ const PrivacyPolicy: React.FC = () => {
   const { t } = useTranslation('privacy'); // Use 'privacy' namespace
 
   return (
-    <section className="bg-indian-pattern bg-cover bg-fixed bg-center py-16">
+    <section className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md rounded-2xl p-6 sm:p-10 animate-fade-in text-gray-800 dark:text-gray-100">
           <h1 className="text-3xl lg:text-4xl font-bold mb-6 text-primary-600 dark:text-primary-400">

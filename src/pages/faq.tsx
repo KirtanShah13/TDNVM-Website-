@@ -8,7 +8,7 @@ const FAQPage: React.FC = () => {
   const faqKeys = ['q1', 'q2', 'q3', 'q4', 'q5'];
 
   return (
-    <section className="bg-indian-pattern bg-cover bg-fixed bg-center py-16">
+    <section className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md rounded-2xl p-6 sm:p-10">
           <div className="text-center mb-12">
