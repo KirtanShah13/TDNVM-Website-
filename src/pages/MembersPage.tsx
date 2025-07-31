@@ -5,6 +5,9 @@ import { supabase } from '../lib/SupabaseClient';
 import { Search, Filter, MapPin, Calendar, Users } from 'lucide-react';
 import Fuse from 'fuse.js';
 import { useTranslation } from 'react-i18next';
+import { useDebounce } from 'use-debounce';
+  import { useMemo } from 'react';
+
 
 interface Member {
   [key: string]: any;
@@ -30,10 +33,14 @@ const BANNER_IMAGES = [
 
 const MembersPage: React.FC = () => {
   const { t } = useTranslation(['members']);
-  const [searchTerm, setSearchTerm] = useState('');
+
+const [searchTerm, setSearchTerm] = useState('');
+const [debouncedSearchTerm] = useDebounce(searchTerm, 300); // 300ms delay
+
   const [roleFilter, setRoleFilter] = useState('all');
   const [regionFilter, setRegionFilter] = useState('all');
   const [members, setMembers] = useState<Member[]>([]);
+  const [allMembers, setAllMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -46,23 +53,36 @@ const MembersPage: React.FC = () => {
   useEffect(() => {
     const fetchMembers = async () => {
       setLoading(true);
-      const { data, error } = await supabase.from('members_details').select('*');
-      if (error) setError(error.message);
-      else setMembers(data || []);
-      setLoading(false);
+      setError(null);
+
+      try {
+        if (debouncedSearchTerm.trim()) {
+
+          const { data, error } = await supabase.from('members_details_en').select('*');
+          if (error) throw error;
+          setAllMembers(data || []);
+        } else {
+          const from = (page - 1) * pageSize;
+          const to = from + pageSize - 1;
+          const { data, error } = await supabase
+            .from('members_details_en')
+            .select('*')
+            .range(from, to);
+          if (error) throw error;
+          setMembers(data || []);
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to load members.');
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchMembers();
-  }, []);
+ }, [page, debouncedSearchTerm]);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', {
-      year: 'numeric',
-      month: 'short',
-    });
-  };
 
-  const fuse = new Fuse<Member>(members, {
+  const fuse = new Fuse(allMembers, {
     keys: [
       { name: 'Full Name', weight: 0.7 },
       { name: 'Address', weight: 0.4 },
@@ -79,26 +99,36 @@ const MembersPage: React.FC = () => {
     return `'${input.trim()}`;
   };
 
-  const normalizedSearch = buildSearchQuery(searchTerm);
+const normalizedSearch = buildSearchQuery(debouncedSearchTerm);
 
-  const searchedMembers = normalizedSearch
-    ? fuse.search(normalizedSearch).map((result) => result.item)
-    : members;
 
-  const roleFiltered =
-    roleFilter === 'all'
-      ? searchedMembers
-      : searchedMembers.filter((member) => member?.Role === roleFilter);
 
-  const regionFiltered =
-    regionFilter === 'all'
-      ? roleFiltered
-      : roleFiltered.filter((member) => member?.Address?.includes(regionFilter));
+
+const searchedMembers = useMemo(() => {
+  if (!normalizedSearch) return members;
+  return fuse.search(normalizedSearch).map((result) => result.item);
+}, [normalizedSearch, members, allMembers]);
+
+const roleFiltered = useMemo(() => {
+  return roleFilter === 'all'
+    ? searchedMembers
+    : searchedMembers.filter((member) => member?.Role === roleFilter);
+}, [searchedMembers, roleFilter]);
+
+const regionFiltered = useMemo(() => {
+  return regionFilter === 'all'
+    ? roleFiltered
+    : roleFiltered.filter((member) => member?.Address?.includes(regionFilter));
+}, [roleFiltered, regionFilter]);
+
 
   const startIndex = (page - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const paginatedMembers = regionFiltered.slice(startIndex, endIndex);
-  const hasNextPage = endIndex < regionFiltered.length;
+  const paginatedMembers = searchTerm ? regionFiltered.slice(startIndex, endIndex) : regionFiltered;
+
+  const hasNextPage = searchTerm
+    ? endIndex < regionFiltered.length
+    : members.length === pageSize;
 
   const getRandomImage = (index: number): string => {
     return BANNER_IMAGES[index % BANNER_IMAGES.length];
@@ -109,6 +139,14 @@ const MembersPage: React.FC = () => {
     membersRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', {
+      year: 'numeric',
+      month: 'short',
+    });
+  };
+
   return (
     <div ref={membersRef} className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -117,7 +155,7 @@ const MembersPage: React.FC = () => {
             {t('members.title')}
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            {t('members.subtitle')}.
+            {t('members.subtitle')}
           </p>
         </div>
 
@@ -217,7 +255,9 @@ const MembersPage: React.FC = () => {
         {!loading && !error && regionFiltered.length === 0 && (
           <div className="text-center py-12">
             <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">{t('members.notFound.title')}</h3>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              {t('members.notFound.title')}
+            </h3>
             <p className="text-gray-600 dark:text-gray-400">
               {t('members.notFound.subtitle')}
             </p>
