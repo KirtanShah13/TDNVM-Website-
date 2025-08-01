@@ -1,13 +1,11 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { supabase } from '../lib/SupabaseClient';
 import { Search, Filter, MapPin, Calendar, Users } from 'lucide-react';
 import Fuse from 'fuse.js';
 import { useTranslation } from 'react-i18next';
 import { useDebounce } from 'use-debounce';
-  import { useMemo } from 'react';
-
 
 interface Member {
   [key: string]: any;
@@ -32,10 +30,10 @@ const BANNER_IMAGES = [
 ];
 
 const MembersPage: React.FC = () => {
-  const { t } = useTranslation(['members']);
+  const { t, i18n } = useTranslation(['members']);
 
-const [searchTerm, setSearchTerm] = useState('');
-const [debouncedSearchTerm] = useDebounce(searchTerm, 300); // 300ms delay
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm] = useDebounce(searchTerm, 300);
 
   const [roleFilter, setRoleFilter] = useState('all');
   const [regionFilter, setRegionFilter] = useState('all');
@@ -55,17 +53,18 @@ const [debouncedSearchTerm] = useDebounce(searchTerm, 300); // 300ms delay
       setLoading(true);
       setError(null);
 
+      const tableName = i18n.language === 'gu' ? 'members_details_gu' : 'members_details_en';
+
       try {
         if (debouncedSearchTerm.trim()) {
-
-          const { data, error } = await supabase.from('members_details_en').select('*');
+          const { data, error } = await supabase.from(tableName).select('*');
           if (error) throw error;
           setAllMembers(data || []);
         } else {
           const from = (page - 1) * pageSize;
           const to = from + pageSize - 1;
           const { data, error } = await supabase
-            .from('members_details_en')
+            .from(tableName)
             .select('*')
             .range(from, to);
           if (error) throw error;
@@ -79,8 +78,7 @@ const [debouncedSearchTerm] = useDebounce(searchTerm, 300); // 300ms delay
     };
 
     fetchMembers();
- }, [page, debouncedSearchTerm]);
-
+  }, [page, debouncedSearchTerm, i18n.language]);
 
   const fuse = new Fuse(allMembers, {
     keys: [
@@ -99,28 +97,24 @@ const [debouncedSearchTerm] = useDebounce(searchTerm, 300); // 300ms delay
     return `'${input.trim()}`;
   };
 
-const normalizedSearch = buildSearchQuery(debouncedSearchTerm);
+  const normalizedSearch = buildSearchQuery(debouncedSearchTerm);
 
+  const searchedMembers = useMemo(() => {
+    if (!normalizedSearch) return members;
+    return fuse.search(normalizedSearch).map((result) => result.item);
+  }, [normalizedSearch, members, allMembers]);
 
+  const roleFiltered = useMemo(() => {
+    return roleFilter === 'all'
+      ? searchedMembers
+      : searchedMembers.filter((member) => member?.Role === roleFilter);
+  }, [searchedMembers, roleFilter]);
 
-
-const searchedMembers = useMemo(() => {
-  if (!normalizedSearch) return members;
-  return fuse.search(normalizedSearch).map((result) => result.item);
-}, [normalizedSearch, members, allMembers]);
-
-const roleFiltered = useMemo(() => {
-  return roleFilter === 'all'
-    ? searchedMembers
-    : searchedMembers.filter((member) => member?.Role === roleFilter);
-}, [searchedMembers, roleFilter]);
-
-const regionFiltered = useMemo(() => {
-  return regionFilter === 'all'
-    ? roleFiltered
-    : roleFiltered.filter((member) => member?.Address?.includes(regionFilter));
-}, [roleFiltered, regionFilter]);
-
+  const regionFiltered = useMemo(() => {
+    return regionFilter === 'all'
+      ? roleFiltered
+      : roleFiltered.filter((member) => member?.Address?.includes(regionFilter));
+  }, [roleFiltered, regionFilter]);
 
   const startIndex = (page - 1) * pageSize;
   const endIndex = startIndex + pageSize;
