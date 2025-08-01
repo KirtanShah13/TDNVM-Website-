@@ -167,7 +167,7 @@ const isGujarati = i18n.language === 'gu';
         {/* How Your Money Helps */}
         <div className="my-16">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">
-           {t('donate.howHelps')}
+           {t('donate.howHelp')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {impactAreas.map((area, index) => (

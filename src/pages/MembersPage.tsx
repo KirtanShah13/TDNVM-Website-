@@ -225,10 +225,13 @@ const regionFiltered = useMemo(() => {
                 key={member["SR NO"] || index}
                 className="card p-0 rounded-lg overflow-hidden shadow transition-all duration-300 transform hover:shadow-xl hover:ring-2 hover:ring-primary-400 hover:scale-[1.02]"
               >
-                <div
-                  className="h-24 w-full bg-cover bg-center"
-                  style={{ backgroundImage: `url(${getRandomImage(index)})` }}
-                ></div>
+                <img
+                  src={getRandomImage(index)}
+                  loading="lazy"
+                  alt="Member Banner"
+                  className="h-24 w-full object-cover object-center"
+                />
+
                 <div className="p-6 text-center">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                     {member["Full Name"]}

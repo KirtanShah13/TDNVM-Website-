@@ -17,7 +17,9 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import FAQPage from './pages/faq';
 import PrivacyPolicy from './pages/privacy_policy';
 import TermsAndConditions from './pages/terms_&_conditions';
- 
+import ScrollToTop from './components/Scroll_To_Top';
+
+
 
 
 
@@ -28,6 +30,7 @@ function App() {
   return (
     <ThemeProvider>
       <Router>
+         <ScrollToTop /> {/* 👈 Add this line */}
         <Routes>
           {/* Auth Routes (without Layout) */}
           <Route path="/login" element={<LoginPage />} />

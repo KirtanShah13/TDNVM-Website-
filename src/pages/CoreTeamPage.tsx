@@ -113,10 +113,13 @@ const isGujarati = i18n.language === 'gu';
             <div key={member.id} className="card overflow-hidden group hover:shadow-2xl transition-all duration-300">
               <div className="relative">
                 <img
-                  src={member.photo}
-                  alt={member.name}
-                  className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                src={member.photo}
+                loading="lazy"
+                decoding="async"
+                alt={member.name}
+                className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
+
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
 
@@ -194,7 +197,7 @@ const isGujarati = i18n.language === 'gu';
         <section className="bg-white dark:bg-gray-900 py-16 px-4 sm:px-6 lg:px-8 rounded-xl shadow-lg">
           <div className="max-w-6xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-              {t('coreTeam.table.title')}
+              {t('coreTeam.leadershipHistory.title')}
             </h2>
             {loading ? (
               <p className="text-gray-500 dark:text-gray-400">
