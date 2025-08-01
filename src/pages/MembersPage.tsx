@@ -45,8 +45,47 @@ const MembersPage: React.FC = () => {
   const pageSize = 20;
   const membersRef = useRef<HTMLDivElement>(null);
 
-  const roles = ['all', 'President', 'Treasurer', 'Secretary', 'Coordinator', 'Member', 'Volunteer'];
-  const regions = ['all', 'Mumbai', 'Pune', 'Delhi', 'Bangalore', 'Chennai', 'Hyderabad'];
+const roles = useMemo(() => ['all', 'President', 'Treasurer', 'Secretary', 'Coordinator', 'Member', 'Volunteer'], []);
+const regions = useMemo(() => [
+  'all',
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chhattisgarh',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal',
+  'Andaman and Nicobar Islands',
+  'Chandigarh',
+  'Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi',
+  'Jammu and Kashmir',
+  'Ladakh',
+  'Lakshadweep',
+  'Puducherry',
+], []);
+
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -184,7 +223,7 @@ const MembersPage: React.FC = () => {
               >
                 {roles.map((role) => (
                   <option key={role} value={role}>
-                    {role === 'all' ? t('members.filter.role') : role}
+                    {role === 'all' ? t('members.filter.role') :  t(`members.roles.${role}`)}
                   </option>
                 ))}
               </select>
@@ -203,7 +242,7 @@ const MembersPage: React.FC = () => {
               >
                 {regions.map((region) => (
                   <option key={region} value={region}>
-                    {region === 'all' ? t('members.filter.region') : region}
+                    {region === 'all' ? t('members.filter.region') : t(`members.regions.${region}`)}
                   </option>
                 ))}
               </select>
