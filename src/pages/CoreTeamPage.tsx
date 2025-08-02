@@ -19,37 +19,41 @@ const isGujarati = i18n.language === 'gu';
   const [leaders, setLeaders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCoreTeam = async () => {
-      const { data, error } = await supabase
-        .from('core_team')
-        .select('*')
-        .order('id', { ascending: true });
+ useEffect(() => {
+  const fetchCoreTeam = async () => {
+    const tableName = isGujarati ? 'core_team_gu' : 'core_team';
 
-      if (error) {
-        console.error('Error fetching core team:', error);
-      } else {
-        setCoreTeam(data);
-      }
-    };
 
-    const fetchLeaders = async () => {
-      const { data, error } = await supabase
-        .from('president_secrataries')
-        .select('*');
+    const { data, error } = await supabase
+      .from(tableName)
+      .select('*')
+      .order('id', { ascending: true });
 
-      if (error) {
-        console.error('Error fetching leadership history:', error);
-      } else {
-        setLeaders(data);
-      }
+    if (error) {
+      console.error(`Error fetching data from ${tableName}:`, error);
+    } else {
+      setCoreTeam(data);
+    }
+  };
 
-      setLoading(false);
-    };
+  const fetchLeaders = async () => {
+    const { data, error } = await supabase
+      .from('president_secrataries')
+      .select('*');
 
-    fetchCoreTeam();
-    fetchLeaders();
-  }, []);
+    if (error) {
+      console.error('Error fetching leadership history:', error);
+    } else {
+      setLeaders(data);
+    }
+
+    setLoading(false);
+  };
+
+  fetchCoreTeam();
+  fetchLeaders();
+}, [isGujarati]);
+
 
   return (
     <div className="py-16">
@@ -139,7 +143,8 @@ const isGujarati = i18n.language === 'gu';
                   {member.experience && (
                     <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
                       <Calendar className="h-4 w-4 text-primary-500" />
-                      <span>Experience: {member.experience}</span>
+                      <span>{t('coreTeam.card.experience')}: {member.experience}</span>
+
                     </div>
                   )}
                   {member.achievements && (
