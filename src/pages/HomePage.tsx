@@ -43,19 +43,23 @@ const isGujarati = i18n.language === 'gu';
     fetchAds();
   }, []);
 
-  useEffect(() => {
+ useEffect(() => {
   const fetchUpcomingEvents = async () => {
     const today = new Date().toISOString();
+    const currentLang = i18n.language;
+
+    // ✅ Pick the right table based on selected language
+    const tableName = currentLang === 'gu' ? 'events_gu' : 'events';
 
     const { data, error } = await supabase
-      .from('events')
+      .from(tableName)
       .select('*')
       .gte('date', today)
       .order('date', { ascending: true })
       .limit(2);
 
     if (error) {
-      setErrorAds(t('adsLoadError')); // ✅ REPLACE "Failed to load ads"
+      setErrorAds(t('adsLoadError'));
     } else {
       const formatted = data.map((event: any) => ({
         ...event,
@@ -66,8 +70,9 @@ const isGujarati = i18n.language === 'gu';
     }
   };
 
+  // ✅ Refetch when language changes
   fetchUpcomingEvents();
-}, []);
+}, [i18n.language]);
 
 
 
