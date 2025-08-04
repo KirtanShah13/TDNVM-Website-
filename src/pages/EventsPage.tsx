@@ -10,8 +10,9 @@ const EventsPage: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { t } = useTranslation(['events']);
+  const [error, setError] = useState<string | null>(null)
+
+  const { t, i18n } = useTranslation(['events']); // add i18n
 
   const [errorAds, setErrorAds] = useState<string | null>(null);
 
@@ -54,25 +55,36 @@ const EventsPage: React.FC = () => {
 ];
 */}
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      setLoading(true);
-      setError(null);
+ 
 
-      const { data, error } = await supabase.from('events').select('*');
 
-      if (error) {
-        setError(t('events.error'));
-        setEvents([]);
-      } else {
-        setEvents(data || []);
-      }
 
-      setLoading(false);
-    };
+useEffect(() => {
+  const fetchEvents = async () => {
+    setLoading(true);
+    setError(null);
 
-    fetchEvents();
-  }, []);
+    const tableName = i18n.language === 'gu' ? 'events_gu' : 'events';
+    console.log('🌐 Language:', i18n.language);
+    console.log('📦 Fetching from table:', tableName);
+
+    const { data, error } = await supabase.from(tableName).select('*');
+
+    if (error) {
+      console.error('❌ Supabase fetch error:', error.message);
+      setError(t('events.error', 'Failed to load events'));
+      setEvents([]);
+    } else {
+      console.log('✅ Data received:', data);
+      setEvents(data || []);
+    }
+
+    setLoading(false);
+  };
+
+  fetchEvents();
+}, [i18n.language]);
+
 
   useEffect(() => {
     const interval = setInterval(() => {

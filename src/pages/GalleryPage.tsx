@@ -13,7 +13,8 @@ import {
 } from 'lucide-react';
 
 const GalleryPage: React.FC = () => {
-   const { t } = useTranslation(['gallery']);
+  const { t, i18n } = useTranslation(['gallery']);
+
 
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [galleryData, setGalleryData] = useState<any[]>([]);
@@ -35,40 +36,32 @@ const GalleryPage: React.FC = () => {
     'community',
   ];
 
-  useEffect(() => {
-    const fetchGallery = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('gallery_events')
-        .select('*')
-        .order('date', { ascending: false });
+ useEffect(() => {
+  const fetchGallery = async () => {
+    setLoading(true);
 
-      if (error) console.error('Supabase fetch error:', error.message);
-      else setGalleryData(data || []);
+    const tableName = i18n.language === 'gu' ? 'gallery_events_gu' : 'gallery_events';
 
-      setLoading(false);
-    };
+    const { data, error } = await supabase
+      .from(tableName)
+      .select('*')
+      .order('date', { ascending: false });
 
-    fetchGallery();
-  }, []);
+    if (error) {
+      console.error('Supabase fetch error:', error.message);
+    } else {
+      setGalleryData(data || []);
+    }
+
+    setLoading(false);
+  };
+
+  fetchGallery();
+}, [i18n.language]);
+
  
 
-  useEffect(() => {
-    const fetchGallery = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('gallery_events')
-        .select('*')
-        .order('date', { ascending: false });
-
-      if (error) console.error('Supabase fetch error:', error.message);
-      else setGalleryData(data || []);
-
-      setLoading(false);
-    };
-
-    fetchGallery();
-  }, []);
+  
 
   const filteredImages = useMemo(() => {
     if (selectedFilter === 'all') return galleryData;
@@ -240,10 +233,10 @@ const GalleryPage: React.FC = () => {
                   onTouchMove={handleTouchMove}
                   onTouchEnd={handleTouchEnd}
                 />
-                <div className="absolute top-4 left-4 bg-black/70 text-white text-sm px-3 py-1 rounded-full">
-                  {activeImageIndex + 1} / {lightboxImage.images?.length}
-                  {activeImageIndex + 1} / {lightboxImage.images?.length}
+                <div className="absolute top-4 left-4 bg-black/70 text-white text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full">
+                 {activeImageIndex + 1} / {lightboxImage.images?.length}
                 </div>
+
 
                 {/* Arrows */}
                 <div className="absolute top-1/2 left-2 transform -translate-y-1/2">
