@@ -4,6 +4,9 @@ import { Menu, X, Sun, Moon } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useTranslation } from "react-i18next";
 
+import toast from "react-hot-toast";
+
+
 const Header: React.FC = () => {
   // === State and Hooks ===
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -32,13 +35,36 @@ const Header: React.FC = () => {
     i18n.changeLanguage(i18n.language === "en" ? "gu" : "en");
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.setItem("isLoggedIn", "false");
-    setIsLoggedIn(false);
+  const goodbyeMessages = [
+  "See you soon 👋",
+  "Come back anytime, we’ll miss you ❤️",
+  "Logged out safely 🔒",
+  "Goodbye for now, stay awesome 🌟",
+  "Take care and have a great day 🌸",
+  "See you on your next adventure 🚀",
+  "Thanks for stopping by 🙏",
+  "You’re always welcome back 🏡",
+  "That’s a wrap! 🎬",
+  "Catch you later, alligator 🐊",
+];
+
+const handleLogout = () => {
+  // Clear storage
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.setItem("isLoggedIn", "false");
+  setIsLoggedIn(false);
+
+  // Pick a random farewell
+  const randomMsg = goodbyeMessages[Math.floor(Math.random() * goodbyeMessages.length)];
+  toast.success(randomMsg);
+
+  // Redirect after a short delay
+  setTimeout(() => {
     navigate("/login");
-  };
+  }, 1500);
+};
+
 
   const isActive = (path: string) => location.pathname === path;
 
