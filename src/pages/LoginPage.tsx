@@ -3,12 +3,28 @@ import { Phone, Heart, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 
+import toast from "react-hot-toast";
+
+
 
 const LoginPage: React.FC = () => {
   const { t } = useTranslation("login");
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  const welcomeMessages = [
+  "Welcome back 🎉",
+  "Glad to see you again 🌟",
+  "You’ve logged in successfully 🚀",
+  "Hope you’re having a great day 🌸",
+  "Ready to explore? Let’s go 🔥",
+  "We missed you ❤️",
+  "Back in action! 💪",
+  "Great to have you here 🙌",
+  "Your journey continues 🛤️",
+  "Welcome home 🏡",
+];
 
 
   
@@ -20,18 +36,24 @@ const handleSubmit = async (e: React.FormEvent) => {
   setTimeout(() => {
     const storedUser = localStorage.getItem("user");
     if (!storedUser) {
-      alert("No account found. Please sign up first.");
+      toast.error("No account found. Please sign up first.");
     } else {
       const user = JSON.parse(storedUser);
       const cleanedInput = phone.replace(/\s+/g, "");
       const cleanedStored = user.phone.replace(/\s+/g, "");
 
       if (cleanedInput === cleanedStored || `+91${cleanedInput}` === cleanedStored) {
-        alert("Login successful! Welcome back to Samudaya.");
+        // ✅ Pick a random welcome message
+        const randomMsg = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+        toast.success(randomMsg);
+
         localStorage.setItem("isLoggedIn", "true");
-        navigate("/");
+
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
       } else {
-        alert("Invalid phone number. Please try again.");
+        toast.error("Invalid phone number. Please try again.");
       }
     }
     setIsLoading(false);
