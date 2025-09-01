@@ -87,6 +87,26 @@ const regions = useMemo(() => [
 ], []);
 
 
+
+
+const [session, setSession] = useState<any>(null);
+
+useEffect(() => {
+  supabase.auth.getSession().then(({ data }) => {
+    setSession(data.session);
+  });
+
+  const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
+    setSession(session);
+  });
+
+  return () => {
+    authListener.subscription.unsubscribe();
+  };
+}, []);
+
+
+
   useEffect(() => {
     const fetchMembers = async () => {
       setLoading(true);
@@ -179,6 +199,32 @@ const regions = useMemo(() => [
       month: 'short',
     });
   };
+
+{/*   if (!session) {         //  Redirect to login if not authenticated 
+  return (
+    <div className="py-16 flex items-center justify-center min-h-[60vh]">
+      <div className="backdrop-blur-md bg-white/30 dark:bg-gray-800/30 p-8 rounded-xl shadow-lg text-center">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          Please log in to view this page
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          Members information is only available to registered users.
+        </p>
+        <a
+          href="/login"
+          className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
+        >
+          Log in
+        </a>
+      </div>
+    </div>
+  );
+}
+
+*/}
+
+
+
 
   return (
     <div ref={membersRef} className="py-16">
