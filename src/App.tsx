@@ -21,7 +21,6 @@ import ScrollToTop from './components/Scroll_To_Top';
 
 import { Toaster } from 'react-hot-toast';
 
-import ProtectedRoute from "./components/ProtectedRoute"; // ✅ ProtectedRoute
 
 
 
@@ -53,34 +52,9 @@ function App() {
             <Layout>
               <Routes>
                 <Route path="/" element={<HomePage />} />
-
-                <Route
-  path="/members"
-  element={
-    <ProtectedRoute>
-      <MembersPage />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/gallery"
-  element={
-    <ProtectedRoute>
-      <GalleryPage />
-    </ProtectedRoute>
-  }
-/>
-
-
-
-
-
-
-
-
-                {/* <Route path="/gallery" element={<GalleryPage />} /> */}
+                 <Route path="/gallery" element={<GalleryPage />} /> 
                 <Route path="/events" element={<EventsPage />} />
-               {/* <Route path="/members" element={<MembersPage />} />  */}
+                <Route path="/members" element={<MembersPage />} />  
                 <Route path="/core-team" element={<CoreTeamPage />} />
                 <Route path="/volunteer" element={<VolunteerPage />} />
                 <Route path="/contact" element={<ContactPage />} /> 
