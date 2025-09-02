@@ -89,55 +89,50 @@ const regions = useMemo(() => [
 
 
 
-const [session, setSession] = useState<any>(null);
+const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
 useEffect(() => {
-  supabase.auth.getSession().then(({ data }) => {
-    setSession(data.session);
-  });
-
-  const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-    setSession(session);
-  });
-
-  return () => {
-    authListener.subscription.unsubscribe();
-  };
+  const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+  setIsLoggedIn(loggedIn);
 }, []);
 
 
 
-  useEffect(() => {
-    const fetchMembers = async () => {
-      setLoading(true);
-      setError(null);
 
-      const tableName = i18n.language === 'gu' ? 'members_details_gu' : 'members_details_en';
+ useEffect(() => {
+  if (!isLoggedIn) return; // 🚨 prevent fetching if user not logged in
 
-      try {
-        if (debouncedSearchTerm.trim()) {
-          const { data, error } = await supabase.from(tableName).select('*');
-          if (error) throw error;
-          setAllMembers(data || []);
-        } else {
-          const from = (page - 1) * pageSize;
-          const to = from + pageSize - 1;
-          const { data, error } = await supabase
-            .from(tableName)
-            .select('*')
-            .range(from, to);
-          if (error) throw error;
-          setMembers(data || []);
-        }
-      } catch (err: any) {
-        setError(err.message || 'Failed to load members.');
-      } finally {
-        setLoading(false);
+  const fetchMembers = async () => {
+    setLoading(true);
+    setError(null);
+
+    const tableName = i18n.language === 'gu' ? 'members_details_gu' : 'members_details_en';
+
+    try {
+      if (debouncedSearchTerm.trim()) {
+        const { data, error } = await supabase.from(tableName).select('*');
+        if (error) throw error;
+        setAllMembers(data || []);
+      } else {
+        const from = (page - 1) * pageSize;
+        const to = from + pageSize - 1;
+        const { data, error } = await supabase
+          .from(tableName)
+          .select('*')
+          .range(from, to);
+        if (error) throw error;
+        setMembers(data || []);
       }
-    };
+    } catch (err: any) {
+      setError(err.message || 'Failed to load members.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchMembers();
-  }, [page, debouncedSearchTerm, i18n.language]);
+  fetchMembers();
+}, [page, debouncedSearchTerm, i18n.language, isLoggedIn]);
+
 
   const fuse = new Fuse(allMembers, {
     keys: [
@@ -200,7 +195,18 @@ useEffect(() => {
     });
   };
 
-{/*   if (!session) {         //  Redirect to login if not authenticated 
+
+
+  if (isLoggedIn === null) {
+  return (
+    <div className="flex items-center justify-center py-20">
+      <span className="text-gray-600 dark:text-gray-400">Checking login...</span>
+    </div>
+  );
+}
+
+
+   if (isLoggedIn === false) {         //  Redirect to login if not authenticated 
   return (
     <div className="py-16 flex items-center justify-center min-h-[60vh]">
       <div className="backdrop-blur-md bg-white/30 dark:bg-gray-800/30 p-8 rounded-xl shadow-lg text-center">
@@ -221,7 +227,7 @@ useEffect(() => {
   );
 }
 
-*/}
+
 
 
 

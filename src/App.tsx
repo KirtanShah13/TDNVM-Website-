@@ -21,6 +21,9 @@ import ScrollToTop from './components/Scroll_To_Top';
 
 import { Toaster } from 'react-hot-toast';
 
+import ProtectedRoute from "./components/ProtectedRoute"; // ✅ ProtectedRoute
+
+
 
 
 
@@ -38,7 +41,7 @@ function App() {
          {/* ✅ Global toaster for notifications */}
         <Toaster position="top-center" toastOptions={{ duration: 2000 }} />
 
-        
+
         <Routes>
           {/* Auth Routes (without Layout) */}
           <Route path="/login" element={<LoginPage />} />
@@ -50,9 +53,34 @@ function App() {
             <Layout>
               <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="/gallery" element={<GalleryPage />} />
+
+                <Route
+  path="/members"
+  element={
+    <ProtectedRoute>
+      <MembersPage />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/gallery"
+  element={
+    <ProtectedRoute>
+      <GalleryPage />
+    </ProtectedRoute>
+  }
+/>
+
+
+
+
+
+
+
+
+                {/* <Route path="/gallery" element={<GalleryPage />} /> */}
                 <Route path="/events" element={<EventsPage />} />
-                <Route path="/members" element={<MembersPage />} />
+               {/* <Route path="/members" element={<MembersPage />} />  */}
                 <Route path="/core-team" element={<CoreTeamPage />} />
                 <Route path="/volunteer" element={<VolunteerPage />} />
                 <Route path="/contact" element={<ContactPage />} /> 

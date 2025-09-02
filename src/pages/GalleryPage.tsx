@@ -25,7 +25,7 @@ const GalleryPage: React.FC = () => {
   const [touchEndX, setTouchEndX] = useState(0);
 
 
-  const [session, setSession] = useState<any>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 
   const filters = [
@@ -40,48 +40,39 @@ const GalleryPage: React.FC = () => {
     'community',
   ];
 
- useEffect(() => {
-  const fetchGallery = async () => {
-    setLoading(true);
 
-    const tableName = i18n.language === 'gu' ? 'gallery_events_gu' : 'gallery_events';
-
-    const { data, error } = await supabase
-      .from(tableName)
-      .select('*')
-      .order('date', { ascending: false });
-
-    if (error) {
-      console.error('Supabase fetch error:', error.message);
-    } else {
-      setGalleryData(data || []);
-    }
-
-    setLoading(false);
-  };
-+
-
-  fetchGallery();
-}, [i18n.language]);
+// ✅ Check localStorage for login status
+  useEffect(() => {
+    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    setIsLoggedIn(loggedIn);
+  }, []);
 
 
 
+// ✅ Fetch gallery only if logged in
+  useEffect(() => {
+    if (!isLoggedIn) return;
 
-useEffect(() => {
-  supabase.auth.getSession().then(({ data }) => {
-    setSession(data.session);
-  });
+    const fetchGallery = async () => {
+      setLoading(true);
+      const tableName = i18n.language === 'gu' ? 'gallery_events_gu' : 'gallery_events';
 
-  const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-    setSession(session);
-  });
+      const { data, error } = await supabase
+        .from(tableName)
+        .select('*')
+        .order('date', { ascending: false });
 
-  return () => {
-    authListener.subscription.unsubscribe();
-  };
-}, []);
+      if (error) {
+        console.error('Supabase fetch error:', error.message);
+      } else {
+        setGalleryData(data || []);
+      }
+      setLoading(false);
+    };
 
- 
+    fetchGallery();
+  }, [i18n.language, isLoggedIn]);
+
 
   
 
@@ -163,7 +154,7 @@ useEffect(() => {
 
 
 
-{ /* if (!session) {                        // Redirect to login if not authenticated limiting the user access to gallery
+ if (!isLoggedIn) {                        // Redirect to login if not authenticated limiting the user access to gallery
   return (
     <div className="py-16 flex items-center justify-center min-h-[60vh]">
       <div className="backdrop-blur-md bg-white/30 dark:bg-gray-800/30 p-8 rounded-xl shadow-lg text-center">
@@ -183,7 +174,6 @@ useEffect(() => {
     </div>
   );
 }
-*/}
 
   return (
     <div className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

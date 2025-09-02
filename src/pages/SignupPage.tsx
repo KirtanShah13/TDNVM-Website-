@@ -4,6 +4,9 @@ import { User, Phone, MapPin, Heart, CheckCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
+import toast from "react-hot-toast";
+
+
 
 interface FormData {
   firstName: string;
@@ -38,6 +41,15 @@ const SignupPage: React.FC = () => {
     { value: "other", label: t("states.Other") },
   ];
 
+
+  const signupMessages = [
+  "Successfully signed up. After admin approval you will be able to log in.",
+  "Thank you for signing up! You’ll be able to log in once an admin approves your account.",
+  "Signup complete. Login access will be granted after admin approval.",
+  "You’re all set! An admin will review your signup shortly before you can log in.",
+  "Signup submitted. Please wait for admin approval before logging in.",
+];
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -56,19 +68,25 @@ const handleSubmit = async (e: React.FormEvent) => {
   setIsLoading(true);
   try {
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    // Save user data only
+
     localStorage.setItem("user", JSON.stringify(formData));
 
-    // ✅ Do NOT set isLoggedIn here
-    alert("Signup successful! Please log in.");
-    navigate("/login");
+    // ✅ random toast message
+    const randomMessage = signupMessages[Math.floor(Math.random() * signupMessages.length)];
+    toast.success(randomMessage);
+
+    setTimeout(() => {
+      navigate("/login");
+    }, 1500);
   } catch (error) {
     console.error("Error submitting form:", error);
+    toast.error("Something went wrong. Please try again.");
   } finally {
     setIsLoading(false);
   }
 };
+
+
 
 
 
