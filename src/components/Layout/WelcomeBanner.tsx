@@ -3,27 +3,48 @@ import { useEffect, useState } from 'react';
 const WelcomeBanner = () => {
   const [userFullName, setUserFullName] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isBannerVisible, setIsBannerVisible] = useState(true);
 
+  // Fetch user data from localStorage if logged in
   useEffect(() => {
-    // Fetch the user data from localStorage
     const storedUser = localStorage.getItem('user');
-    
-    if (storedUser) {
-      // If user data exists, parse it
+    const isLoggedInFlag = localStorage.getItem('isLoggedIn') === 'true';
+
+    if (storedUser && isLoggedInFlag) {
       const user = JSON.parse(storedUser);
-      
-      // Construct the full name (first + last name)
       const fullName = `${user.firstName} ${user.lastName}`;
-      
-      // Update state
       setUserFullName(fullName);
-      setIsLoggedIn(true); // Mark user as logged in
+      setIsLoggedIn(true); // User is logged in
     }
   }, []);
 
+  // Scroll listener to retract/show the banner
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    const handleScroll = () => {
+      if (window.scrollY > lastScrollY) {
+        // If scrolling down, hide the banner
+        setIsBannerVisible(false);
+      } else {
+        // If scrolling up, show the banner
+        setIsBannerVisible(true);
+      }
+      lastScrollY = window.scrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // If not logged in, don't render the banner
+  if (!isLoggedIn) return null;
+
   return (
-    <div className="text-center bg-white dark:bg-gray-800 text-gray-800 dark:text-white py-3 shadow mt-16 z-40 relative">
-      {/* Display full name or fallback to 'Temporary User' */}
+    <div
+      className={`text-center bg-white dark:bg-gray-800 text-gray-800 dark:text-white py-3 shadow mt-16 z-40 relative transition-all duration-300 ${
+        isBannerVisible ? 'transform translate-y-0' : 'transform translate-y-[-100%]'
+      }`}
+    >
       👋 Welcome {userFullName || 'Temporary User'}
     </div>
   );
