@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, Users, Clock } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, Share2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/SupabaseClient';
 import { useTranslation } from 'react-i18next';
+import toast from "react-hot-toast";
 
 
 const EventsPage: React.FC = () => {
@@ -118,6 +119,20 @@ useEffect(() => {
     });
   };
 
+
+
+  // Share handler
+const handleShare = async (eventId: string) => {
+  const eventUrl = `${window.location.origin}/events/${eventId}`;
+  try {
+    await navigator.clipboard.writeText(eventUrl);
+    toast.success("🔗 Link copied! You can paste it to share.");
+  } catch (err) {
+    toast.error("❌ Failed to copy link.");
+  }
+};
+
+
   const EventCard = ({ event, isPast = false }: { event: any; isPast?: boolean }) => (
     <div className="card overflow-hidden group">
       <div className="relative">
@@ -159,13 +174,26 @@ useEffect(() => {
         </div>
 
         {!isPast ? (
-          <div className="flex space-x-2">
-            <button className="btn-primary flex-1">RSVP Now</button>
-            <button className="btn-outline">Share</button>
-          </div>
-        ) : (
-          <button className="btn-outline w-full">View Photos</button>
-        )}
+  <div className="flex space-x-2">
+    <button className="btn-primary flex-1">RSVP Now</button>
+    <button 
+      className="btn-outline flex items-center justify-center space-x-1"
+      onClick={() => handleShare(event.id)}
+    >
+      <Share2 className="h-4 w-4" />
+      <span>Share</span>
+    </button>
+  </div>
+) : (
+  <button 
+    className="btn-outline flex items-center justify-center space-x-1"
+    onClick={() => handleShare(event.id)}
+  >
+    <Share2 className="h-4 w-4" />
+    <span>Share</span>
+  </button>
+)}
+
       </div>
     </div>
   );
@@ -189,10 +217,10 @@ useEffect(() => {
 
         {/* Tab Navigation */}
 <div className="flex justify-center mb-8">
-  <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+  <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-1 flex flex-col sm:flex-row w-full max-w-xs sm:max-w-md">
     <button
       onClick={() => setActiveTab('upcoming')}
-      className={`px-6 py-2 rounded-md font-medium transition-colors ${
+      className={`flex-1 px-4 py-2 rounded-md font-medium transition-colors text-center ${
         activeTab === 'upcoming'
           ? 'bg-primary-500 text-white'
           : 'text-gray-600 dark:text-gray-400 hover:text-primary-600'
@@ -202,7 +230,7 @@ useEffect(() => {
     </button>
     <button
       onClick={() => setActiveTab('past')}
-      className={`px-6 py-2 rounded-md font-medium transition-colors ${
+      className={`flex-1 px-4 py-2 rounded-md font-medium transition-colors text-center ${
         activeTab === 'past'
           ? 'bg-primary-500 text-white'
           : 'text-gray-600 dark:text-gray-400 hover:text-primary-600'
@@ -212,6 +240,7 @@ useEffect(() => {
     </button>
   </div>
 </div>
+
 
         {/* Loading/Error */}
        {loading ? (

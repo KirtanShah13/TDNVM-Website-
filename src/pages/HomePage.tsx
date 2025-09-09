@@ -153,8 +153,8 @@ const stats = [
   return (
     <div className="animate-fade-in">
       {/* Hero Section */}
-<section className="relative bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-600 text-white overflow-hidden">
-  <div className="absolute inset-0 bg-black/20"></div>
+<section className="relative bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-600 text-white overflow-hidden">  // bg-gradient-to-tr from-yellow-400 via-red-500 to-pink-600
+  <div className="absolute inset-0 bg-black/20"></div>    // bg-gradient-to-tr from-pink-600 via-indigo-600 to-sky-500
   <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
       <div className="animate-slide-up">
