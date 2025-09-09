@@ -121,9 +121,9 @@ useEffect(() => {
 
 
 
-  // Share handler
-const handleShare = async (eventId: string) => {
-  const eventUrl = `${window.location.origin}/events/${eventId}`;
+// Share handler (simple: always share the events list)
+const handleShare = async () => {
+  const eventUrl = `${window.location.origin}/events`; 
   try {
     await navigator.clipboard.writeText(eventUrl);
     toast.success("🔗 Link copied! You can paste it to share.");
@@ -131,6 +131,7 @@ const handleShare = async (eventId: string) => {
     toast.error("❌ Failed to copy link.");
   }
 };
+
 
 
   const EventCard = ({ event, isPast = false }: { event: any; isPast?: boolean }) => (
@@ -178,7 +179,8 @@ const handleShare = async (eventId: string) => {
     <button className="btn-primary flex-1">RSVP Now</button>
     <button 
       className="btn-outline flex items-center justify-center space-x-1"
-      onClick={() => handleShare(event.id)}
+      onClick={handleShare}
+
     >
       <Share2 className="h-4 w-4" />
       <span>Share</span>
@@ -187,7 +189,8 @@ const handleShare = async (eventId: string) => {
 ) : (
   <button 
     className="btn-outline flex items-center justify-center space-x-1"
-    onClick={() => handleShare(event.id)}
+    onClick={handleShare}
+
   >
     <Share2 className="h-4 w-4" />
     <span>Share</span>
