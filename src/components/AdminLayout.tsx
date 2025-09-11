@@ -41,7 +41,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       {/* Sidebar */}
       <aside
         className={`
-          fixed lg:static top-0 left-0 h-full z-40 flex flex-col bg-white dark:bg-gray-800 shadow-md transition-all duration-300
+          fixed lg:static top-0 left-0 min-h-screen z-40 flex flex-col bg-white dark:bg-gray-800 shadow-md transition-all duration-300
           ${isMobileOpen ? "translate-x-0 w-64" : "-translate-x-full w-64"} 
           lg:translate-x-0 ${isCollapsed ? "lg:w-20" : "lg:w-64"}
         `}
@@ -138,7 +138,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             handleLogout();
             setIsMobileOpen(false);
           }}
-          className={`mt-4 mx-2 flex items-center ${
+          className={`mt-4 mb-2 mx-2 flex items-center ${
             isCollapsed ? "justify-center" : "gap-3"
           } px-3 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md`}
         >

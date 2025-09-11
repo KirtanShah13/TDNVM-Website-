@@ -11,11 +11,10 @@ interface Event {
   category: string;
   time: string;
   location: string;
-  status: string;
+  thumbnail: string; // changed from status
 }
 
 const categoryOptions = ["Cultural", "Sports", "Technical", "Academic", "Other"];
-const statusOptions = ["Upcoming", "Ongoing", "Completed"];
 
 const EventsAdmin: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -26,7 +25,7 @@ const EventsAdmin: React.FC = () => {
     category: "Cultural",
     time: "",
     location: "",
-    status: "Upcoming",
+    thumbnail: "",
   });
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -65,7 +64,7 @@ const EventsAdmin: React.FC = () => {
       category: "Cultural",
       time: "",
       location: "",
-      status: "Upcoming",
+      thumbnail: "",
     });
     setErrors({});
   };
@@ -109,7 +108,6 @@ const EventsAdmin: React.FC = () => {
               <input
                 id="date"
                 type="date"
-                placeholder="6:00 PM or TBD"
                 value={newEvent.date}
                 onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
                 className="input w-full"
@@ -179,23 +177,19 @@ const EventsAdmin: React.FC = () => {
             </div>
 
             <div>
-              <label htmlFor="status" className="block mb-1 text-sm font-medium">
-                Status
+              <label htmlFor="thumbnail" className="block mb-1 text-sm font-medium">
+                Thumbnail Link
               </label>
-              <select
-                id="status"
-                value={newEvent.status}
+              <input
+                id="thumbnail"
+                type="text"
+                placeholder="Paste thumbnail URL"
+                value={newEvent.thumbnail}
                 onChange={(e) =>
-                  setNewEvent({ ...newEvent, status: e.target.value })
+                  setNewEvent({ ...newEvent, thumbnail: e.target.value })
                 }
                 className="input w-full"
-              >
-                {statusOptions.map((st) => (
-                  <option key={st} value={st}>
-                    {st}
-                  </option>
-                ))}
-              </select>
+              />
             </div>
           </div>
 
@@ -244,8 +238,15 @@ const EventsAdmin: React.FC = () => {
                   {event.date} — {event.description}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  ⏰ {event.time} | 📍 {event.location} | 📌 {event.status}
+                  ⏰ {event.time} | 📍 {event.location}
                 </p>
+                {event.thumbnail && (
+                  <img
+                    src={event.thumbnail}
+                    alt={`${event.title} thumbnail`}
+                    className="mt-2 w-32 h-20 object-cover rounded-lg"
+                  />
+                )}
               </div>
               <div className="flex gap-2">
                 <button
@@ -322,19 +323,15 @@ const EventsAdmin: React.FC = () => {
                 }
                 className="input mb-2 w-full"
               />
-              <select
-                value={editingEvent.status}
+              <input
+                type="text"
+                placeholder="Paste thumbnail URL"
+                value={editingEvent.thumbnail}
                 onChange={(e) =>
-                  setEditingEvent({ ...editingEvent, status: e.target.value })
+                  setEditingEvent({ ...editingEvent, thumbnail: e.target.value })
                 }
                 className="input mb-2 w-full"
-              >
-                {statusOptions.map((st) => (
-                  <option key={st} value={st}>
-                    {st}
-                  </option>
-                ))}
-              </select>
+              />
               <textarea
                 value={editingEvent.description}
                 onChange={(e) =>
