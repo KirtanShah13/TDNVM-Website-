@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Phone, Heart, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-
 import toast from "react-hot-toast";
 
-
+// ✅ Define admin phone numbers here
+const ADMIN_PHONES = ["+919173118993"]; // replace with real admin numbers
 
 const LoginPage: React.FC = () => {
   const { t } = useTranslation("login");
@@ -14,58 +14,64 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const welcomeMessages = [
-  "Welcome back 🎉",
-  "Glad to see you again 🌟",
-  "You’ve logged in successfully 🚀",
-  "Hope you’re having a great day 🌸",
-  "Ready to explore? Let’s go 🔥",
-  "We missed you ❤️",
-  "Back in action! 💪",
-  "Great to have you here 🙌",
-  "Your journey continues 🛤️",
-  "Welcome home 🏡",
-];
+    "Welcome back 🎉",
+    "Glad to see you again 🌟",
+    "You’ve logged in successfully 🚀",
+    "Hope you’re having a great day 🌸",
+    "Ready to explore? Let’s go 🔥",
+    "We missed you ❤️",
+    "Back in action! 💪",
+    "Great to have you here 🙌",
+    "Your journey continues 🛤️",
+    "Welcome home 🏡",
+  ];
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
 
-  
-
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
-
-  setTimeout(() => {
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-      toast.error("No account found. Please sign up first.");
-    } else {
-      const user = JSON.parse(storedUser);
-      const cleanedInput = phone.replace(/\s+/g, "");
-      const cleanedStored = user.phone.replace(/\s+/g, "");
-
-      if (cleanedInput === cleanedStored || `+91${cleanedInput}` === cleanedStored) {
-        // ✅ Pick a random welcome message
-        const randomMsg = welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
-        toast.success(randomMsg);
-
-        localStorage.setItem("isLoggedIn", "true");
-
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
+    setTimeout(() => {
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) {
+        toast.error("No account found. Please sign up first.");
       } else {
-        toast.error("Invalid phone number. Please try again.");
+        const user = JSON.parse(storedUser);
+        const cleanedInput = phone.replace(/\s+/g, "");
+        const cleanedStored = user.phone.replace(/\s+/g, "");
+
+        if (
+          cleanedInput === cleanedStored ||
+          `+91${cleanedInput}` === cleanedStored
+        ) {
+          // ✅ Check if this user is admin
+          const isAdmin =
+            ADMIN_PHONES.includes(cleanedInput) ||
+            ADMIN_PHONES.includes(`+91${cleanedInput}`);
+
+          // ✅ Save role in localStorage
+          localStorage.setItem("isAdmin", isAdmin ? "true" : "false");
+          localStorage.setItem("isLoggedIn", "true");
+
+          // ✅ Toast message
+          const randomMsg =
+            welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+          toast.success(randomMsg);
+
+          // ✅ Redirect based on role
+          const redirectPath = isAdmin ? "/admin" : "/";
+          setTimeout(() => {
+            navigate(redirectPath);
+          }, 1500);
+        } else {
+          toast.error("Invalid phone number. Please try again.");
+        }
       }
-    }
-    setIsLoading(false);
-  }, 1000);
-};
-
-
-
+      setIsLoading(false);
+    }, 1000);
+  };
 
   return (
-   <div className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-
+    <div className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-flex items-center space-x-2 mb-6">
@@ -79,9 +85,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             {t("title")}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            {t("subtitle")}
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">{t("subtitle")}</p>
         </div>
 
         <div className="card p-8">

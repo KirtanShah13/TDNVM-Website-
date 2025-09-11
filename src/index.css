@@ -69,3 +69,21 @@
   max-height: 90%;
   object-fit: contain;
 }
+
+
+/* ✅ Tailwind helper classes */
+.input {
+  @apply w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white;
+}
+.btn-primary {
+  @apply bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition;
+}
+.btn-outline {
+  @apply border px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition;
+}
+.btn-danger {
+  @apply bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition;
+}
+.card {
+  @apply rounded-2xl shadow;
+}

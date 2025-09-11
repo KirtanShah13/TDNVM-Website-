@@ -69,6 +69,19 @@ const handleSubmit = async (e: React.FormEvent) => {
   try {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
+    // ✅ Normalize phone (always store with +91 prefix)
+    const cleanedPhone = formData.phone.replace(/\s+/g, "");
+    const normalizedPhone = cleanedPhone.startsWith("+91")
+      ? cleanedPhone
+      : `+91${cleanedPhone}`;
+
+    // ✅ Save user with normalized phone
+    const userData = {
+      ...formData,
+      phone: normalizedPhone,
+    };
+    localStorage.setItem("user", JSON.stringify(userData));
+
     localStorage.setItem("user", JSON.stringify(formData));
 
     // ✅ random toast message
