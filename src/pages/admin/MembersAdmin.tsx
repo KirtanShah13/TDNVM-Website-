@@ -8,14 +8,7 @@ interface Member {
   name: string;
   address: string;
   dob: string;
-  avatar: string;
 }
-
-// Function to generate random avatar (using DiceBear API for placeholders)
-const getRandomAvatar = () => {
-  const seed = Math.floor(Math.random() * 10000);
-  return `https://api.dicebear.com/7.x/identicon/svg?seed=${seed}`;
-};
 
 const MembersAdmin: React.FC = () => {
   const [members, setMembers] = useState<Member[]>([]);
@@ -35,7 +28,7 @@ const MembersAdmin: React.FC = () => {
     if (!formData.name || !formData.address || !formData.dob) return;
     setMembers([
       ...members,
-      { id: Date.now(), ...formData, avatar: getRandomAvatar() },
+      { id: Date.now(), ...formData },
     ]);
     setFormData({ name: "", address: "", dob: "" });
   };
@@ -108,11 +101,9 @@ const MembersAdmin: React.FC = () => {
               key={member.id}
               className="relative group bg-white dark:bg-gray-800 p-4 rounded-2xl shadow flex flex-col items-center"
             >
-              <img
-                src={member.avatar}
-                alt={member.name}
-                className="w-24 h-24 rounded-full object-cover mb-3"
-              />
+              <div className="w-24 h-24 rounded-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 mb-3">
+                <User className="h-12 w-12 text-gray-500" />
+              </div>
               <h3 className="text-lg font-semibold">{member.name}</h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 {member.address}
