@@ -1,10 +1,12 @@
 // project/src/pages/admin/MembersAdmin.tsx
-import React, { useState } from "react";
-import { Plus, Trash2, User } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Plus, Trash2, User, Edit } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import AdminLayout from "../../components/AdminLayout";
 
 interface Member {
-  id: number;
+  id: string;
   name: string;
   address: string;
   dob: string;
@@ -17,6 +19,19 @@ const MembersAdmin: React.FC = () => {
     address: "",
     dob: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [editId, setEditId] = useState<string | null>(null);
+
+  // ✅ Load from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem("members");
+    if (stored) setMembers(JSON.parse(stored));
+  }, []);
+
+  // ✅ Save to localStorage
+  useEffect(() => {
+    localStorage.setItem("members", JSON.stringify(members));
+  }, [members]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -24,17 +39,50 @@ const MembersAdmin: React.FC = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleAddMember = () => {
-    if (!formData.name || !formData.address || !formData.dob) return;
-    setMembers([
-      ...members,
-      { id: Date.now(), ...formData },
-    ]);
-    setFormData({ name: "", address: "", dob: "" });
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.address.trim()) newErrors.address = "Address is required";
+    if (!formData.dob.trim()) newErrors.dob = "Date of birth is required";
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      toast.error("Please fix the highlighted errors");
+      return false;
+    }
+    return true;
   };
 
-  const handleDelete = (id: number) => {
+  const handleAddMember = () => {
+    if (!validateForm()) return;
+
+    setMembers([...members, { id: Date.now().toString(), ...formData }]);
+    setFormData({ name: "", address: "", dob: "" });
+    toast.success("Member added successfully!");
+  };
+
+  const handleEdit = (member: Member) => {
+    setFormData({ name: member.name, address: member.address, dob: member.dob });
+    setEditId(member.id);
+  };
+
+  const handleUpdateMember = () => {
+    if (!validateForm() || !editId) return;
+
+    setMembers(
+      members.map((member) =>
+        member.id === editId ? { id: editId, ...formData } : member
+      )
+    );
+    setFormData({ name: "", address: "", dob: "" });
+    setEditId(null);
+    toast.success("Member updated successfully!");
+  };
+
+  const handleDelete = (id: string) => {
     setMembers(members.filter((member) => member.id !== id));
+    toast.info("Member deleted");
   };
 
   return (
@@ -44,9 +92,11 @@ const MembersAdmin: React.FC = () => {
           Manage Members
         </h1>
 
-        {/* Add Member Form */}
+        {/* Add/Edit Member Form */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow mb-8">
-          <h2 className="text-lg font-semibold mb-4">Add New Member</h2>
+          <h2 className="text-lg font-semibold mb-4">
+            {editId ? "Edit Member" : "Add New Member"}
+          </h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="block text-sm font-medium mb-1">Full Name</label>
@@ -58,6 +108,7 @@ const MembersAdmin: React.FC = () => {
                 placeholder="Enter full name"
                 className="input w-full"
               />
+              {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
             </div>
 
             <div>
@@ -70,12 +121,13 @@ const MembersAdmin: React.FC = () => {
                 placeholder="Enter address"
                 className="input w-full"
               />
+              {errors.address && (
+                <p className="text-red-600 text-sm">{errors.address}</p>
+              )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">
-                Date of Birth
-              </label>
+              <label className="block text-sm font-medium mb-1">Date of Birth</label>
               <input
                 type="date"
                 name="dob"
@@ -83,14 +135,15 @@ const MembersAdmin: React.FC = () => {
                 onChange={handleChange}
                 className="input w-full"
               />
+              {errors.dob && <p className="text-red-600 text-sm">{errors.dob}</p>}
             </div>
           </div>
 
           <button
-            onClick={handleAddMember}
+            onClick={editId ? handleUpdateMember : handleAddMember}
             className="mt-6 btn-primary flex items-center gap-2"
           >
-            <Plus className="h-4 w-4" /> Add Member
+            <Plus className="h-4 w-4" /> {editId ? "Update Member" : "Add Member"}
           </button>
         </div>
 
@@ -105,21 +158,39 @@ const MembersAdmin: React.FC = () => {
                 <User className="h-12 w-12 text-gray-500" />
               </div>
               <h3 className="text-lg font-semibold">{member.name}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {member.address}
-              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">{member.address}</p>
               <p className="text-sm text-gray-500">{member.dob}</p>
 
-              <button
-                onClick={() => handleDelete(member.id)}
-                className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={() => handleEdit(member)}
+                  className="btn-secondary flex items-center gap-1"
+                >
+                  <Edit className="h-4 w-4" /> Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(member.id)}
+                  className="btn-danger flex items-center gap-1"
+                >
+                  <Trash2 className="h-4 w-4" /> Delete
+                </button>
+              </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Toast notifications */}
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </AdminLayout>
   );
 };

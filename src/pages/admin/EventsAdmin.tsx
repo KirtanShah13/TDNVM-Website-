@@ -1,133 +1,131 @@
 // project/src/pages/admin/EventsAdmin.tsx
-import React, { useState, useEffect, useRef } from "react";
-import { Plus, Trash2, Edit, X } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Plus, Trash2, Edit } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import AdminLayout from "../../components/AdminLayout";
 
 interface Event {
-  id: number;
+  id: string;
   title: string;
   date: string;
+  time: string;
   description: string;
   category: string;
-  time: string;
+  thumbnail: string;
   location: string;
-  thumbnail?: string;
 }
-
-type NewEvent = Omit<Event, "id">;
-
-const categoryOptions = ["Cultural", "Sports", "Technical", "Academic", "Other"];
 
 const EventsAdmin: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
-  const [newEvent, setNewEvent] = useState<NewEvent>({
+  const [formData, setFormData] = useState<Omit<Event, "id">>({
     title: "",
     date: "",
-    description: "",
-    category: "Cultural",
     time: "",
-    location: "",
+    description: "",
+    category: "",
     thumbnail: "",
+    location: "",
   });
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-  const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
-  const [alert, setAlert] = useState<{ type: "success" | "error"; msg: string } | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [editId, setEditId] = useState<string | null>(null);
 
-  const modalRef = useRef<HTMLDivElement>(null);
-
-  // Auto-hide alert after 3s
+  // ✅ Load from localStorage
   useEffect(() => {
-    if (alert) {
-      const timer = setTimeout(() => setAlert(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [alert]);
+    const stored = localStorage.getItem("events");
+    if (stored) setEvents(JSON.parse(stored));
+  }, []);
 
-  // Trap focus inside modal when open
+  // ✅ Save to localStorage
   useEffect(() => {
-    if (editingEvent && modalRef.current) {
-      const focusable = modalRef.current.querySelectorAll<HTMLElement>("input, textarea, select, button");
-      focusable[0]?.focus();
+    localStorage.setItem("events", JSON.stringify(events));
+  }, [events]);
 
-      const handleKey = (e: KeyboardEvent) => {
-        if (e.key === "Escape") setEditingEvent(null);
-        if (e.key === "Tab") {
-          const first = focusable[0];
-          const last = focusable[focusable.length - 1];
-          if (e.shiftKey && document.activeElement === first) {
-            e.preventDefault();
-            last.focus();
-          } else if (!e.shiftKey && document.activeElement === last) {
-            e.preventDefault();
-            first.focus();
-          }
-        }
-      };
-      document.addEventListener("keydown", handleKey);
-      return () => document.removeEventListener("keydown", handleKey);
-    }
-  }, [editingEvent]);
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  const validateForm = (data: NewEvent) => {
-    const newErrors: { [key: string]: string } = {};
-    if (!data.title) newErrors.title = "Title is required";
-    if (!data.date) newErrors.date = "Date is required";
-    if (!data.location) newErrors.location = "Location is required";
-
-    if (data.thumbnail && !/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)$/i.test(data.thumbnail)) {
-      newErrors.thumbnail = "Thumbnail must be a valid image URL";
-    }
-
-    if (data.time && !/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]( ?[APMapm]{2})?$/.test(data.time) && data.time.toLowerCase() !== "tbd") {
-      newErrors.time = "Time must be in HH:mm format or 'TBD'";
-    }
-
-    if (data.description.length > 500) {
-      newErrors.description = "Description cannot exceed 500 characters";
-    }
+  // ✅ Validate Form
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.title.trim()) newErrors.title = "Title is required";
+    if (!formData.date.trim()) newErrors.date = "Date is required";
+    if (!formData.time.trim()) newErrors.time = "Time is required";
+    if (!formData.description.trim()) newErrors.description = "Description is required";
+    if (!formData.category.trim()) newErrors.category = "Category is required";
+    if (!formData.thumbnail.trim()) newErrors.thumbnail = "Thumbnail URL is required";
+    if (!formData.location.trim()) newErrors.location = "Location is required";
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+
+    if (Object.keys(newErrors).length > 0) {
+      toast.error("Please fix the highlighted errors");
+      return false;
+    }
+    return true;
   };
 
+  // ✅ Add Event
   const handleAddEvent = () => {
-    if (!validateForm(newEvent)) return;
-    setEvents([...events, { id: Date.now(), ...newEvent }]);
-    resetForm();
-    setAlert({ type: "success", msg: "Event added successfully!" });
-  };
+    if (!validateForm()) return;
 
-  const handleDelete = (id: number) => {
-    setEvents(events.filter((event) => event.id !== id));
-    setDeleteConfirmId(null);
-    setAlert({ type: "success", msg: "Event deleted." });
-  };
+    const newEvent: Event = { id: Date.now().toString(), ...formData };
+    setEvents([...events, newEvent]);
 
-  const handleUpdateEvent = () => {
-    if (!editingEvent) return;
-    if (!validateForm(editingEvent)) return;
-    setEvents(events.map((ev) => (ev.id === editingEvent.id ? editingEvent : ev)));
-    setEditingEvent(null);
-    setAlert({ type: "success", msg: "Event updated successfully!" });
-  };
-
-  const resetForm = () => {
-    setNewEvent({
+    setFormData({
       title: "",
       date: "",
-      description: "",
-      category: "Cultural",
       time: "",
-      location: "",
+      description: "",
+      category: "",
       thumbnail: "",
+      location: "",
     });
-    setErrors({});
+
+    toast.success("Event added successfully!");
   };
 
-  const sortedEvents = [...events].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
+  // ✅ Update Event
+  const handleUpdateEvent = () => {
+    if (!validateForm() || !editId) return;
+
+    setEvents(events.map((event) => (event.id === editId ? { id: editId, ...formData } : event)));
+
+    setFormData({
+      title: "",
+      date: "",
+      time: "",
+      description: "",
+      category: "",
+      thumbnail: "",
+      location: "",
+    });
+    setEditId(null);
+
+    toast.success("Event updated successfully!");
+  };
+
+  // ✅ Delete Event
+  const handleDelete = (id: string) => {
+    setEvents(events.filter((event) => event.id !== id));
+    toast.info("Event deleted");
+  };
+
+  // ✅ Edit Event
+  const handleEdit = (event: Event) => {
+    setFormData({
+      title: event.title,
+      date: event.date,
+      time: event.time,
+      description: event.description,
+      category: event.category,
+      thumbnail: event.thumbnail,
+      location: event.location,
+    });
+    setEditId(event.id);
+  };
 
   return (
     <AdminLayout>
@@ -136,181 +134,161 @@ const EventsAdmin: React.FC = () => {
           Manage Events
         </h1>
 
-        {alert && (
-          <div
-            className={`mb-4 p-3 rounded-lg ${
-              alert.type === "success" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-            }`}
-          >
-            {alert.msg}
-          </div>
-        )}
-
-        {/* Add new event */}
+        {/* Add / Edit Event Form */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow mb-8">
-          <h2 className="text-lg font-semibold mb-4">Add New Event</h2>
-          <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          <h2 className="text-lg font-semibold mb-4">
+            {editId ? "Edit Event" : "Add New Event"}
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
             {/* Title */}
             <div>
-              <label htmlFor="title" className="block mb-1 text-sm font-medium">
-                Event Title
-              </label>
+              <label className="block text-sm font-medium mb-1">Title</label>
               <input
-                id="title"
                 type="text"
-                placeholder="Enter title"
-                value={newEvent.title}
-                onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Event title"
                 className="input w-full"
               />
-              {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title}</p>}
+              {errors.title && <p className="text-red-600 text-sm">{errors.title}</p>}
             </div>
 
             {/* Date */}
             <div>
-              <label htmlFor="date" className="block mb-1 text-sm font-medium">
-                Date
-              </label>
+              <label className="block text-sm font-medium mb-1">Date</label>
               <input
-                id="date"
                 type="date"
-                value={newEvent.date}
-                onChange={(e) => setNewEvent({ ...newEvent, date: e.target.value })}
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
                 className="input w-full"
               />
-              {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
-            </div>
-
-            {/* Category */}
-            <div>
-              <label htmlFor="category" className="block mb-1 text-sm font-medium">
-                Category
-              </label>
-              <select
-                id="category"
-                value={newEvent.category}
-                onChange={(e) => setNewEvent({ ...newEvent, category: e.target.value })}
-                className="input w-full"
-              >
-                {categoryOptions.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
+              {errors.date && <p className="text-red-600 text-sm">{errors.date}</p>}
             </div>
 
             {/* Time */}
             <div>
-              <label htmlFor="time" className="block mb-1 text-sm font-medium">
-                Time
-              </label>
+              <label className="block text-sm font-medium mb-1">Time</label>
               <input
-                id="time"
-                type="text"
-                placeholder="e.g. 18:00 or TBD"
-                value={newEvent.time}
-                onChange={(e) => setNewEvent({ ...newEvent, time: e.target.value })}
+                type="time"
+                name="time"
+                value={formData.time}
+                onChange={handleChange}
                 className="input w-full"
               />
-              {errors.time && <p className="text-red-500 text-xs mt-1">{errors.time}</p>}
+              {errors.time && <p className="text-red-600 text-sm">{errors.time}</p>}
             </div>
 
-            {/* Location */}
+            {/* Category */}
             <div>
-              <label htmlFor="location" className="block mb-1 text-sm font-medium">
-                Location
-              </label>
-              <input
-                id="location"
-                type="text"
-                placeholder="Enter location"
-                value={newEvent.location}
-                onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
+              <label className="block text-sm font-medium mb-1">Category</label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
                 className="input w-full"
-              />
-              {errors.location && <p className="text-red-500 text-xs mt-1">{errors.location}</p>}
+              >
+                <option value="">Select category</option>
+                <option value="Conference">Conference</option>
+                <option value="Workshop">Workshop</option>
+                <option value="Meetup">Meetup</option>
+                <option value="Webinar">Webinar</option>
+              </select>
+              {errors.category && <p className="text-red-600 text-sm">{errors.category}</p>}
             </div>
 
             {/* Thumbnail */}
             <div>
-              <label htmlFor="thumbnail" className="block mb-1 text-sm font-medium">
-                Thumbnail Link
-              </label>
+              <label className="block text-sm font-medium mb-1">Thumbnail URL</label>
               <input
-                id="thumbnail"
                 type="text"
-                placeholder="Paste thumbnail URL"
-                value={newEvent.thumbnail}
-                onChange={(e) => setNewEvent({ ...newEvent, thumbnail: e.target.value })}
+                name="thumbnail"
+                value={formData.thumbnail}
+                onChange={handleChange}
+                placeholder="https://example.com/image.jpg"
                 className="input w-full"
               />
-              {errors.thumbnail && <p className="text-red-500 text-xs mt-1">{errors.thumbnail}</p>}
+              {errors.thumbnail && (
+                <p className="text-red-600 text-sm">{errors.thumbnail}</p>
+              )}
+            </div>
+
+            {/* Location */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Location</label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                placeholder="Event location"
+                className="input w-full"
+              />
+              {errors.location && (
+                <p className="text-red-600 text-sm">{errors.location}</p>
+              )}
+            </div>
+
+            {/* Description */}
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium mb-1">Description</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Event details"
+                rows={3}
+                className="input w-full"
+              />
+              {errors.description && (
+                <p className="text-red-600 text-sm">{errors.description}</p>
+              )}
             </div>
           </div>
 
-          {/* Description */}
-          <div className="mt-4">
-            <label htmlFor="description" className="block mb-1 text-sm font-medium">
-              Description
-            </label>
-            <textarea
-              id="description"
-              placeholder="Event details..."
-              value={newEvent.description}
-              onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-              className="input w-full"
-              rows={3}
-            />
-            {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
-          </div>
-
           <button
-            onClick={handleAddEvent}
-            className="btn-primary mt-4 flex items-center gap-2"
-            aria-label="Add new event"
+            onClick={editId ? handleUpdateEvent : handleAddEvent}
+            className="mt-6 btn-primary flex items-center gap-2"
           >
-            <Plus className="h-4 w-4" /> Add Event
+            <Plus className="h-4 w-4" /> {editId ? "Update Event" : "Add Event"}
           </button>
         </div>
 
-        {/* Events list */}
-        <div className="grid gap-4">
-          {sortedEvents.map((event) => (
+        {/* Events List */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {events.map((event) => (
             <div
               key={event.id}
-              className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+              className="relative bg-white dark:bg-gray-800 p-6 rounded-2xl shadow flex flex-col"
             >
-              <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">
-                  {event.title} <span className="text-sm text-gray-500">({event.category})</span>
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {event.date} — {event.description}
-                </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  ⏰ {event.time} | 📍 {event.location}
-                </p>
-                {event.thumbnail && (
-                  <img
-                    src={event.thumbnail}
-                    alt={`${event.title} thumbnail`}
-                    className="mt-2 w-32 h-20 object-cover rounded-lg"
-                  />
-                )}
-              </div>
-              <div className="flex gap-2">
+              {event.thumbnail && (
+                <img
+                  src={event.thumbnail}
+                  alt={event.title}
+                  className="w-full h-40 object-cover rounded-md mb-3"
+                />
+              )}
+              <h3 className="text-lg font-semibold">{event.title}</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {event.date} at {event.time}
+              </p>
+              <p className="text-sm text-gray-500 mt-1">{event.description}</p>
+              <p className="text-sm text-gray-500 mt-1">📍 {event.location}</p>
+              <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
+                Category: {event.category}
+              </p>
+
+              <div className="flex gap-2 mt-4">
                 <button
-                  onClick={() => setEditingEvent(event)}
+                  onClick={() => handleEdit(event)}
                   className="btn-secondary flex items-center gap-1"
-                  aria-label={`Edit event ${event.title}`}
                 >
                   <Edit className="h-4 w-4" /> Edit
                 </button>
                 <button
-                  onClick={() => setDeleteConfirmId(event.id)}
+                  onClick={() => handleDelete(event.id)}
                   className="btn-danger flex items-center gap-1"
-                  aria-label={`Delete event ${event.title}`}
                 >
                   <Trash2 className="h-4 w-4" /> Delete
                 </button>
@@ -318,97 +296,19 @@ const EventsAdmin: React.FC = () => {
             </div>
           ))}
         </div>
-
-        {/* Edit Modal */}
-        {editingEvent && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center px-2">
-            <div
-              ref={modalRef}
-              className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-md relative"
-            >
-              <button
-                onClick={() => setEditingEvent(null)}
-                className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 dark:hover:text-white"
-                aria-label="Close edit modal"
-              >
-                <X className="h-5 w-5" />
-              </button>
-              <h2 className="text-lg font-semibold mb-4">Edit Event</h2>
-
-              <input
-                type="text"
-                value={editingEvent.title}
-                onChange={(e) => setEditingEvent({ ...editingEvent, title: e.target.value })}
-                className="input mb-2 w-full"
-              />
-              <input
-                type="date"
-                value={editingEvent.date}
-                onChange={(e) => setEditingEvent({ ...editingEvent, date: e.target.value })}
-                className="input mb-2 w-full"
-              />
-              <select
-                value={editingEvent.category}
-                onChange={(e) => setEditingEvent({ ...editingEvent, category: e.target.value })}
-                className="input mb-2 w-full"
-              >
-                {categoryOptions.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="text"
-                value={editingEvent.time}
-                onChange={(e) => setEditingEvent({ ...editingEvent, time: e.target.value })}
-                className="input mb-2 w-full"
-              />
-              <input
-                type="text"
-                value={editingEvent.location}
-                onChange={(e) => setEditingEvent({ ...editingEvent, location: e.target.value })}
-                className="input mb-2 w-full"
-              />
-              <input
-                type="text"
-                placeholder="Paste thumbnail URL"
-                value={editingEvent.thumbnail}
-                onChange={(e) => setEditingEvent({ ...editingEvent, thumbnail: e.target.value })}
-                className="input mb-2 w-full"
-              />
-              <textarea
-                value={editingEvent.description}
-                onChange={(e) => setEditingEvent({ ...editingEvent, description: e.target.value })}
-                className="input mb-2 w-full"
-                rows={3}
-              />
-
-              <button onClick={handleUpdateEvent} className="btn-primary mt-2 w-full">
-                Save Changes
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Delete Confirm Modal */}
-        {deleteConfirmId && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center px-2">
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg w-full max-w-sm relative">
-              <h2 className="text-lg font-semibold mb-4">Confirm Delete</h2>
-              <p>Are you sure you want to delete this event?</p>
-              <div className="mt-4 flex justify-end gap-2">
-                <button onClick={() => setDeleteConfirmId(null)} className="btn-secondary">
-                  Cancel
-                </button>
-                <button onClick={() => handleDelete(deleteConfirmId)} className="btn-danger">
-                  Delete
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
+
+      {/* Toast notifications */}
+      <ToastContainer
+        position="top-center"   // ✅ Better for mobile screens
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </AdminLayout>
   );
 };

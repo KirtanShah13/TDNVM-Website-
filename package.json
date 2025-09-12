@@ -24,6 +24,7 @@
     "react-intersection-observer": "^9.16.0",
     "react-router-dom": "^6.8.1",
     "react-toastify": "^11.0.5",
+    "sonner": "^2.0.7",
     "swiper": "^11.2.10",
     "use-debounce": "^10.0.5",
     "uuid": "^13.0.0"
