@@ -54,9 +54,10 @@ const PendingUsers: React.FC = () => {
     }
   }, []);
 
-  // ✅ Save back to localStorage whenever changes happen
+  // ✅ Save back to localStorage whenever changes happen + save count for sidebar
   useEffect(() => {
     localStorage.setItem("pendingUsers", JSON.stringify(pendingUsers));
+    localStorage.setItem("pendingUsersCount", String(pendingUsers.length));
   }, [pendingUsers]);
 
   const handleApprove = (id: string) => {
@@ -81,8 +82,37 @@ const PendingUsers: React.FC = () => {
       return;
     }
 
-    setPendingUsers(pendingUsers.filter((u) => u.id !== id));
-    toast.error(`${user.firstName} rejected`);
+    // ✅ Show confirmation toast instead of window.confirm
+    toast.info(
+      <div>
+        <p>
+          Are you sure you want to reject{" "}
+          <strong>
+            {user.firstName} {user.lastName}
+          </strong>
+          ?
+        </p>
+        <div className="flex gap-3 mt-2">
+          <button
+            onClick={() => {
+              setPendingUsers(pendingUsers.filter((u) => u.id !== id));
+              toast.success(`${user.firstName} rejected`);
+              toast.dismiss(); // Close the confirmation toast
+            }}
+            className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700"
+          >
+            Yes, Reject
+          </button>
+          <button
+            onClick={() => toast.dismiss()}
+            className="px-3 py-1 rounded bg-gray-400 text-white hover:bg-gray-500"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>,
+      { autoClose: false }
+    );
   };
 
   return (
