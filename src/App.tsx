@@ -31,6 +31,7 @@ import EventsAdmin from './pages/admin/EventsAdmin';
 import GalleryAdmin from './pages/admin/GalleryAdmin';
 import MembersAdmin from './pages/admin/MembersAdmin';
 import CoreTeamAdmin from './pages/admin/CoreTeamAdmin';
+import PendingUsers from "./pages/admin/PendingUsers"; // ✅ new page
 
 function App() {
   return (
@@ -89,6 +90,15 @@ function App() {
               </AdminRoute>
             }
           />
+
+          <Route
+          path="/admin/pending-users" // ✅ NEW ROUTE
+          element={
+            <AdminRoute>
+              <PendingUsers />
+            </AdminRoute>
+          }
+        />
 
           {/* Main Routes (with Layout) */}
           <Route

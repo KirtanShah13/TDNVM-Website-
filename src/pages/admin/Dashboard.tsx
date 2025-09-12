@@ -1,7 +1,7 @@
 // project/src/pages/admin/Dashboard.tsx
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Calendar, Image, Users, UserCog } from "lucide-react";
+import { Calendar, Image, Users, UserCog, UserCheck } from "lucide-react";
 import AdminLayout from "../../components/AdminLayout";
 
 const Dashboard: React.FC = () => {
@@ -32,23 +32,29 @@ const Dashboard: React.FC = () => {
       icon: <UserCog className="h-8 w-8 text-primary-500 dark:text-primary-400" />,
       link: "/admin/core-team",
     },
+    {
+      name: "Pending Approvals",
+      description: "Approve or reject new user signups before they can log in.",
+      icon: <UserCheck className="h-8 w-8 text-primary-500 dark:text-primary-400" />,
+      link: "/admin/pending-users",
+    },
   ];
 
   return (
     <AdminLayout>
-      <div className="py-8">
+      <div className="py-6 px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <div className="mb-8 text-center sm:text-left">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Admin Dashboard
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
             Welcome! Manage the content of your community website from here.
           </p>
         </div>
 
         {/* Grid of cards */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {sections.map((section) => {
             const isActive = location.pathname === section.link;
             return (
@@ -56,7 +62,7 @@ const Dashboard: React.FC = () => {
                 key={section.name}
                 to={section.link}
                 className={`
-                  rounded-2xl shadow p-6 flex flex-col items-center text-center group
+                  rounded-2xl shadow p-4 sm:p-6 flex flex-col items-center text-center group
                   bg-white dark:bg-gray-800
                   transition-transform duration-200 ease-in-out
                   hover:scale-105 hover:shadow-lg
@@ -64,9 +70,9 @@ const Dashboard: React.FC = () => {
                   ${isActive ? "ring-2 ring-primary-500 shadow-md" : ""}
                 `}
               >
-                <div className="mb-4">{section.icon}</div>
+                <div className="mb-3 sm:mb-4">{section.icon}</div>
                 <h3
-                  className={`text-lg font-semibold ${
+                  className={`text-base sm:text-lg font-semibold ${
                     isActive
                       ? "text-primary-600 dark:text-primary-400"
                       : "text-gray-900 dark:text-white group-hover:text-primary-500"
@@ -74,7 +80,7 @@ const Dashboard: React.FC = () => {
                 >
                   {section.name}
                 </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-2">
                   {section.description}
                 </p>
               </Link>

@@ -1,5 +1,5 @@
 // project/src/components/AdminLayout.tsx
-import React, { useState, useEffect } from "react"; // ✅ added useEffect
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import {
@@ -11,14 +11,16 @@ import {
   Menu,
   X,
   LogOut,
+  UserCheck, // ✅ new icon
 } from "lucide-react";
 
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
 
-  const [isCollapsed, setIsCollapsed] = useState(false); // desktop collapse
-  const [isMobileOpen, setIsMobileOpen] = useState(false); // mobile drawer
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
 
   const handleLogout = () => {
     logout();
@@ -34,11 +36,32 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     }
   }, [isMobileOpen]);
 
+  // ✅ Fetch pending users count from localStorage
+  useEffect(() => {
+    const fetchPending = () => {
+      try {
+        const stored = localStorage.getItem("pendingUsers");
+        const parsed = stored ? JSON.parse(stored) : [];
+        setPendingCount(parsed.length);
+      } catch {
+        setPendingCount(0);
+      }
+    };
+
+    fetchPending();
+
+    // update count if localStorage changes (for example when admin approves)
+    window.addEventListener("storage", fetchPending);
+    return () => window.removeEventListener("storage", fetchPending);
+  }, []);
+
   return (
     <div className="min-h-screen flex bg-gray-100 dark:bg-gray-900">
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-30 bg-white dark:bg-gray-800 shadow-md flex items-center justify-between px-4 py-3">
-        <h2 className="text-lg font-bold text-gray-800 dark:text-white">Admin Panel</h2>
+        <h2 className="text-lg font-bold text-gray-800 dark:text-white">
+          Admin Panel
+        </h2>
         <button
           onClick={() => setIsMobileOpen(true)}
           className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -55,7 +78,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           lg:translate-x-0 ${isCollapsed ? "lg:w-20" : "lg:w-64"}
         `}
       >
-        {/* Wrap content so we can pin logout at bottom */}
         <div className="flex flex-col h-full">
           {/* Header */}
           <div
@@ -73,8 +95,8 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <button
               onClick={() =>
                 window.innerWidth < 1024
-                  ? setIsMobileOpen(false) // close drawer on mobile
-                  : setIsCollapsed(!isCollapsed) // collapse on desktop
+                  ? setIsMobileOpen(false)
+                  : setIsCollapsed(!isCollapsed)
               }
               className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
             >
@@ -95,7 +117,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </p>
           )}
 
-          {/* Navigation (scrollable if too long) */}
+          {/* Navigation */}
           <nav className="space-y-2 flex-1 px-2 overflow-y-auto">
             <Link
               to="/admin"
@@ -146,6 +168,29 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             >
               <Users size={24} />
               {!isCollapsed && <span>Core Team</span>}
+            </Link>
+
+            {/* ✅ New Pending Approvals link */}
+            <Link
+              to="/admin/pending-users"
+              className={`relative flex items-center ${
+                isCollapsed ? "justify-center" : "gap-3"
+              } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
+              onClick={() => setIsMobileOpen(false)}
+            >
+              <UserCheck size={24} />
+              {!isCollapsed && <span>Pending Approvals</span>}
+
+              {/* Badge (only when count > 0 and not collapsed) */}
+              {pendingCount > 0 && !isCollapsed && (
+                <span className="ml-auto inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium rounded-full bg-red-500 text-white">
+                  {pendingCount}
+                </span>
+              )}
+              {/* Collapsed mode → show badge as dot */}
+              {pendingCount > 0 && isCollapsed && (
+                <span className="absolute top-1 right-2 w-2 h-2 rounded-full bg-red-500"></span>
+              )}
             </Link>
           </nav>
 
