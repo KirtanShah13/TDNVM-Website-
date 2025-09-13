@@ -188,3 +188,5 @@ const PendingUsers: React.FC = () => {
 };
 
 export default PendingUsers;
+ 
+//make the rejection a bit better  

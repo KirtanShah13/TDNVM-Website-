@@ -1,7 +1,14 @@
 // project/src/pages/admin/Dashboard.tsx
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Calendar, Image, Users, UserCog, UserCheck } from "lucide-react";
+import {
+  Calendar,
+  Image,
+  Users,
+  UserCog,
+  UserCheck,
+  UserPlus,
+} from "lucide-react";
 import AdminLayout from "../../components/AdminLayout";
 
 const Dashboard: React.FC = () => {
@@ -11,32 +18,50 @@ const Dashboard: React.FC = () => {
     {
       name: "Manage Events",
       description: "Create, update, and delete events for the community.",
-      icon: <Calendar className="h-8 w-8 text-primary-500 dark:text-primary-400" />,
+      icon: (
+        <Calendar className="h-8 w-8 text-primary-500 dark:text-primary-400" />
+      ),
       link: "/admin/events",
     },
     {
       name: "Manage Gallery",
       description: "Upload and remove community gallery photos.",
-      icon: <Image className="h-8 w-8 text-primary-500 dark:text-primary-400" />,
+      icon: (
+        <Image className="h-8 w-8 text-primary-500 dark:text-primary-400" />
+      ),
       link: "/admin/gallery",
     },
     {
       name: "Manage Members",
       description: "View and update community member details.",
-      icon: <Users className="h-8 w-8 text-primary-500 dark:text-primary-400" />,
+      icon: (
+        <Users className="h-8 w-8 text-primary-500 dark:text-primary-400" />
+      ),
       link: "/admin/members",
     },
     {
       name: "Manage Core Team",
       description: "Edit the details of the core organizing team.",
-      icon: <UserCog className="h-8 w-8 text-primary-500 dark:text-primary-400" />,
+      icon: (
+        <UserCog className="h-8 w-8 text-primary-500 dark:text-primary-400" />
+      ),
       link: "/admin/core-team",
     },
     {
       name: "Pending Approvals",
       description: "Approve or reject new user signups before they can log in.",
-      icon: <UserCheck className="h-8 w-8 text-primary-500 dark:text-primary-400" />,
+      icon: (
+        <UserPlus className="h-8 w-8 text-primary-500 dark:text-primary-400" />
+      ),
       link: "/admin/pending-users",
+    },
+    {
+      name: "Approved Members",
+      description: "View and manage users who have been approved.",
+      icon: (
+        <UserCheck className="h-8 w-8 text-primary-500 dark:text-primary-400" />
+      ),
+      link: "/admin/approved-members",
     },
   ];
 

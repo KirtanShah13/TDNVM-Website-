@@ -11,7 +11,7 @@ import {
   Menu,
   X,
   LogOut,
-  UserCheck, // ✅ new icon
+  UserCheck, // ✅ new icon for pending
 } from "lucide-react";
 
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -129,6 +129,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <LayoutDashboard size={24} />
               {!isCollapsed && <span>Dashboard</span>}
             </Link>
+
             <Link
               to="/admin/events"
               className={`flex items-center ${
@@ -139,6 +140,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <Calendar size={24} />
               {!isCollapsed && <span>Events</span>}
             </Link>
+
             <Link
               to="/admin/gallery"
               className={`flex items-center ${
@@ -149,6 +151,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <Image size={24} />
               {!isCollapsed && <span>Gallery</span>}
             </Link>
+
             <Link
               to="/admin/members"
               className={`flex items-center ${
@@ -159,6 +162,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <UserCircle size={24} />
               {!isCollapsed && <span>Members</span>}
             </Link>
+
             <Link
               to="/admin/core-team"
               className={`flex items-center ${
@@ -170,7 +174,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               {!isCollapsed && <span>Core Team</span>}
             </Link>
 
-            {/* ✅ New Pending Approvals link */}
+            {/* ✅ Pending Approvals link */}
             <Link
               to="/admin/pending-users"
               className={`relative flex items-center ${
@@ -191,6 +195,18 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               {pendingCount > 0 && isCollapsed && (
                 <span className="absolute top-1 right-2 w-2 h-2 rounded-full bg-red-500"></span>
               )}
+            </Link>
+
+            {/* ✅ Approved Members link */}
+            <Link
+              to="/admin/approved-members"
+              className={`flex items-center ${
+                isCollapsed ? "justify-center" : "gap-3"
+              } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
+              onClick={() => setIsMobileOpen(false)}
+            >
+              <Users size={24} />
+              {!isCollapsed && <span>Approved Members</span>}
             </Link>
           </nav>
 

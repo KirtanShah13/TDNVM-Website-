@@ -32,6 +32,7 @@ import GalleryAdmin from './pages/admin/GalleryAdmin';
 import MembersAdmin from './pages/admin/MembersAdmin';
 import CoreTeamAdmin from './pages/admin/CoreTeamAdmin';
 import PendingUsers from "./pages/admin/PendingUsers"; // ✅ new page
+import ApprovedMembers from './pages/admin/ApprovedMembers';
 
 function App() {
   return (
@@ -99,6 +100,17 @@ function App() {
             </AdminRoute>
           }
         />
+
+
+        <Route
+  path="/admin/approved-members"
+  element={
+    <AdminRoute>
+      <ApprovedMembers />
+    </AdminRoute>
+  }
+/>
+
 
           {/* Main Routes (with Layout) */}
           <Route
