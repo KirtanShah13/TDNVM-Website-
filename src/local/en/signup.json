@@ -22,15 +22,46 @@
     "city": "Your city",
     "selectState": "Select state"
   },
-  "states": {
-    "Maharashtra": "Maharashtra",
-    "Karnataka": "Karnataka",
-    "TamilNadu": "Tamil Nadu",
-    "Delhi": "Delhi",
-    "Gujarat": "Gujarat",
-    "Rajasthan": "Rajasthan",
-    "WestBengal": "West Bengal",
-    "UttarPradesh": "Uttar Pradesh",
-    "Other": "Other"
-  }
+ "states": {
+  "AndhraPradesh": "Andhra Pradesh",
+  "ArunachalPradesh": "Arunachal Pradesh",
+  "Assam": "Assam",
+  "Bihar": "Bihar",
+  "Chhattisgarh": "Chhattisgarh",
+  "Goa": "Goa",
+  "Gujarat": "Gujarat",
+  "Haryana": "Haryana",
+  "HimachalPradesh": "Himachal Pradesh",
+  "Jharkhand": "Jharkhand",
+  "Karnataka": "Karnataka",
+  "Kerala": "Kerala",
+  "MadhyaPradesh": "Madhya Pradesh",
+  "Maharashtra": "Maharashtra",
+  "Manipur": "Manipur",
+  "Meghalaya": "Meghalaya",
+  "Mizoram": "Mizoram",
+  "Nagaland": "Nagaland",
+  "Odisha": "Odisha",
+  "Punjab": "Punjab",
+  "Rajasthan": "Rajasthan",
+  "Sikkim": "Sikkim",
+  "TamilNadu": "Tamil Nadu",
+  "Telangana": "Telangana",
+  "Tripura": "Tripura",
+  "UttarPradesh": "Uttar Pradesh",
+  "Uttarakhand": "Uttarakhand",
+  "WestBengal": "West Bengal",
+
+  "AndamanNicobar": "Andaman and Nicobar Islands",
+  "Chandigarh": "Chandigarh",
+  "DadraNagarHaveliDamanDiu": "Dadra and Nagar Haveli and Daman and Diu",
+  "Delhi": "Delhi",
+  "JammuKashmir": "Jammu and Kashmir",
+  "Ladakh": "Ladakh",
+  "Lakshadweep": "Lakshadweep",
+  "Puducherry": "Puducherry",
+
+  "Other": "Other"
+}
+
 }

@@ -29,18 +29,50 @@ const SignupPage: React.FC = () => {
     agreeToTerms: false,
   });
 
-  const stateOptions = [
-    { value: "maharashtra", label: t("states.Maharashtra") },
-    { value: "karnataka", label: t("states.Karnataka") },
-    { value: "tamilNadu", label: t("states.TamilNadu") },
-    { value: "delhi", label: t("states.Delhi") },
-    { value: "gujarat", label: t("states.Gujarat") },
-    { value: "rajasthan", label: t("states.Rajasthan") },
-    { value: "westBengal", label: t("states.WestBengal") },
-    { value: "uttarPradesh", label: t("states.UttarPradesh") },
-    { value: "other", label: t("states.Other") },
-  ];
+const stateOptions = [
+  // ✅ States
+  { value: "andhraPradesh", label: t("states.AndhraPradesh") },
+  { value: "arunachalPradesh", label: t("states.ArunachalPradesh") },
+  { value: "assam", label: t("states.Assam") },
+  { value: "bihar", label: t("states.Bihar") },
+  { value: "chhattisgarh", label: t("states.Chhattisgarh") },
+  { value: "goa", label: t("states.Goa") },
+  { value: "gujarat", label: t("states.Gujarat") },
+  { value: "haryana", label: t("states.Haryana") },
+  { value: "himachalPradesh", label: t("states.HimachalPradesh") },
+  { value: "jharkhand", label: t("states.Jharkhand") },
+  { value: "karnataka", label: t("states.Karnataka") },
+  { value: "kerala", label: t("states.Kerala") },
+  { value: "madhyaPradesh", label: t("states.MadhyaPradesh") },
+  { value: "maharashtra", label: t("states.Maharashtra") },
+  { value: "manipur", label: t("states.Manipur") },
+  { value: "meghalaya", label: t("states.Meghalaya") },
+  { value: "mizoram", label: t("states.Mizoram") },
+  { value: "nagaland", label: t("states.Nagaland") },
+  { value: "odisha", label: t("states.Odisha") },
+  { value: "punjab", label: t("states.Punjab") },
+  { value: "rajasthan", label: t("states.Rajasthan") },
+  { value: "sikkim", label: t("states.Sikkim") },
+  { value: "tamilNadu", label: t("states.TamilNadu") },
+  { value: "telangana", label: t("states.Telangana") },
+  { value: "tripura", label: t("states.Tripura") },
+  { value: "uttarPradesh", label: t("states.UttarPradesh") },
+  { value: "uttarakhand", label: t("states.Uttarakhand") },
+  { value: "westBengal", label: t("states.WestBengal") },
 
+  // ✅ Union Territories
+  { value: "andamanNicobar", label: t("states.AndamanNicobar") },
+  { value: "chandigarh", label: t("states.Chandigarh") },
+  { value: "dadraNagarHaveliDamanDiu", label: t("states.DadraNagarHaveliDamanDiu") },
+  { value: "delhi", label: t("states.Delhi") },
+  { value: "jammuKashmir", label: t("states.JammuKashmir") },
+  { value: "ladakh", label: t("states.Ladakh") },
+  { value: "lakshadweep", label: t("states.Lakshadweep") },
+  { value: "puducherry", label: t("states.Puducherry") },
+
+  // ✅ Fallback
+  { value: "other", label: t("states.Other") },
+];
 
   const signupMessages = [
   "Successfully signed up. After admin approval you will be able to log in.",
