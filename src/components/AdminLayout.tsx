@@ -11,7 +11,9 @@ import {
   Menu,
   X,
   LogOut,
-  UserCheck, // ✅ new icon for pending
+  UserCheck, // for approved members
+  UserCog,    // for core team
+  UserPlus,   // for pending users
 } from "lucide-react";
 
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -153,15 +155,15 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </Link>
 
             <Link
-              to="/admin/members"
-              className={`flex items-center ${
-                isCollapsed ? "justify-center" : "gap-3"
-              } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
-              onClick={() => setIsMobileOpen(false)}
-            >
-              <UserCircle size={24} />
-              {!isCollapsed && <span>Members</span>}
-            </Link>
+                to="/admin/members"
+                className={`flex items-center ${
+                    isCollapsed ? "justify-center" : "gap-3"
+                } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
+                onClick={() => setIsMobileOpen(false)}
+                >
+                <Users size={24} />   {/* ✅ changed from UserCircle to Users */}
+                {!isCollapsed && <span>Members</span>}
+                </Link>
 
             <Link
               to="/admin/core-team"
@@ -170,7 +172,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
               onClick={() => setIsMobileOpen(false)}
             >
-              <Users size={24} />
+              <UserCog size={24} /> {/* changed icon */}
               {!isCollapsed && <span>Core Team</span>}
             </Link>
 
@@ -182,7 +184,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
               onClick={() => setIsMobileOpen(false)}
             >
-              <UserCheck size={24} />
+              <UserPlus size={24} /> {/* changed to UserPlus */}
               {!isCollapsed && <span>Pending Approvals</span>}
 
               {/* Badge (only when count > 0 and not collapsed) */}
@@ -205,7 +207,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
               onClick={() => setIsMobileOpen(false)}
             >
-              <Users size={24} />
+              <UserCheck size={24} /> {/* changed icon */}
               {!isCollapsed && <span>Approved Members</span>}
             </Link>
           </nav>
