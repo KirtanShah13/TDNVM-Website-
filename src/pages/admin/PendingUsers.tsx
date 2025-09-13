@@ -16,6 +16,7 @@ interface PendingUser {
 
 const PendingUsers: React.FC = () => {
   const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
+  const [confirmRejectId, setConfirmRejectId] = useState<string | null>(null);
 
   // ✅ Load pending users from localStorage, seed if empty
   useEffect(() => {
@@ -72,47 +73,19 @@ const PendingUsers: React.FC = () => {
     localStorage.setItem("members", JSON.stringify([...members, user]));
 
     setPendingUsers(pendingUsers.filter((u) => u.id !== id));
-    toast.success(`${user.firstName} approved successfully!`);
+    toast.success(`${user.firstName} ${user.lastName} approved successfully!`);
   };
 
-  const handleReject = (id: string) => {
+  const handleRejectConfirm = (id: string) => {
     const user = pendingUsers.find((u) => u.id === id);
     if (!user) {
       toast.error("User not found!");
       return;
     }
 
-    // ✅ Show confirmation toast instead of window.confirm
-    toast.info(
-      <div>
-        <p>
-          Are you sure you want to reject{" "}
-          <strong>
-            {user.firstName} {user.lastName}
-          </strong>
-          ?
-        </p>
-        <div className="flex gap-3 mt-2">
-          <button
-            onClick={() => {
-              setPendingUsers(pendingUsers.filter((u) => u.id !== id));
-              toast.success(`${user.firstName} rejected`);
-              toast.dismiss(); // Close the confirmation toast
-            }}
-            className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700"
-          >
-            Yes, Reject
-          </button>
-          <button
-            onClick={() => toast.dismiss()}
-            className="px-3 py-1 rounded bg-gray-400 text-white hover:bg-gray-500"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>,
-      { autoClose: false }
-    );
+    setPendingUsers(pendingUsers.filter((u) => u.id !== id));
+    toast.info(`${user.firstName} ${user.lastName} rejected`);
+    setConfirmRejectId(null);
   };
 
   return (
@@ -158,7 +131,7 @@ const PendingUsers: React.FC = () => {
                         <CheckCircle className="h-4 w-4" /> Approve
                       </button>
                       <button
-                        onClick={() => handleReject(user.id)}
+                        onClick={() => setConfirmRejectId(user.id)}
                         className="flex items-center gap-1 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300"
                       >
                         <XCircle className="h-4 w-4" /> Reject
@@ -171,6 +144,34 @@ const PendingUsers: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* ✅ Confirmation Dialog (same style as ApprovedMembers) */}
+      {confirmRejectId && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Confirm Rejection
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              Are you sure you want to reject this user?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setConfirmRejectId(null)}
+                className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleRejectConfirm(confirmRejectId)}
+                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+              >
+                Reject
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Toast notifications */}
       <ToastContainer
@@ -188,5 +189,3 @@ const PendingUsers: React.FC = () => {
 };
 
 export default PendingUsers;
- 
-//make the rejection a bit better  

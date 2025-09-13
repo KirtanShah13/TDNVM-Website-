@@ -71,7 +71,8 @@ const ApprovedMembers: React.FC = () => {
     if (!user) return;
 
     setMembers(members.filter((m) => m.id !== id));
-    toast.info(`${user.firstName} removed from approved members`);
+   toast.info(`${user.firstName} ${user.lastName} removed from approved members`);
+
     setConfirmDeleteId(null);
   };
 
@@ -202,8 +203,17 @@ const ApprovedMembers: React.FC = () => {
           </div>
         )}
 
-        {/* Toast Notifications */}
-        <ToastContainer position="top-right" autoClose={3000} />
+        <ToastContainer
+  position="top-center"   // ✅ Uniform placement
+  autoClose={5000}        // ✅ Same timing
+  hideProgressBar={false}
+  newestOnTop
+  closeOnClick
+  draggable
+  pauseOnHover
+  theme="colored"         // ✅ Matches CoreTeamAdmin
+/>
+
       </div>
     </AdminLayout>
   );
