@@ -3,47 +3,48 @@ import { Phone, Heart, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 
-
 const LoginPage: React.FC = () => {
   const { t } = useTranslation("login");
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    // change alerts to toasts
+    try {
+      const response = await fetch("http://127.0.0.1:8000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone }), // send phone number only
+      });
 
-  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
+      const data = await response.json();
+      console.log("API Response:", data);
 
-  setTimeout(() => {
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-      alert("No account found. Please sign up first.");
-    } else {
-      const user = JSON.parse(storedUser);
-      const cleanedInput = phone.replace(/\s+/g, "");
-      const cleanedStored = user.phone.replace(/\s+/g, "");
-
-      if (cleanedInput === cleanedStored || `+91${cleanedInput}` === cleanedStored) {
+      if (data.success) {
         alert("Login successful! Welcome back to Samudaya.");
         localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("user", JSON.stringify(data.user));
         navigate("/");
       } else {
         alert("Invalid phone number. Please try again.");
       }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-  }, 1000);
-};
-
-
-
+  };
 
   return (
-   <div className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-
+    <div className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-flex items-center space-x-2 mb-6">
@@ -57,9 +58,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             {t("title")}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            {t("subtitle")}
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">{t("subtitle")}</p>
         </div>
 
         <div className="card p-8">

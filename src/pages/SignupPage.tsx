@@ -4,26 +4,27 @@ import { User, Phone, MapPin, Heart, CheckCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-
 interface FormData {
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   phone: string;
   city: string;
   state: string;
-  agreeToTerms: boolean;
+  // agreeToTerms: boolean;
+  // status: string;
 }
 
 const SignupPage: React.FC = () => {
   const { t } = useTranslation("signup");
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     phone: "",
     city: "",
     state: "",
-    agreeToTerms: false,
+    // agreeToTerms: false,
+    // status: "pending",
   });
 
   const stateOptions = [
@@ -49,34 +50,58 @@ const SignupPage: React.FC = () => {
     }));
   };
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
-  try {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
-    // Save user data only
-    localStorage.setItem("user", JSON.stringify(formData));
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    // try {
+    //   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // ✅ Do NOT set isLoggedIn here
-    alert("Signup successful! Please log in.");
-    navigate("/login");
-  } catch (error) {
-    console.error("Error submitting form:", error);
-  } finally {
-    setIsLoading(false);
-  }
-};
+    //   // Save user data only
+    //   localStorage.setItem("user", JSON.stringify(formData));
 
+    //   // ✅ Do NOT set isLoggedIn here
+    //   alert("Signup successful! Please log in.");
+    //   navigate("/login");
+    // } catch (error) {
+    //   console.error("Error submitting form:", error);
+    // } finally {
+    //   setIsLoading(false);
+    // }
 
+    try {
+      // Call FastAPI backend
+      const response = await fetch("http://127.0.0.1:8000/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData), // send form data
+      });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("API Response:", data);
+
+      // Optionally keep user in localStorage
+      localStorage.setItem("user", JSON.stringify(formData));
+
+      alert("Signup successful! Please log in.");
+      navigate("/login");
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-   <div className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-
-
+    <div className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-flex items-center space-x-2 mb-6">
@@ -98,7 +123,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label
-                htmlFor="firstName"
+                htmlFor="first_name"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
                 {t("firstName")}
@@ -107,11 +132,11 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="first_name"
+                  name="first_name"
                   required
                   placeholder={t("placeholders.firstName")}
-                  value={formData.firstName}
+                  value={formData.first_name}
                   onChange={handleInputChange}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 />
@@ -120,7 +145,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
             <div>
               <label
-                htmlFor="lastName"
+                htmlFor="last_name"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
                 {t("lastName")}
@@ -129,11 +154,11 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type="text"
-                  id="lastName"
-                  name="lastName"
+                  id="last_name"
+                  name="last_name"
                   required
                   placeholder={t("placeholders.lastName")}
-                  value={formData.lastName}
+                  value={formData.last_name}
                   onChange={handleInputChange}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 />
@@ -219,7 +244,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               <input
                 type="checkbox"
                 name="agreeToTerms"
-                checked={formData.agreeToTerms}
+                // checked={formData.agreeToTerms}
                 onChange={handleInputChange}
                 required
                 className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1"
@@ -246,7 +271,8 @@ const handleSubmit = async (e: React.FormEvent) => {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isLoading || !formData.agreeToTerms}
+            disabled={isLoading}
+            // || !formData.agreeToTerms
             className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 w-full justify-center"
           >
             {isLoading ? (

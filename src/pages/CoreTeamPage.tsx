@@ -1,59 +1,113 @@
-import React, { useEffect, useState } from 'react';
-import { Mail, Phone, Linkedin, Calendar, Award, Users } from 'lucide-react';
-import { supabase } from '../lib/SupabaseClient';
-import CountUp from 'react-countup';
-import { useTranslation } from 'react-i18next';
-
-
+import React, { useEffect, useState } from "react";
+import { Mail, Phone, Linkedin, Calendar, Award, Users } from "lucide-react";
+import { supabase } from "../lib/SupabaseClient";
+import CountUp from "react-countup";
+import { useTranslation } from "react-i18next";
+import type { President } from "../types.tsx";
+import type { CoreTeamMember } from "../types.tsx";
 
 const CoreTeamPage: React.FC = () => {
-  const { t } = useTranslation('coreTeam');
+  const { t } = useTranslation("coreTeam");
 
   const { i18n } = useTranslation();
-const isGujarati = i18n.language === 'gu';
-
-
-
+  const isGujarati = i18n.language === "gu";
 
   const [coreTeam, setCoreTeam] = useState<any[]>([]);
   const [leaders, setLeaders] = useState<any[]>([]);
+  // const [presidents, setPresidents] = useState<any[]>([]);
+  const [coreTeamMembers, setCoreTeamMembers] = useState<CoreTeamMember[]>([]);
+  const [presidents, setPresidents] = useState<President[]>([]);
   const [loading, setLoading] = useState(true);
 
- useEffect(() => {
-  const fetchCoreTeam = async () => {
-    const tableName = isGujarati ? 'core_team_gu' : 'core_team';
+  useEffect(() => {
+    const fetchCoreTeam = async () => {
+      const tableName = isGujarati ? "core_team_gu" : "core_team";
 
+      const { data, error } = await supabase
+        .from(tableName)
+        .select("*")
+        .order("id", { ascending: true });
 
-    const { data, error } = await supabase
-      .from(tableName)
-      .select('*')
-      .order('id', { ascending: true });
+      if (error) {
+        console.error(`Error fetching data from ${tableName}:`, error);
+      } else {
+        setCoreTeam(data);
+        // console.log(`Fetched data from ${tableName}:`, data);
+      }
+    };
 
-    if (error) {
-      console.error(`Error fetching data from ${tableName}:`, error);
-    } else {
-      setCoreTeam(data);
-    }
-  };
+    const fetchLeaders = async () => {
+      const { data, error } = await supabase
+        .from("president_secrataries")
+        .select("*");
 
-  const fetchLeaders = async () => {
-    const { data, error } = await supabase
-      .from('president_secrataries')
-      .select('*');
+      if (error) {
+        console.error("Error fetching leadership history:", error);
+      } else {
+        setLeaders(data);
+      }
 
-    if (error) {
-      console.error('Error fetching leadership history:', error);
-    } else {
-      setLeaders(data);
-    }
+      setLoading(false);
+    };
 
-    setLoading(false);
-  };
+    const fetchCoreTeamMembers = async () => {
+      const tableName = isGujarati ? "core_team_gu" : "core_team_en";
+      const url = "http://127.0.0.1:8000/" + tableName;
+      fetch(url)
+        .then((res) => {
+          if (res.ok) {
+            // throw new Error("Failed to fetch members");
+            // console.log("Fetched members successfully");
+          } else {
+            throw new Error("Failed to fetch members");
+          }
+          return res.json();
+        })
+        .then((data: CoreTeamMember[]) => {
+          data = data.sort((a, b) => (a.id || 0) - (b.id || 0));
+          setCoreTeamMembers(data);
+          // console.log("Members data:", data);
+          // setIsLoading(false);
+        })
+        .catch((err) => {
+          // setError(err.message);
+          console.error("Error fetching leadership history:", err);
+          // setIsLoading(false);
+        });
+      setLoading(false);
+    };
 
-  fetchCoreTeam();
-  fetchLeaders();
-}, [isGujarati]);
+    const fetchPresidents = async () => {
+      fetch("http://127.0.0.1:8000/presidents")
+        .then((res) => {
+          if (res.ok) {
+            // throw new Error("Failed to fetch members");
+            // console.log("Fetched members successfully");
+          } else {
+            throw new Error("Failed to fetch members");
+          }
+          return res.json();
+        })
+        .then((data: President[]) => {
+          data = data.sort((a, b) => (a.no || 0) - (b.no || 0));
+          setPresidents(data);
+          // console.log("Members data:", data);
+          // setIsLoading(false);
+        })
+        .catch((err) => {
+          // setError(err.message);
+          console.error("Error fetching leadership history:", err);
+          // setIsLoading(false);
+        });
+      setLoading(false);
+    };
 
+    // fetchCoreTeam();
+    // fetchLeaders();
+    fetchCoreTeamMembers();
+    fetchPresidents();
+    console.log("records in CoreTeamMembers:", coreTeamMembers.length);
+  }, [isGujarati]);
 
   return (
     <div className="py-16">
@@ -61,10 +115,10 @@ const isGujarati = i18n.language === 'gu';
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            {t('coreTeam.title')}
+            {t("coreTeam.title")}
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-            {t('coreTeam.description')}
+            {t("coreTeam.description")}
           </p>
         </div>
 
@@ -75,53 +129,62 @@ const isGujarati = i18n.language === 'gu';
               <Users className="h-8 w-8 text-primary-600" />
             </div>
             <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {isGujarati ? t('coreTeam.stats.values.members') : <CountUp end={14} duration={2} />}
-
+              {isGujarati ? (
+                t("coreTeam.stats.values.members")
+              ) : (
+                <CountUp end={14} duration={2} />
+              )}
             </div>
-            <div className="text-gray-600 dark:text-gray-400">{t('coreTeam.stats.members')}</div>
+            <div className="text-gray-600 dark:text-gray-400">
+              {t("coreTeam.stats.members")}
+            </div>
           </div>
           <div className="text-center">
             <div className="w-16 h-16 bg-secondary-100 dark:bg-secondary-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Calendar className="h-8 w-8 text-secondary-600" />
             </div>
             <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-
-             {isGujarati
-              ? t('coreTeam.stats.values.events')
-              : <CountUp end={100} duration={2} suffix="+" />
-              }
-
+              {isGujarati ? (
+                t("coreTeam.stats.values.events")
+              ) : (
+                <CountUp end={100} duration={2} suffix="+" />
+              )}
             </div>
-            <div className="text-gray-600 dark:text-gray-400">{t('coreTeam.stats.experience')}</div>
+            <div className="text-gray-600 dark:text-gray-400">
+              {t("coreTeam.stats.experience")}
+            </div>
           </div>
           <div className="text-center">
             <div className="w-16 h-16 bg-accent-100 dark:bg-accent-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Award className="h-8 w-8 text-accent-600" />
             </div>
             <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-
-              {isGujarati
-                ? t('coreTeam.stats.values.experience')
-                : <CountUp end={25} duration={2} suffix="+" />
-            }
-
-
+              {isGujarati ? (
+                t("coreTeam.stats.values.experience")
+              ) : (
+                <CountUp end={25} duration={2} suffix="+" />
+              )}
             </div>
-            <div className="text-gray-600 dark:text-gray-400">{t('coreTeam.stats.events')}</div>
+            <div className="text-gray-600 dark:text-gray-400">
+              {t("coreTeam.stats.events")}
+            </div>
           </div>
         </div>
 
         {/* Core Team Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {coreTeam.map((member) => (
-            <div key={member.id} className="card overflow-hidden group hover:shadow-2xl transition-all duration-300">
+          {coreTeamMembers.map((member) => (
+            <div
+              key={member.id}
+              className="card overflow-hidden group hover:shadow-2xl transition-all duration-300"
+            >
               <div className="relative">
                 <img
-                src={member.photo}
-                loading="lazy"
-                decoding="async"
-                alt={member.name}
-                className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                  src={member.photo}
+                  loading="lazy"
+                  decoding="async"
+                  alt={member.name}
+                  className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
 
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -129,7 +192,9 @@ const isGujarati = i18n.language === 'gu';
 
               <div className="p-6">
                 <div className="mb-4">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">{member.name}</h3>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                    {member.name}
+                  </h3>
                   <div className="bg-primary-100 dark:bg-primary-900/20 text-primary-800 dark:text-primary-300 px-3 py-1 rounded-full text-sm font-medium inline-block">
                     {member.designation}
                   </div>
@@ -143,8 +208,9 @@ const isGujarati = i18n.language === 'gu';
                   {member.experience && (
                     <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
                       <Calendar className="h-4 w-4 text-primary-500" />
-                      <span>{t('coreTeam.card.experience')}: {member.experience}</span>
-
+                      <span>
+                        {t("coreTeam.card.experience")}: {member.experience}
+                      </span>
                     </div>
                   )}
                   {member.achievements && (
@@ -189,12 +255,14 @@ const isGujarati = i18n.language === 'gu';
         <div className="bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-8 mb-12">
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              {t('coreTeam.leadershipMessage.title')}
+              {t("coreTeam.leadershipMessage.title")}
             </h2>
             <blockquote className="text-lg text-gray-700 dark:text-gray-300 italic max-w-3xl mx-auto mb-6">
-              {t('coreTeam.leadershipMessage.quote')}
+              {t("coreTeam.leadershipMessage.quote")}
             </blockquote>
-            <cite className="text-primary-600 font-medium">{t('coreTeam.leadershipMessage.name')}</cite>
+            <cite className="text-primary-600 font-medium">
+              {t("coreTeam.leadershipMessage.name")}
+            </cite>
           </div>
         </div>
 
@@ -202,39 +270,65 @@ const isGujarati = i18n.language === 'gu';
         <section className="bg-white dark:bg-gray-900 py-16 px-4 sm:px-6 lg:px-8 rounded-xl shadow-lg">
           <div className="max-w-6xl mx-auto text-center">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-              {t('coreTeam.leadershipHistory.title')}
+              {t("coreTeam.leadershipHistory.title")}
             </h2>
             {loading ? (
               <p className="text-gray-500 dark:text-gray-400">
-                {t('coreTeam.table.loading')}
+                {t("coreTeam.table.loading")}
               </p>
             ) : (
               <div className="overflow-x-auto rounded-lg shadow border border-gray-200 dark:border-gray-700">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-100 dark:bg-gray-800">
                     <tr>
-                      <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.srNo')}</th>
-                      <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.presidentName')}</th>
-                      <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.presidencyYear')}</th>
-                      <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.secretaryName')}</th>
-                      <th className="border border-gray-300 px-2 py-1 text-left">{t('coreTeam.table.headers.secretaryYear')}</th>
+                      <th className="border border-gray-300 px-2 py-1 text-left">
+                        {t("coreTeam.table.headers.srNo")}
+                      </th>
+                      <th className="border border-gray-300 px-2 py-1 text-left">
+                        {t("coreTeam.table.headers.presidentName")}
+                      </th>
+                      <th className="border border-gray-300 px-2 py-1 text-left">
+                        {t("coreTeam.table.headers.presidencyYear")}
+                      </th>
+                      <th className="border border-gray-300 px-2 py-1 text-left">
+                        {t("coreTeam.table.headers.secretaryName")}
+                      </th>
+                      <th className="border border-gray-300 px-2 py-1 text-left">
+                        {t("coreTeam.table.headers.secretaryYear")}
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-                    {leaders.length > 0 ? (
-                      leaders.map((entry, index) => (
-                        <tr key={entry.no || index} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                          <td className="border border-gray-300 px-2 py-1">{entry.no}</td>
-                          <td className="border border-gray-300 px-2 py-1">{entry["President Name"]}</td>
-                          <td className="border border-gray-300 px-2 py-1">{entry["Presidency Year"]}</td>
-                          <td className="border border-gray-300 px-2 py-1">{entry["Secretary Name"]}</td>
-                          <td className="border border-gray-300 px-2 py-1">{entry["Secretary Year"]}</td>
+                    {presidents.length > 0 ? (
+                      presidents.map((entry, index) => (
+                        <tr
+                          key={entry["no"] || index}
+                          className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                        >
+                          <td className="border border-gray-300 px-2 py-1">
+                            {entry["no"]}
+                          </td>
+                          <td className="border border-gray-300 px-2 py-1">
+                            {entry["President Name"]}
+                          </td>
+                          <td className="border border-gray-300 px-2 py-1">
+                            {entry["Presidency Year"]}
+                          </td>
+                          <td className="border border-gray-300 px-2 py-1">
+                            {entry["Secretary Name"]}
+                          </td>
+                          <td className="border border-gray-300 px-2 py-1">
+                            {entry["Secretary Year"]}
+                          </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                          {t('coreTeam.table.empty')}
+                        <td
+                          colSpan={5}
+                          className="px-4 py-8 text-center text-gray-500 dark:text-gray-400"
+                        >
+                          {t("coreTeam.table.empty")}
                         </td>
                       </tr>
                     )}
