@@ -1,5 +1,5 @@
 // project/src/pages/admin/Dashboard.tsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Calendar,
@@ -11,8 +11,27 @@ import {
 } from "lucide-react";
 import AdminLayout from "../../components/AdminLayout";
 
+// 🔹 Reusable Loading Overlay (same as ApprovedMembers)
+const LoadingOverlay: React.FC<{ message?: string }> = ({ message }) => (
+  <div className="fixed inset-0 flex flex-col items-center justify-center bg-white/70 dark:bg-gray-900/70 z-50">
+    <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+    {message && (
+      <p className="mt-4 text-gray-800 dark:text-gray-200 font-medium">
+        {message}
+      </p>
+    )}
+  </div>
+);
+
 const Dashboard: React.FC = () => {
   const location = useLocation();
+  const [loading, setLoading] = useState(true);
+
+  // ⏳ Simulate data fetch (replace with API call later)
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1200);
+    return () => clearTimeout(timer);
+  }, []);
 
   const sections = [
     {
@@ -113,6 +132,9 @@ const Dashboard: React.FC = () => {
           })}
         </div>
       </div>
+
+      {/* ✅ Global Loading Overlay (uniform with ApprovedMembers) */}
+      {loading && <LoadingOverlay message="Fetching dashboard..." />}
     </AdminLayout>
   );
 };

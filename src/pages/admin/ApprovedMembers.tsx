@@ -5,6 +5,18 @@ import { Search, Trash2 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// 🔹 Reusable Loading Overlay Component
+const LoadingOverlay: React.FC<{ message?: string }> = ({ message }) => (
+  <div className="fixed inset-0 flex flex-col items-center justify-center bg-white/70 dark:bg-gray-900/70 z-50">
+    <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+    {message && (
+      <p className="mt-4 text-gray-800 dark:text-gray-200 font-medium">
+        {message}
+      </p>
+    )}
+  </div>
+);
+
 interface Member {
   id: string;
   firstName: string;
@@ -18,47 +30,54 @@ const ApprovedMembers: React.FC = () => {
   const [members, setMembers] = useState<Member[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // ✅ New loading state
 
   // ✅ Load approved members from localStorage OR add mock data
   useEffect(() => {
-    const stored = localStorage.getItem("members");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (parsed.length > 0) {
-        setMembers(parsed);
-        return;
-      }
-    }
+    setLoading(true);
 
-    // 🔹 If nothing in storage → seed mock data
-    const mockMembers: Member[] = [
-      {
-        id: "1",
-        firstName: "Amit",
-        lastName: "Sharma",
-        phone: "9876543210",
-        city: "Delhi",
-        state: "Delhi",
-      },
-      {
-        id: "2",
-        firstName: "Priya",
-        lastName: "Verma",
-        phone: "9123456780",
-        city: "Mumbai",
-        state: "Maharashtra",
-      },
-      {
-        id: "3",
-        firstName: "Rohit",
-        lastName: "Patel",
-        phone: "9988776655",
-        city: "Ahmedabad",
-        state: "Gujarat",
-      },
-    ];
-    setMembers(mockMembers);
-    localStorage.setItem("members", JSON.stringify(mockMembers));
+    setTimeout(() => {
+      const stored = localStorage.getItem("members");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.length > 0) {
+          setMembers(parsed);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // 🔹 If nothing in storage → seed mock data
+      const mockMembers: Member[] = [
+        {
+          id: "1",
+          firstName: "Amit",
+          lastName: "Sharma",
+          phone: "9876543210",
+          city: "Delhi",
+          state: "Delhi",
+        },
+        {
+          id: "2",
+          firstName: "Priya",
+          lastName: "Verma",
+          phone: "9123456780",
+          city: "Mumbai",
+          state: "Maharashtra",
+        },
+        {
+          id: "3",
+          firstName: "Rohit",
+          lastName: "Patel",
+          phone: "9988776655",
+          city: "Ahmedabad",
+          state: "Gujarat",
+        },
+      ];
+      setMembers(mockMembers);
+      localStorage.setItem("members", JSON.stringify(mockMembers));
+      setLoading(false);
+    }, 1200); // ⏳ simulate API delay
   }, []);
 
   // ✅ Save back to localStorage when members update
@@ -71,7 +90,7 @@ const ApprovedMembers: React.FC = () => {
     if (!user) return;
 
     setMembers(members.filter((m) => m.id !== id));
-   toast.info(`${user.firstName} ${user.lastName} removed from approved members`);
+    toast.info(`${user.firstName} ${user.lastName} removed from approved members`);
 
     setConfirmDeleteId(null);
   };
@@ -175,7 +194,7 @@ const ApprovedMembers: React.FC = () => {
           </>
         )}
 
-        {/* ✅ Confirmation Dialog */}
+        {/* ✅ Confirmation Dialog (Uniform with PendingUsers) */}
         {confirmDeleteId && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full">
@@ -204,21 +223,21 @@ const ApprovedMembers: React.FC = () => {
         )}
 
         <ToastContainer
-  position="top-center"   // ✅ Uniform placement
-  autoClose={5000}        // ✅ Same timing
-  hideProgressBar={false}
-  newestOnTop
-  closeOnClick
-  draggable
-  pauseOnHover
-  theme="colored"         // ✅ Matches CoreTeamAdmin
-/>
-
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
       </div>
+
+      {/* ✅ Global Loading Overlay */}
+      {loading && <LoadingOverlay message="Fetching approved members..." />}
     </AdminLayout>
   );
 };
 
 export default ApprovedMembers;
-
-// just make the uniformity in the pending and approved member when the choice is made to reject or approve the user

@@ -5,6 +5,19 @@ import AdminLayout from "../../components/AdminLayout";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// 🔹 Reusable Loading Overlay Component
+const LoadingOverlay: React.FC<{ message?: string }> = ({ message }) => (
+  <div className="fixed inset-0 flex flex-col items-center justify-center bg-white/70 dark:bg-gray-900/70 z-50">
+    <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
+    {message && (
+      <p className="mt-4 text-gray-800 dark:text-gray-200 font-medium">
+        {message}
+      </p>
+    )}
+  </div>
+);
+
+
 interface PendingUser {
   id: string;
   firstName: string;
@@ -17,45 +30,51 @@ interface PendingUser {
 const PendingUsers: React.FC = () => {
   const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
   const [confirmRejectId, setConfirmRejectId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true); // ✅ New loading state
 
-  // ✅ Load pending users from localStorage, seed if empty
+  // ✅ Load pending users (simulate API with timeout)
   useEffect(() => {
-    const stored = localStorage.getItem("pendingUsers");
-    if (stored && JSON.parse(stored).length > 0) {
-      setPendingUsers(JSON.parse(stored));
-    } else {
-      const mockUsers: PendingUser[] = [
-        {
-          id: "1",
-          firstName: "Aarav",
-          lastName: "Patel",
-          phone: "9876543210",
-          city: "Vadodara",
-          state: "Gujarat",
-        },
-        {
-          id: "2",
-          firstName: "Meera",
-          lastName: "Shah",
-          phone: "9123456780",
-          city: "Surat",
-          state: "Gujarat",
-        },
-        {
-          id: "3",
-          firstName: "Kiran",
-          lastName: "Joshi",
-          phone: "9988776655",
-          city: "Ahmedabad",
-          state: "Gujarat",
-        },
-      ];
-      localStorage.setItem("pendingUsers", JSON.stringify(mockUsers));
-      setPendingUsers(mockUsers);
-    }
+    setLoading(true);
+
+    setTimeout(() => {
+      const stored = localStorage.getItem("pendingUsers");
+      if (stored && JSON.parse(stored).length > 0) {
+        setPendingUsers(JSON.parse(stored));
+      } else {
+        const mockUsers: PendingUser[] = [
+          {
+            id: "1",
+            firstName: "Aarav",
+            lastName: "Patel",
+            phone: "9876543210",
+            city: "Vadodara",
+            state: "Gujarat",
+          },
+          {
+            id: "2",
+            firstName: "Meera",
+            lastName: "Shah",
+            phone: "9123456780",
+            city: "Surat",
+            state: "Gujarat",
+          },
+          {
+            id: "3",
+            firstName: "Kiran",
+            lastName: "Joshi",
+            phone: "9988776655",
+            city: "Ahmedabad",
+            state: "Gujarat",
+          },
+        ];
+        localStorage.setItem("pendingUsers", JSON.stringify(mockUsers));
+        setPendingUsers(mockUsers);
+      }
+      setLoading(false);
+    }, 1200); // ⏳ simulate API delay
   }, []);
 
-  // ✅ Save back to localStorage whenever changes happen + save count for sidebar
+  // ✅ Save back to localStorage whenever changes happen
   useEffect(() => {
     localStorage.setItem("pendingUsers", JSON.stringify(pendingUsers));
     localStorage.setItem("pendingUsersCount", String(pendingUsers.length));
@@ -68,7 +87,6 @@ const PendingUsers: React.FC = () => {
       return;
     }
 
-    // Move user to approved members
     const members = JSON.parse(localStorage.getItem("members") || "[]");
     localStorage.setItem("members", JSON.stringify([...members, user]));
 
@@ -145,7 +163,7 @@ const PendingUsers: React.FC = () => {
         )}
       </div>
 
-      {/* ✅ Confirmation Dialog (same style as ApprovedMembers) */}
+      {/* ✅ Confirmation Dialog */}
       {confirmRejectId && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full">
@@ -173,7 +191,7 @@ const PendingUsers: React.FC = () => {
         </div>
       )}
 
-      {/* Toast notifications */}
+      {/* ✅ Toast */}
       <ToastContainer
         position="top-center"
         autoClose={5000}
@@ -184,6 +202,9 @@ const PendingUsers: React.FC = () => {
         pauseOnHover
         theme="colored"
       />
+
+      {/* ✅ Global Loading Overlay */}
+      {loading && <LoadingOverlay message="Fetching pending users..." />}
     </AdminLayout>
   );
 };
