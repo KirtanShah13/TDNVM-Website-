@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import { Link } from 'react-router-dom';
 import { Calendar, Users, Camera, Heart, ArrowRight, Star } from 'lucide-react';
 import CountUp from 'react-countup';
@@ -165,14 +166,25 @@ const stats = [
         <p className="text-xl lg:text-2xl mb-8 opacity-90">
           {t('hero.subtitle')}
         </p>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Link to="/events" className="btn-primary bg-white text-primary-600 hover:bg-gray-100 text-lg px-8 py-3">
-            {t('hero.cta.viewEvents')}
-          </Link>
-          <Link to="/contact" className="btn-outline border-white text-white hover:bg-white hover:text-primary-600 text-lg px-8 py-3">
-            {t('hero.cta.joinUs')}
-          </Link>
-        </div>
+       <div className="flex flex-col sm:flex-row gap-4">
+  {/* Primary CTA */}
+  <Link
+    to="/events"
+    className="btn-primary bg-primary-600 text-white hover:bg-primary-700 dark:hover:bg-primary-500 text-lg px-8 py-3"
+  >
+    {t('hero.cta.viewEvents')}
+  </Link>
+
+  {/* Secondary CTA */}
+  <Link
+    to="/contact"
+    className="btn-outline border border-white text-white hover:bg-white hover:text-primary-600 dark:hover:bg-white dark:hover:text-primary-600 text-lg px-8 py-3"
+  >
+    {t('hero.cta.joinUs')}
+  </Link>
+</div>
+
+
       </div>
 
             {/* Hero Carousel */}
