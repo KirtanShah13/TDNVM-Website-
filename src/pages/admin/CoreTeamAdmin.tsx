@@ -16,7 +16,7 @@ interface CoreMember {
   email: string;
   phone: string;
   linkedin: string;
-  avatar?: string; // optional upload
+  avatar?: string; // now stores URL instead of uploaded base64
 }
 
 const CoreTeamAdmin: React.FC = () => {
@@ -49,17 +49,6 @@ const CoreTeamAdmin: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData({ ...formData, avatar: reader.result as string });
-    };
-    reader.readAsDataURL(file);
   };
 
   const validateForm = () => {
@@ -224,14 +213,16 @@ const CoreTeamAdmin: React.FC = () => {
               />
             </div>
 
-            {/* Avatar Upload */}
+            {/* Avatar Image URL */}
             <div>
-              <label className="block text-sm font-medium mb-1">Profile Picture</label>
+              <label className="block text-sm font-medium mb-1">Profile Picture (URL)</label>
               <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="w-full"
+                type="url"
+                name="avatar"
+                value={formData.avatar}
+                onChange={handleChange}
+                placeholder="enter the image link"
+                className="input w-full"
               />
               {formData.avatar && (
                 <img
@@ -307,18 +298,16 @@ const CoreTeamAdmin: React.FC = () => {
       </div>
 
       {/* Toast notifications */}
-      {/* Toast notifications */}
-<ToastContainer
-  position="top-center"   // ✅ Better for mobile screens
-  autoClose={5000}
-  hideProgressBar={false}
-  newestOnTop
-  closeOnClick
-  draggable
-  pauseOnHover
-  theme="colored"
-/>
-
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </AdminLayout>
   );
 };
