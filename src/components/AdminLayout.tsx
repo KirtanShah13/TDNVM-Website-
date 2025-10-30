@@ -12,8 +12,8 @@ import {
   X,
   LogOut,
   UserCheck, // for approved members
-  UserCog,    // for core team
-  UserPlus,   // for pending users
+  UserCog, // for core team
+  UserPlus, // for pending users
 } from "lucide-react";
 
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -155,15 +155,15 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </Link>
 
             <Link
-                to="/admin/members"
-                className={`flex items-center ${
-                    isCollapsed ? "justify-center" : "gap-3"
-                } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
-                onClick={() => setIsMobileOpen(false)}
-                >
-                <Users size={24} />   {/* ✅ changed from UserCircle to Users */}
-                {!isCollapsed && <span>Members</span>}
-                </Link>
+              to="/admin/members"
+              className={`flex items-center ${
+                isCollapsed ? "justify-center" : "gap-3"
+              } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
+              onClick={() => setIsMobileOpen(false)}
+            >
+              <Users size={24} /> {/* ✅ changed from UserCircle to Users */}
+              {!isCollapsed && <span>Members</span>}
+            </Link>
 
             <Link
               to="/admin/core-team"
@@ -186,7 +186,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             >
               <UserPlus size={24} /> {/* changed to UserPlus */}
               {!isCollapsed && <span>Pending Approvals</span>}
-
               {/* Badge (only when count > 0 and not collapsed) */}
               {pendingCount > 0 && !isCollapsed && (
                 <span className="ml-auto inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium rounded-full bg-red-500 text-white">

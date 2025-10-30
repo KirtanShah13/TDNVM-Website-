@@ -7,8 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 interface PendingUser {
   id: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   phone: string;
   city: string;
   state: string;
@@ -20,39 +20,22 @@ const PendingUsers: React.FC = () => {
 
   // ✅ Load pending users from localStorage, seed if empty
   useEffect(() => {
-    const stored = localStorage.getItem("pendingUsers");
-    if (stored && JSON.parse(stored).length > 0) {
-      setPendingUsers(JSON.parse(stored));
-    } else {
-      const mockUsers: PendingUser[] = [
-        {
-          id: "1",
-          firstName: "Aarav",
-          lastName: "Patel",
-          phone: "9876543210",
-          city: "Vadodara",
-          state: "Gujarat",
-        },
-        {
-          id: "2",
-          firstName: "Meera",
-          lastName: "Shah",
-          phone: "9123456780",
-          city: "Surat",
-          state: "Gujarat",
-        },
-        {
-          id: "3",
-          firstName: "Kiran",
-          lastName: "Joshi",
-          phone: "9988776655",
-          city: "Ahmedabad",
-          state: "Gujarat",
-        },
-      ];
-      localStorage.setItem("pendingUsers", JSON.stringify(mockUsers));
-      setPendingUsers(mockUsers);
-    }
+    fetch("http://127.0.0.1:8000/users/pending")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setPendingUsers(data.pending_users); // assuming API returns an array of PendingUser
+        localStorage.setItem("pendingUsers", JSON.stringify(data)); // optional caching
+        localStorage.setItem("pendingUsersCount", String(data.length));
+      })
+      .catch((err) => {
+        console.error("Error fetching pending users:", err);
+        toast.error("Failed to load pending users");
+      });
   }, []);
 
   // ✅ Save back to localStorage whenever changes happen + save count for sidebar
@@ -68,12 +51,22 @@ const PendingUsers: React.FC = () => {
       return;
     }
 
-    // Move user to approved members
-    const members = JSON.parse(localStorage.getItem("members") || "[]");
-    localStorage.setItem("members", JSON.stringify([...members, user]));
-
-    setPendingUsers(pendingUsers.filter((u) => u.id !== id));
-    toast.success(`${user.firstName} ${user.lastName} approved successfully!`);
+    fetch(`http://127.0.0.1:8000/users/update_status`, {
+      method: "PUT",
+      body: JSON.stringify({ phone: user.phone, status: "approved" }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+        return res.json();
+      })
+      .then(() => {
+        setPendingUsers(pendingUsers.filter((u) => u.id !== id));
+        toast.success(
+          `${user.first_name} ${user.last_name} approved successfully!`
+        );
+      })
+      .catch(() => toast.error("Failed to approve user"));
   };
 
   const handleRejectConfirm = (id: string) => {
@@ -82,10 +75,23 @@ const PendingUsers: React.FC = () => {
       toast.error("User not found!");
       return;
     }
-
-    setPendingUsers(pendingUsers.filter((u) => u.id !== id));
-    toast.info(`${user.firstName} ${user.lastName} rejected`);
-    setConfirmRejectId(null);
+    fetch(`http://127.0.0.1:8000/users/update_status`, {
+      method: "PUT",
+      body: JSON.stringify({ phone: user.phone, status: "denied" }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+        return res.json();
+      })
+      .then(() => {
+        setPendingUsers(pendingUsers.filter((u) => u.id !== id));
+        toast.success(
+          `${user.first_name} ${user.last_name} denied successfully!`
+        );
+        setConfirmRejectId(null);
+      })
+      .catch(() => toast.error("Failed to approve user"));
   };
 
   return (
@@ -118,7 +124,7 @@ const PendingUsers: React.FC = () => {
                     className="border-b dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     <td className="p-3 text-sm font-medium">
-                      {user.firstName} {user.lastName}
+                      {user.first_name} {user.last_name}
                     </td>
                     <td className="p-3 text-sm">{user.phone}</td>
                     <td className="p-3 text-sm">{user.city}</td>

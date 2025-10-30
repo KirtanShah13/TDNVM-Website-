@@ -23,9 +23,7 @@ const GalleryPage: React.FC = () => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [touchStartX, setTouchStartX] = useState(0);
   const [touchEndX, setTouchEndX] = useState(0);
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   const filters = [
     "all",
     "2024",
@@ -56,8 +54,9 @@ const GalleryPage: React.FC = () => {
         .then((res) => {
           if (res.ok) {
             // throw new Error("Failed to fetch members");
-            // console.log("Fetched members successfully");
+            console.log("Fetched members successfully");
           } else {
+            console.log("couldn't Fetch members successfully");
             throw new Error("Failed to fetch members");
           }
           return res.json();
@@ -79,7 +78,7 @@ const GalleryPage: React.FC = () => {
 
     fetchGalleryEvents();
     // fetchGallery();
-  }, [i18n.language]);
+  }, [isLoggedIn, i18n.language]);
 
   const filteredImages = useMemo(() => {
     if (selectedFilter === "all") return galleryEvents;

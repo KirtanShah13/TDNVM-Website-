@@ -1,7 +1,6 @@
 // project/src/pages/admin/CoreTeamAdmin.tsx
 import React, { useEffect, useState } from "react";
 import { Plus, Trash2, Mail, Phone, Linkedin } from "lucide-react";
-import { v4 as uuidv4 } from "uuid";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AdminLayout from "../../components/AdminLayout";
@@ -9,38 +8,39 @@ import AdminLayout from "../../components/AdminLayout";
 interface CoreMember {
   id: string;
   name: string;
-  role: string;
-  bio: string;
+  designation: string;
+  description: string;
   experience: string;
   achievements: string;
   email: string;
   phone: string;
   linkedin: string;
-  avatar?: string; // optional upload
+  photo?: string;
 }
 
 const CoreTeamAdmin: React.FC = () => {
   const [coreMembers, setCoreMembers] = useState<CoreMember[]>([]);
   const [formData, setFormData] = useState<Omit<CoreMember, "id">>({
     name: "",
-    role: "",
-    bio: "",
+    designation: "",
+    description: "",
     experience: "",
     achievements: "",
     email: "",
     phone: "",
     linkedin: "",
-    avatar: "",
+    photo: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
-  // ✅ Load from localStorage
+  // Load from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("coreMembers");
     if (stored) setCoreMembers(JSON.parse(stored));
   }, []);
 
-  // ✅ Save to localStorage
+  // Save to localStorage
   useEffect(() => {
     localStorage.setItem("coreMembers", JSON.stringify(coreMembers));
   }, [coreMembers]);
@@ -51,21 +51,11 @@ const CoreTeamAdmin: React.FC = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFormData({ ...formData, avatar: reader.result as string });
-    };
-    reader.readAsDataURL(file);
-  };
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.role.trim()) newErrors.role = "Role is required";
+    if (!formData.designation.trim())
+      newErrors.designation = "Designation is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Invalid email format";
@@ -82,24 +72,60 @@ const CoreTeamAdmin: React.FC = () => {
   const handleAddMember = () => {
     if (!validateForm()) return;
 
-    setCoreMembers([...coreMembers, { id: uuidv4(), ...formData }]);
-    setFormData({
-      name: "",
-      role: "",
-      bio: "",
-      experience: "",
-      achievements: "",
-      email: "",
-      phone: "",
-      linkedin: "",
-      avatar: "",
-    });
-    toast.success("Core team member added successfully!");
+    fetch("http://127.0.0.1:8000/add_coreteam_en", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        setCoreMembers((prev) => [...prev, data.member]);
+        setFormData({
+          name: "",
+          designation: "",
+          photo: "",
+          description: "",
+          email: "",
+          phone: "",
+          linkedin: "",
+          experience: "",
+          achievements: "",
+        });
+        toast.success("Core team member added successfully!");
+      })
+      .catch((error) => {
+        console.error("Error adding core team member:", error);
+        toast.error("Failed to add core team member.");
+      });
   };
 
   const handleDelete = (id: string) => {
-    setCoreMembers(coreMembers.filter((member) => member.id !== id));
-    toast.info("Core team member deleted");
+    fetch("http://127.0.0.1:8000/delete_coreteam_en", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return res.json().then((errorData) => {
+            throw new Error(
+              errorData.detail || "Failed to delete core team member"
+            );
+          });
+        }
+        return res.json();
+      })
+      .then(() => {
+        setCoreMembers((prev) => prev.filter((m) => m.id !== id));
+        toast.success("Core team member deleted successfully!");
+      })
+      .catch((error) => {
+        console.error("Error deleting core team member:", error);
+        toast.error(error.message || "Something went wrong while deleting.");
+      });
   };
 
   return (
@@ -115,9 +141,10 @@ const CoreTeamAdmin: React.FC = () => {
             Add New Core Team Member
           </h2>
           <div className="grid gap-4 sm:grid-cols-2">
-            {/* Name */}
             <div>
-              <label className="block text-sm font-medium mb-1">Full Name</label>
+              <label className="block text-sm font-medium mb-1">
+                Full Name
+              </label>
               <input
                 type="text"
                 name="name"
@@ -126,29 +153,35 @@ const CoreTeamAdmin: React.FC = () => {
                 placeholder="Enter full name"
                 className="input w-full"
               />
-              {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+              {errors.name && (
+                <p className="text-red-600 text-sm">{errors.name}</p>
+              )}
             </div>
 
-            {/* Role */}
             <div>
-              <label className="block text-sm font-medium mb-1">Role / Position</label>
+              <label className="block text-sm font-medium mb-1">
+                Designation / Position
+              </label>
               <input
                 type="text"
-                name="role"
-                value={formData.role}
+                name="designation"
+                value={formData.designation}
                 onChange={handleChange}
                 placeholder="e.g. Secretary"
                 className="input w-full"
               />
-              {errors.role && <p className="text-red-600 text-sm">{errors.role}</p>}
+              {errors.designation && (
+                <p className="text-red-600 text-sm">{errors.designation}</p>
+              )}
             </div>
 
-            {/* Bio */}
             <div className="sm:col-span-2">
-              <label className="block text-sm font-medium mb-1">Bio / Description</label>
+              <label className="block text-sm font-medium mb-1">
+                Bio / Description
+              </label>
               <textarea
-                name="bio"
-                value={formData.bio}
+                name="description"
+                value={formData.description}
                 onChange={handleChange}
                 placeholder="Short description"
                 className="input w-full"
@@ -156,9 +189,10 @@ const CoreTeamAdmin: React.FC = () => {
               />
             </div>
 
-            {/* Experience */}
             <div>
-              <label className="block text-sm font-medium mb-1">Experience (Years)</label>
+              <label className="block text-sm font-medium mb-1">
+                Experience (Years)
+              </label>
               <input
                 type="text"
                 name="experience"
@@ -169,9 +203,10 @@ const CoreTeamAdmin: React.FC = () => {
               />
             </div>
 
-            {/* Achievements */}
             <div>
-              <label className="block text-sm font-medium mb-1">Achievements</label>
+              <label className="block text-sm font-medium mb-1">
+                Achievements
+              </label>
               <input
                 type="text"
                 name="achievements"
@@ -182,7 +217,6 @@ const CoreTeamAdmin: React.FC = () => {
               />
             </div>
 
-            {/* Email */}
             <div>
               <label className="block text-sm font-medium mb-1">Email</label>
               <input
@@ -198,7 +232,6 @@ const CoreTeamAdmin: React.FC = () => {
               )}
             </div>
 
-            {/* Phone */}
             <div>
               <label className="block text-sm font-medium mb-1">Phone</label>
               <input
@@ -211,7 +244,6 @@ const CoreTeamAdmin: React.FC = () => {
               />
             </div>
 
-            {/* LinkedIn */}
             <div>
               <label className="block text-sm font-medium mb-1">LinkedIn</label>
               <input
@@ -224,20 +256,24 @@ const CoreTeamAdmin: React.FC = () => {
               />
             </div>
 
-            {/* Avatar Upload */}
             <div>
-              <label className="block text-sm font-medium mb-1">Profile Picture</label>
+              <label className="block text-sm font-medium mb-1">
+                Profile Picture URL
+              </label>
               <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="w-full"
+                type="url"
+                name="photo"
+                value={formData.photo}
+                onChange={handleChange}
+                placeholder="Enter Image Link"
+                className="input w-full"
               />
-              {formData.avatar && (
+              {formData.photo && (
                 <img
-                  src={formData.avatar}
+                  src={formData.photo}
                   alt="Preview"
                   className="w-16 h-16 mt-2 rounded-full object-cover"
+                  onError={(e) => (e.currentTarget.style.display = "none")}
                 />
               )}
             </div>
@@ -259,19 +295,20 @@ const CoreTeamAdmin: React.FC = () => {
               className="relative bg-white dark:bg-gray-800 p-6 rounded-2xl shadow flex flex-col items-center"
             >
               <img
-                src={member.avatar || "/default-avatar.png"}
+                src={member.photo || "/default-photo.png"}
                 alt={member.name}
                 className="w-24 h-24 rounded-full object-cover mb-3"
               />
               <h3 className="text-lg font-semibold">{member.name}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{member.role}</p>
-              <p className="text-sm text-gray-500 mt-1">{member.bio}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {member.designation}
+              </p>
+              <p className="text-sm text-gray-500 mt-1">{member.description}</p>
               <p className="text-sm text-gray-500 mt-1">
                 <strong>Experience:</strong> {member.experience}
               </p>
               <p className="text-sm text-gray-500">{member.achievements}</p>
 
-              {/* Social Links */}
               <div className="flex gap-4 mt-3 text-blue-600 dark:text-blue-400">
                 {member.email && (
                   <a href={`mailto:${member.email}`} aria-label="Email">
@@ -296,7 +333,7 @@ const CoreTeamAdmin: React.FC = () => {
               </div>
 
               <button
-                onClick={() => handleDelete(member.id)}
+                onClick={() => setConfirmDeleteId(member.id)}
                 className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-2 transition"
               >
                 <Trash2 className="h-5 w-5" />
@@ -306,19 +343,48 @@ const CoreTeamAdmin: React.FC = () => {
         </div>
       </div>
 
-      {/* Toast notifications */}
-      {/* Toast notifications */}
-<ToastContainer
-  position="top-center"   // ✅ Better for mobile screens
-  autoClose={5000}
-  hideProgressBar={false}
-  newestOnTop
-  closeOnClick
-  draggable
-  pauseOnHover
-  theme="colored"
-/>
+      {/* ✅ Confirmation Modal */}
+      {confirmDeleteId && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Confirm Delete
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">
+              Are you sure you want to delete this core team member?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  handleDelete(confirmDeleteId);
+                  setConfirmDeleteId(null);
+                }}
+                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
+      {/* Toast notifications */}
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        draggable
+        pauseOnHover
+        theme="colored"
+      />
     </AdminLayout>
   );
 };

@@ -36,7 +36,8 @@ const LoginPage: React.FC = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone }), // send phone number only
       });
-
+      console.log("Request sent with phone:", phone);
+      console.log("response from server:", response);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -48,8 +49,12 @@ const LoginPage: React.FC = () => {
         alert("Login successful! Welcome back to Samudaya.");
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("user", JSON.stringify(data.user));
+        console.log("is logged in:{%s}", localStorage.getItem("isLoggedIn"));
 
-        if (data.user.userType === "admin") {
+        // const storedUser = localStorage.getItem("user");
+        // console.log("Stored user:", storedUser);
+        // console.log("User type:", data.user.user_type);
+        if (data.user.user_type === "admin") {
           localStorage.setItem("isAdmin", "true");
           const randomMsg =
             welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];

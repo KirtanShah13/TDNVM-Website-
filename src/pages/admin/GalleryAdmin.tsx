@@ -24,7 +24,7 @@ const GalleryAdmin: React.FC = () => {
   const [newGallery, setNewGallery] = useState<Omit<GalleryItem, "id">>({
     title: "",
     description: "",
-    year: "2024",
+    year: "2025",
     tag: "Cultural",
     date: "",
     location: "",
@@ -48,12 +48,15 @@ const GalleryAdmin: React.FC = () => {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     if (!newGallery.title.trim()) newErrors.title = "Title is required";
-    if (!newGallery.description.trim()) newErrors.description = "Description is required";
+    if (!newGallery.description.trim())
+      newErrors.description = "Description is required";
     if (!newGallery.year.trim()) newErrors.year = "Year is required";
     if (!newGallery.tag.trim()) newErrors.tag = "Tag is required";
     if (!newGallery.date.trim()) newErrors.date = "Date is required";
-    if (!newGallery.location.trim()) newErrors.location = "Location is required";
-    if (!newGallery.folderUrl.trim()) newErrors.folderUrl = "Folder URL is required";
+    if (!newGallery.location.trim())
+      newErrors.location = "Location is required";
+    if (!newGallery.folderUrl.trim())
+      newErrors.folderUrl = "Folder URL is required";
 
     setErrors(newErrors);
 
@@ -68,8 +71,8 @@ const GalleryAdmin: React.FC = () => {
     setNewGallery({
       title: "",
       description: "",
-      year: "2024",
-      tag: "Cultural",
+      year: "2025",
+      tag: "",
       date: "",
       location: "",
       folderUrl: "",
@@ -80,17 +83,100 @@ const GalleryAdmin: React.FC = () => {
 
   // ✅ Add or Update Gallery
   const handleSaveGallery = () => {
-    if (!validateForm()) return;
+    // if (!validateForm()) return;
+
+    const payload = {
+      title: newGallery.title,
+      description: newGallery.description,
+      date: newGallery.date, // format: YYYY-MM-DD
+      location: newGallery.location,
+      year: new Date(newGallery.date).getFullYear(),
+      category: newGallery.tag?.trim() || "Cultural",
+      images: newGallery.folderUrl
+        ? newGallery.folderUrl.split(",").map((img) => img.trim())
+        : [],
+    };
+    console.log("Adding event:", payload);
 
     if (editId !== null) {
-      setGallery(
-        gallery.map((item) =>
-          item.id === editId ? { id: editId, ...newGallery } : item
-        )
-      );
-      toast.success("Gallery event updated successfully!");
+      const tempEvent = {
+        id: editId,
+        ...payload,
+        // images: formData.images
+        //   ? formData.images.split(",").map((img) => img.trim()) // always array
+        //   : [],
+      };
+      console.log(JSON.stringify(tempEvent, null, 2));
+      console.log("Updating event:", tempEvent);
+      fetch(`http://127.0.0.1:8000/update_gallery_event_en`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(tempEvent), // {category fieldmissing and images going in empty
+      })
+        .then((response) => {
+          if (!response.ok) {
+            // console.log(response.json());
+            return response.json().then((errorData) => {
+              throw new Error(errorData.detail || "Failed to update member");
+            });
+          }
+          return response.json();
+        })
+        .then((data) => {
+          // console.log("Member added:", data);
+
+          setGallery((prev) =>
+            prev.map((m) => (m.id === editId ? { ...m, ...newGallery } : m))
+          );
+          toast.success(data.message || "Member updated successfully!");
+          setNewGallery({
+            title: "",
+            description: "",
+            date: "",
+            location: "",
+            year: "",
+            tag: "",
+            folderUrl: "",
+          });
+          setEditId(null);
+        })
+        .catch((error) => {
+          console.error("Error updating member:", error);
+          toast.error(error.message || "Something went wrong");
+        });
+      // setGallery(
+      //   gallery.map((item) =>
+      //     item.id === editId ? { id: editId, ...newGallery } : item
+      //   )
+      // );
+      // toast.success("Gallery event updated successfully!");
     } else {
-      setGallery([...gallery, { id: Date.now(), ...newGallery }]);
+      console.log("Creating tag:", newGallery.tag);
+      fetch("http://127.0.0.1:8000/gallery_events_en", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+          return res.json();
+        })
+        .then((data) => {
+          // ✅ Use the response from backend (e.g., with generated ID)
+          setGallery((prev) => [...prev, data.event]);
+          // setEvents([...events, newEvent]);
+          // resetForm();
+          // setGallery([...gallery, { id: Date.now(), ...newGallery }]);
+          console.log("Event added:", data.event);
+          toast.success("Event added successfully!");
+        })
+        .catch((error) => {
+          console.error("Error adding event:", error);
+          toast.error("Failed to add event.");
+        });
+
       toast.success("Gallery event added successfully!");
     }
 
@@ -98,12 +184,36 @@ const GalleryAdmin: React.FC = () => {
   };
 
   const handleDelete = (id: number) => {
-    setGallery(gallery.filter((item) => item.id !== id));
-    toast.info("Gallery event deleted");
-    if (editId === id) resetForm(); // clear form if deleting item being edited
+    console.log("Deleting member with id:", id);
+    fetch(`http://127.0.0.1:8000/delete_gallery_event_en`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((errorData) => {
+            throw new Error(errorData.detail || "Failed to delete member");
+          });
+        }
+        return response.json();
+      })
+      .then(() => {
+        setGallery((prev) => prev.filter((m) => m.id !== id)); // ✅ functional update
+        toast.success("Member deleted successfully!");
+      })
+      .catch((error) => {
+        console.error("Error deleting member:", error);
+        toast.error(error.message || "Something went wrong while deleting.");
+      });
+
+    // setGallery(gallery.filter((item) => item.id !== id));
+    // toast.info("Gallery event deleted");
+    // if (editId === id) resetForm(); // clear form if deleting item being edited
   };
 
   const handleEdit = (item: GalleryItem) => {
+    console.log("Editing item:", item.folderUrl);
     setNewGallery({
       title: item.title,
       description: item.description,
@@ -136,10 +246,14 @@ const GalleryAdmin: React.FC = () => {
                 type="text"
                 placeholder="Event Title"
                 value={newGallery.title}
-                onChange={(e) => setNewGallery({ ...newGallery, title: e.target.value })}
+                onChange={(e) =>
+                  setNewGallery({ ...newGallery, title: e.target.value })
+                }
                 className="input w-full"
               />
-              {errors.title && <p className="text-red-600 text-sm">{errors.title}</p>}
+              {errors.title && (
+                <p className="text-red-600 text-sm">{errors.title}</p>
+              )}
             </div>
 
             {/* Year */}
@@ -147,7 +261,9 @@ const GalleryAdmin: React.FC = () => {
               <label className="block mb-1 text-sm font-medium">Year</label>
               <select
                 value={newGallery.year}
-                onChange={(e) => setNewGallery({ ...newGallery, year: e.target.value })}
+                onChange={(e) =>
+                  setNewGallery({ ...newGallery, year: e.target.value })
+                }
                 className="input w-full"
               >
                 {yearOptions.map((yr) => (
@@ -156,7 +272,9 @@ const GalleryAdmin: React.FC = () => {
                   </option>
                 ))}
               </select>
-              {errors.year && <p className="text-red-600 text-sm">{errors.year}</p>}
+              {errors.year && (
+                <p className="text-red-600 text-sm">{errors.year}</p>
+              )}
             </div>
 
             {/* Tag */}
@@ -164,7 +282,9 @@ const GalleryAdmin: React.FC = () => {
               <label className="block mb-1 text-sm font-medium">Tag</label>
               <select
                 value={newGallery.tag}
-                onChange={(e) => setNewGallery({ ...newGallery, tag: e.target.value })}
+                onChange={(e) =>
+                  setNewGallery({ ...newGallery, tag: e.target.value })
+                }
                 className="input w-full"
               >
                 {tagOptions.map((tag) => (
@@ -173,7 +293,9 @@ const GalleryAdmin: React.FC = () => {
                   </option>
                 ))}
               </select>
-              {errors.tag && <p className="text-red-600 text-sm">{errors.tag}</p>}
+              {errors.tag && (
+                <p className="text-red-600 text-sm">{errors.tag}</p>
+              )}
             </div>
 
             {/* Date */}
@@ -182,10 +304,14 @@ const GalleryAdmin: React.FC = () => {
               <input
                 type="date"
                 value={newGallery.date}
-                onChange={(e) => setNewGallery({ ...newGallery, date: e.target.value })}
+                onChange={(e) =>
+                  setNewGallery({ ...newGallery, date: e.target.value })
+                }
                 className="input w-full"
               />
-              {errors.date && <p className="text-red-600 text-sm">{errors.date}</p>}
+              {errors.date && (
+                <p className="text-red-600 text-sm">{errors.date}</p>
+              )}
             </div>
 
             {/* Location */}
@@ -195,44 +321,61 @@ const GalleryAdmin: React.FC = () => {
                 type="text"
                 placeholder="Enter location"
                 value={newGallery.location}
-                onChange={(e) => setNewGallery({ ...newGallery, location: e.target.value })}
+                onChange={(e) =>
+                  setNewGallery({ ...newGallery, location: e.target.value })
+                }
                 className="input w-full"
               />
-              {errors.location && <p className="text-red-600 text-sm">{errors.location}</p>}
+              {errors.location && (
+                <p className="text-red-600 text-sm">{errors.location}</p>
+              )}
             </div>
 
             {/* Folder URL */}
             <div>
-              <label className="block mb-1 text-sm font-medium">Folder URL</label>
+              <label className="block mb-1 text-sm font-medium">
+                Folder URL
+              </label>
               <input
                 type="text"
                 placeholder="Paste folder URL"
                 value={newGallery.folderUrl}
-                onChange={(e) => setNewGallery({ ...newGallery, folderUrl: e.target.value })}
+                onChange={(e) =>
+                  setNewGallery({ ...newGallery, folderUrl: e.target.value })
+                }
                 className="input w-full"
               />
-              {errors.folderUrl && <p className="text-red-600 text-sm">{errors.folderUrl}</p>}
+              {errors.folderUrl && (
+                <p className="text-red-600 text-sm">{errors.folderUrl}</p>
+              )}
             </div>
           </div>
 
           {/* Description */}
           <div className="mt-4">
-            <label className="block mb-1 text-sm font-medium">Description</label>
+            <label className="block mb-1 text-sm font-medium">
+              Description
+            </label>
             <textarea
               placeholder="Event description..."
               value={newGallery.description}
-              onChange={(e) => setNewGallery({ ...newGallery, description: e.target.value })}
+              onChange={(e) =>
+                setNewGallery({ ...newGallery, description: e.target.value })
+              }
               className="input w-full"
               rows={3}
             />
-            {errors.description && <p className="text-red-600 text-sm">{errors.description}</p>}
+            {errors.description && (
+              <p className="text-red-600 text-sm">{errors.description}</p>
+            )}
           </div>
 
           <button
             onClick={handleSaveGallery}
             className="btn-primary mt-4 flex items-center gap-2"
           >
-            <Plus className="h-4 w-4" /> {editId !== null ? "Update Gallery Event" : "Add Gallery Event"}
+            <Plus className="h-4 w-4" />{" "}
+            {editId !== null ? "Update Gallery Event" : "Add Gallery Event"}
           </button>
         </div>
 

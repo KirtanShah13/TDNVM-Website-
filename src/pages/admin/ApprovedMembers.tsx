@@ -7,8 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 interface Member {
   id: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   phone: string;
   city: string;
   state: string;
@@ -21,44 +21,28 @@ const ApprovedMembers: React.FC = () => {
 
   // ✅ Load approved members from localStorage OR add mock data
   useEffect(() => {
-    const stored = localStorage.getItem("members");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (parsed.length > 0) {
-        setMembers(parsed);
-        return;
-      }
-    }
-
-    // 🔹 If nothing in storage → seed mock data
-    const mockMembers: Member[] = [
-      {
-        id: "1",
-        firstName: "Amit",
-        lastName: "Sharma",
-        phone: "9876543210",
-        city: "Delhi",
-        state: "Delhi",
-      },
-      {
-        id: "2",
-        firstName: "Priya",
-        lastName: "Verma",
-        phone: "9123456780",
-        city: "Mumbai",
-        state: "Maharashtra",
-      },
-      {
-        id: "3",
-        firstName: "Rohit",
-        lastName: "Patel",
-        phone: "9988776655",
-        city: "Ahmedabad",
-        state: "Gujarat",
-      },
-    ];
-    setMembers(mockMembers);
-    localStorage.setItem("members", JSON.stringify(mockMembers));
+    fetch("http://127.0.0.1:8000/users/approved")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setMembers(data.pending_users); // assuming API returns an array of PendingUser
+        localStorage.setItem("members", JSON.stringify(data)); // optional caching
+        localStorage.setItem("approvedUsersCount", String(data.length));
+      })
+      .catch((err) => {
+        console.error("Error fetching approved users:", err);
+        toast.error("Failed to load pending users");
+      })
+      .finally(() => {
+        console.log(
+          "Fetched approved members from API or loaded from localStorage",
+          localStorage.getItem("members")
+        );
+      });
   }, []);
 
   // ✅ Save back to localStorage when members update
@@ -68,17 +52,38 @@ const ApprovedMembers: React.FC = () => {
 
   const handleDelete = (id: string) => {
     const user = members.find((m) => m.id === id);
-    if (!user) return;
+    if (!user) {
+      toast.error("Member not found!");
+      return;
+    }
 
-    setMembers(members.filter((m) => m.id !== id));
-   toast.info(`${user.firstName} ${user.lastName} removed from approved members`);
+    fetch(`http://127.0.0.1:8000/users/update_status`, {
+      method: "PUT",
+      body: JSON.stringify({ phone: user.phone, status: "pending" }),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
+        return res.json();
+      })
+      .then(() => {
+        setMembers(members.filter((u) => u.id !== id));
+        toast.success(
+          `${user.first_name} ${user.last_name} approved successfully!`
+        );
+      })
+      .catch(() => toast.error("Failed to approve user"));
+    // setMembers(members.filter((m) => m.id !== id));
+    toast.info(
+      `${user.first_name} ${user.last_name} removed from approved members`
+    );
 
     setConfirmDeleteId(null);
   };
 
   // ✅ Filtered members based on search term
   const filteredMembers = members.filter((m) =>
-    `${m.firstName} ${m.lastName} ${m.city} ${m.state}`
+    `${m.first_name} ${m.last_name} ${m.city} ${m.state}`
       .toLowerCase()
       .includes(searchTerm.toLowerCase())
   );
@@ -128,7 +133,7 @@ const ApprovedMembers: React.FC = () => {
                       className="border-b dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                     >
                       <td className="p-3 text-sm">
-                        {member.firstName} {member.lastName}
+                        {member.first_name} {member.last_name}
                       </td>
                       <td className="p-3 text-sm">{member.phone}</td>
                       <td className="p-3 text-sm">{member.city}</td>
@@ -155,7 +160,7 @@ const ApprovedMembers: React.FC = () => {
                   className="p-4 border rounded-lg shadow-sm bg-white dark:bg-gray-800"
                 >
                   <p className="font-semibold text-gray-900 dark:text-white">
-                    {member.firstName} {member.lastName}
+                    {member.first_name} {member.last_name}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {member.phone}
@@ -204,16 +209,15 @@ const ApprovedMembers: React.FC = () => {
         )}
 
         <ToastContainer
-  position="top-center"   // ✅ Uniform placement
-  autoClose={5000}        // ✅ Same timing
-  hideProgressBar={false}
-  newestOnTop
-  closeOnClick
-  draggable
-  pauseOnHover
-  theme="colored"         // ✅ Matches CoreTeamAdmin
-/>
-
+          position="top-center" // ✅ Uniform placement
+          autoClose={5000} // ✅ Same timing
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          draggable
+          pauseOnHover
+          theme="colored" // ✅ Matches CoreTeamAdmin
+        />
       </div>
     </AdminLayout>
   );

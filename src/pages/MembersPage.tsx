@@ -105,39 +105,41 @@ const MembersPage: React.FC = () => {
   useEffect(() => {
     const loggedIn = localStorage.getItem("isLoggedIn") === "true";
     setIsLoggedIn(loggedIn);
+    console.log("is logged in:{%s}", isLoggedIn);
   }, []);
 
   useEffect(() => {
+    if (isLoggedIn === false) return; // 🚨 prevent fetching if user not logged in
     if (!isLoggedIn) return; // 🚨 prevent fetching if user not logged in
+    console.log(isLoggedIn);
+    // const fetchMembers = async () => {
+    //   setLoading(true);
+    //   setError(null);
 
-    const fetchMembers = async () => {
-      setLoading(true);
-      setError(null);
+    //   const tableName =
+    //     i18n.language === "gu" ? "members_details_gu" : "members_details_en";
 
-      const tableName =
-        i18n.language === "gu" ? "members_details_gu" : "members_details_en";
-
-      try {
-        if (debouncedSearchTerm.trim()) {
-          const { data, error } = await supabase.from(tableName).select("*");
-          if (error) throw error;
-          setAllMembers(data || []);
-        } else {
-          const from = (page - 1) * pageSize;
-          const to = from + pageSize - 1;
-          const { data, error } = await supabase
-            .from(tableName)
-            .select("*")
-            .range(from, to);
-          if (error) throw error;
-          setMembers(data || []);
-        }
-      } catch (err: any) {
-        setError(err.message || "Failed to load members.");
-      } finally {
-        setLoading(false);
-      }
-    };
+    //   try {
+    //     if (debouncedSearchTerm.trim()) {
+    //       const { data, error } = await supabase.from(tableName).select("*");
+    //       if (error) throw error;
+    //       setAllMembers(data || []);
+    //     } else {
+    //       const from = (page - 1) * pageSize;
+    //       const to = from + pageSize - 1;
+    //       const { data, error } = await supabase
+    //         .from(tableName)
+    //         .select("*")
+    //         .range(from, to);
+    //       if (error) throw error;
+    //       setMembers(data || []);
+    //     }
+    //   } catch (err: any) {
+    //     setError(err.message || "Failed to load members.");
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
 
     const fetchMembersdetails = async () => {
       try {
@@ -190,13 +192,13 @@ const MembersPage: React.FC = () => {
 
     fetchMembersdetails();
     // fetchMembers();
-  }, [page, debouncedSearchTerm, i18n.language]);
+  }, [isLoggedIn, page, debouncedSearchTerm, i18n.language]);
 
-  const fuse = new Fuse(allMembers, {
+  const fuse = new Fuse(membersdetail, {
     keys: [
-      { name: "Full Name", weight: 0.7 },
-      { name: "Address", weight: 0.4 },
-      { name: "BIRTH DATE", weight: 0.2 },
+      { name: "fullname", weight: 0.7 },
+      { name: "address", weight: 0.4 },
+      { name: "birthdate", weight: 0.2 },
     ],
     threshold: 0.2,
     includeScore: true,
@@ -368,7 +370,7 @@ const MembersPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
             {paginatedMembers.map((member, index) => (
               <div
-                key={member["SR NO"] || index}
+                key={member["srno"] || index}
                 className="card p-0 rounded-lg overflow-hidden shadow transition-all duration-300 transform hover:shadow-xl hover:ring-2 hover:ring-primary-400 hover:scale-[1.02]"
               >
                 <img
@@ -380,18 +382,18 @@ const MembersPage: React.FC = () => {
 
                 <div className="p-6 text-center">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    {member["Full Name"]}
+                    {member["fullname"]}
                   </h3>
                   <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex items-center justify-center space-x-1">
                       <MapPin className="h-4 w-4" />
-                      <span>{member["Address"] || "N/A"}</span>
+                      <span>{member["address"] || "N/A"}</span>
                     </div>
                     <div className="flex items-center justify-center space-x-1">
                       <Calendar className="h-4 w-4" />
                       <span>
-                        {member["BIRTH DATE"]
-                          ? formatDate(member["BIRTH DATE"])
+                        {member["birthdate"]
+                          ? formatDate(member["birthdate"])
                           : "N/A"}
                       </span>
                     </div>

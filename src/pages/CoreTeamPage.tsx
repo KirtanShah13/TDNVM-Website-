@@ -11,6 +11,7 @@ const CoreTeamPage: React.FC = () => {
 
   const { i18n } = useTranslation();
   const isGujarati = i18n.language === "gu";
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [coreTeam, setCoreTeam] = useState<any[]>([]);
   const [leaders, setLeaders] = useState<any[]>([]);
@@ -20,6 +21,13 @@ const CoreTeamPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    setIsLoggedIn(loggedIn);
+  }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
     const fetchCoreTeam = async () => {
       const tableName = isGujarati ? "core_team_gu" : "core_team";
 
@@ -107,7 +115,7 @@ const CoreTeamPage: React.FC = () => {
     fetchCoreTeamMembers();
     fetchPresidents();
     console.log("records in CoreTeamMembers:", coreTeamMembers.length);
-  }, [isGujarati]);
+  }, [isLoggedIn, isGujarati]);
 
   return (
     <div className="py-16">
