@@ -29,13 +29,41 @@ const LoginPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    // change alerts to toasts
+    try {
+      const response = await fetch("http://127.0.0.1:8000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone }), // send phone number only
+      });
 
-    setTimeout(() => {
-      const storedUser = localStorage.getItem("user");
-      if (!storedUser) {
-        toast.error("No account found. Please sign up first.");
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      // console.log("API Response:", data);
+
+      if (data.success) {
+        alert("Login successful! Welcome back to Samudaya.");
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        if (data.user.userType === "admin") {
+          localStorage.setItem("isAdmin", "true");
+          const randomMsg =
+            welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+          toast.success(randomMsg);
+          navigate("/admin");
+        } else {
+          localStorage.setItem("isAdmin", "false");
+          const randomMsg =
+            welcomeMessages[Math.floor(Math.random() * welcomeMessages.length)];
+          toast.success(randomMsg);
+          navigate("/");
+        }
       } else {
-        const user = JSON.parse(storedUser);
+        const user = JSON.parse(data.user);
         const cleanedInput = phone.replace(/\s+/g, "");
         const cleanedStored = user.phone.replace(/\s+/g, "");
 
@@ -66,8 +94,12 @@ const LoginPage: React.FC = () => {
           toast.error("Invalid phone number. Please try again.");
         }
       }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (

@@ -6,81 +6,84 @@ import { useNavigate } from "react-router-dom";
 
 import toast from "react-hot-toast";
 
-
-
 interface FormData {
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   phone: string;
   city: string;
   state: string;
-  agreeToTerms: boolean;
+  // agreeToTerms: boolean;
+  // status: string;
 }
 
 const SignupPage: React.FC = () => {
   const { t } = useTranslation("signup");
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     phone: "",
     city: "",
     state: "",
-    agreeToTerms: false,
+    // agreeToTerms: false,
+    // status: "pending",
   });
 
-const stateOptions = [
-  // ✅ States
-  { value: "andhraPradesh", label: t("states.AndhraPradesh") },
-  { value: "arunachalPradesh", label: t("states.ArunachalPradesh") },
-  { value: "assam", label: t("states.Assam") },
-  { value: "bihar", label: t("states.Bihar") },
-  { value: "chhattisgarh", label: t("states.Chhattisgarh") },
-  { value: "goa", label: t("states.Goa") },
-  { value: "gujarat", label: t("states.Gujarat") },
-  { value: "haryana", label: t("states.Haryana") },
-  { value: "himachalPradesh", label: t("states.HimachalPradesh") },
-  { value: "jharkhand", label: t("states.Jharkhand") },
-  { value: "karnataka", label: t("states.Karnataka") },
-  { value: "kerala", label: t("states.Kerala") },
-  { value: "madhyaPradesh", label: t("states.MadhyaPradesh") },
-  { value: "maharashtra", label: t("states.Maharashtra") },
-  { value: "manipur", label: t("states.Manipur") },
-  { value: "meghalaya", label: t("states.Meghalaya") },
-  { value: "mizoram", label: t("states.Mizoram") },
-  { value: "nagaland", label: t("states.Nagaland") },
-  { value: "odisha", label: t("states.Odisha") },
-  { value: "punjab", label: t("states.Punjab") },
-  { value: "rajasthan", label: t("states.Rajasthan") },
-  { value: "sikkim", label: t("states.Sikkim") },
-  { value: "tamilNadu", label: t("states.TamilNadu") },
-  { value: "telangana", label: t("states.Telangana") },
-  { value: "tripura", label: t("states.Tripura") },
-  { value: "uttarPradesh", label: t("states.UttarPradesh") },
-  { value: "uttarakhand", label: t("states.Uttarakhand") },
-  { value: "westBengal", label: t("states.WestBengal") },
+  const stateOptions = [
+    // ✅ States
+    { value: "andhraPradesh", label: t("states.AndhraPradesh") },
+    { value: "arunachalPradesh", label: t("states.ArunachalPradesh") },
+    { value: "assam", label: t("states.Assam") },
+    { value: "bihar", label: t("states.Bihar") },
+    { value: "chhattisgarh", label: t("states.Chhattisgarh") },
+    { value: "goa", label: t("states.Goa") },
+    { value: "gujarat", label: t("states.Gujarat") },
+    { value: "haryana", label: t("states.Haryana") },
+    { value: "himachalPradesh", label: t("states.HimachalPradesh") },
+    { value: "jharkhand", label: t("states.Jharkhand") },
+    { value: "karnataka", label: t("states.Karnataka") },
+    { value: "kerala", label: t("states.Kerala") },
+    { value: "madhyaPradesh", label: t("states.MadhyaPradesh") },
+    { value: "maharashtra", label: t("states.Maharashtra") },
+    { value: "manipur", label: t("states.Manipur") },
+    { value: "meghalaya", label: t("states.Meghalaya") },
+    { value: "mizoram", label: t("states.Mizoram") },
+    { value: "nagaland", label: t("states.Nagaland") },
+    { value: "odisha", label: t("states.Odisha") },
+    { value: "punjab", label: t("states.Punjab") },
+    { value: "rajasthan", label: t("states.Rajasthan") },
+    { value: "sikkim", label: t("states.Sikkim") },
+    { value: "tamilNadu", label: t("states.TamilNadu") },
+    { value: "telangana", label: t("states.Telangana") },
+    { value: "tripura", label: t("states.Tripura") },
+    { value: "uttarPradesh", label: t("states.UttarPradesh") },
+    { value: "uttarakhand", label: t("states.Uttarakhand") },
+    { value: "westBengal", label: t("states.WestBengal") },
 
-  // ✅ Union Territories
-  { value: "andamanNicobar", label: t("states.AndamanNicobar") },
-  { value: "chandigarh", label: t("states.Chandigarh") },
-  { value: "dadraNagarHaveliDamanDiu", label: t("states.DadraNagarHaveliDamanDiu") },
-  { value: "delhi", label: t("states.Delhi") },
-  { value: "jammuKashmir", label: t("states.JammuKashmir") },
-  { value: "ladakh", label: t("states.Ladakh") },
-  { value: "lakshadweep", label: t("states.Lakshadweep") },
-  { value: "puducherry", label: t("states.Puducherry") },
+    // ✅ Union Territories
+    { value: "andamanNicobar", label: t("states.AndamanNicobar") },
+    { value: "chandigarh", label: t("states.Chandigarh") },
+    {
+      value: "dadraNagarHaveliDamanDiu",
+      label: t("states.DadraNagarHaveliDamanDiu"),
+    },
+    { value: "delhi", label: t("states.Delhi") },
+    { value: "jammuKashmir", label: t("states.JammuKashmir") },
+    { value: "ladakh", label: t("states.Ladakh") },
+    { value: "lakshadweep", label: t("states.Lakshadweep") },
+    { value: "puducherry", label: t("states.Puducherry") },
 
-  // ✅ Fallback
-  { value: "other", label: t("states.Other") },
-];
+    // ✅ Fallback
+    { value: "other", label: t("states.Other") },
+  ];
 
   const signupMessages = [
-  "Successfully signed up. After admin approval you will be able to log in.",
-  "Thank you for signing up! You’ll be able to log in once an admin approves your account.",
-  "Signup complete. Login access will be granted after admin approval.",
-  "You’re all set! An admin will review your signup shortly before you can log in.",
-  "Signup submitted. Please wait for admin approval before logging in.",
-];
+    "Successfully signed up. After admin approval you will be able to log in.",
+    "Thank you for signing up! You’ll be able to log in once an admin approves your account.",
+    "Signup complete. Login access will be granted after admin approval.",
+    "You’re all set! An admin will review your signup shortly before you can log in.",
+    "Signup submitted. Please wait for admin approval before logging in.",
+  ];
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -93,53 +96,58 @@ const stateOptions = [
     }));
   };
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
-  try {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    // try {
+    //   await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // ✅ Normalize phone (always store with +91 prefix)
-    const cleanedPhone = formData.phone.replace(/\s+/g, "");
-    const normalizedPhone = cleanedPhone.startsWith("+91")
-      ? cleanedPhone
-      : `+91${cleanedPhone}`;
+    //   // Save user data only
+    //   localStorage.setItem("user", JSON.stringify(formData));
 
-    // ✅ Save user with normalized phone
-    const userData = {
-      ...formData,
-      phone: normalizedPhone,
-    };
-    localStorage.setItem("user", JSON.stringify(userData));
+    //   // ✅ Do NOT set isLoggedIn here
+    //   alert("Signup successful! Please log in.");
+    //   navigate("/login");
+    // } catch (error) {
+    //   console.error("Error submitting form:", error);
+    // } finally {
+    //   setIsLoading(false);
+    // }
 
-    localStorage.setItem("user", JSON.stringify(formData));
+    try {
+      // Call FastAPI backend
+      const response = await fetch("http://127.0.0.1:8000/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData), // send form data
+      });
 
-    // ✅ random toast message
-    const randomMessage = signupMessages[Math.floor(Math.random() * signupMessages.length)];
-    toast.success(randomMessage);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
-    setTimeout(() => {
+      const data = await response.json();
+      console.log("API Response:", data);
+
+      // Optionally keep user in localStorage
+      localStorage.setItem("user", JSON.stringify(formData));
+
+      alert("Signup successful! Please log in.");
       navigate("/login");
-    }, 1500);
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    toast.error("Something went wrong. Please try again.");
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-
-
-
-
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-   <div className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-
-
+    <div className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-flex items-center space-x-2 mb-6">
@@ -161,7 +169,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label
-                htmlFor="firstName"
+                htmlFor="first_name"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
                 {t("firstName")}
@@ -170,11 +178,11 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type="text"
-                  id="firstName"
-                  name="firstName"
+                  id="first_name"
+                  name="first_name"
                   required
                   placeholder={t("placeholders.firstName")}
-                  value={formData.firstName}
+                  value={formData.first_name}
                   onChange={handleInputChange}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 />
@@ -183,7 +191,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
             <div>
               <label
-                htmlFor="lastName"
+                htmlFor="last_name"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
                 {t("lastName")}
@@ -192,11 +200,11 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type="text"
-                  id="lastName"
-                  name="lastName"
+                  id="last_name"
+                  name="last_name"
                   required
                   placeholder={t("placeholders.lastName")}
-                  value={formData.lastName}
+                  value={formData.last_name}
                   onChange={handleInputChange}
                   className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                 />
@@ -282,7 +290,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               <input
                 type="checkbox"
                 name="agreeToTerms"
-                checked={formData.agreeToTerms}
+                // checked={formData.agreeToTerms}
                 onChange={handleInputChange}
                 required
                 className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1"
@@ -309,7 +317,8 @@ const handleSubmit = async (e: React.FormEvent) => {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isLoading || !formData.agreeToTerms}
+            disabled={isLoading}
+            // || !formData.agreeToTerms
             className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 w-full justify-center"
           >
             {isLoading ? (

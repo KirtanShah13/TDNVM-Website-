@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { supabase } from '../lib/SupabaseClient';
-import { Search, Filter, MapPin, Calendar, Users } from 'lucide-react';
-import Fuse from 'fuse.js';
-import { useTranslation } from 'react-i18next';
-import { useDebounce } from 'use-debounce';
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { supabase } from "../lib/SupabaseClient";
+import { Search, Filter, MapPin, Calendar, Users } from "lucide-react";
+import Fuse from "fuse.js";
+import { useTranslation } from "react-i18next";
+import { useDebounce } from "use-debounce";
 
 interface Member {
   [key: string]: any;
   "SR NO"?: string;
   "Full Name"?: string;
-  "Address"?: string;
+  Address?: string;
   "BIRTH DATE"?: string;
   Role?: string;
 }
@@ -30,13 +30,13 @@ const BANNER_IMAGES = [
 ];
 
 const MembersPage: React.FC = () => {
-  const { t, i18n } = useTranslation(['members']);
+  const { t, i18n } = useTranslation(["members"]);
 
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm] = useDebounce(searchTerm, 300);
-
-  const [roleFilter, setRoleFilter] = useState('all');
-  const [regionFilter, setRegionFilter] = useState('all');
+  const [membersdetail, setMembersdetail] = useState<Member[]>([]);
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [regionFilter, setRegionFilter] = useState("all");
   const [members, setMembers] = useState<Member[]>([]);
   const [allMembers, setAllMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,100 +45,158 @@ const MembersPage: React.FC = () => {
   const pageSize = 20;
   const membersRef = useRef<HTMLDivElement>(null);
 
-const roles = useMemo(() => ['all', 'President', 'Treasurer', 'Secretary', 'Coordinator', 'Member', 'Volunteer'], []);
-const regions = useMemo(() => [
-  'all',
-  'Andhra Pradesh',
-  'Arunachal Pradesh',
-  'Assam',
-  'Bihar',
-  'Chhattisgarh',
-  'Goa',
-  'Gujarat',
-  'Haryana',
-  'Himachal Pradesh',
-  'Jharkhand',
-  'Karnataka',
-  'Kerala',
-  'Madhya Pradesh',
-  'Maharashtra',
-  'Manipur',
-  'Meghalaya',
-  'Mizoram',
-  'Nagaland',
-  'Odisha',
-  'Punjab',
-  'Rajasthan',
-  'Sikkim',
-  'Tamil Nadu',
-  'Telangana',
-  'Tripura',
-  'Uttar Pradesh',
-  'Uttarakhand',
-  'West Bengal',
-  'Andaman and Nicobar Islands',
-  'Chandigarh',
-  'Dadra and Nagar Haveli and Daman and Diu',
-  'Delhi',
-  'Jammu and Kashmir',
-  'Ladakh',
-  'Lakshadweep',
-  'Puducherry',
-], []);
+  const roles = useMemo(
+    () => [
+      "all",
+      "President",
+      "Treasurer",
+      "Secretary",
+      "Coordinator",
+      "Member",
+      "Volunteer",
+    ],
+    []
+  );
+  const regions = useMemo(
+    () => [
+      "all",
+      "Andhra Pradesh",
+      "Arunachal Pradesh",
+      "Assam",
+      "Bihar",
+      "Chhattisgarh",
+      "Goa",
+      "Gujarat",
+      "Haryana",
+      "Himachal Pradesh",
+      "Jharkhand",
+      "Karnataka",
+      "Kerala",
+      "Madhya Pradesh",
+      "Maharashtra",
+      "Manipur",
+      "Meghalaya",
+      "Mizoram",
+      "Nagaland",
+      "Odisha",
+      "Punjab",
+      "Rajasthan",
+      "Sikkim",
+      "Tamil Nadu",
+      "Telangana",
+      "Tripura",
+      "Uttar Pradesh",
+      "Uttarakhand",
+      "West Bengal",
+      "Andaman and Nicobar Islands",
+      "Chandigarh",
+      "Dadra and Nagar Haveli and Daman and Diu",
+      "Delhi",
+      "Jammu and Kashmir",
+      "Ladakh",
+      "Lakshadweep",
+      "Puducherry",
+    ],
+    []
+  );
 
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
 
+  useEffect(() => {
+    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    setIsLoggedIn(loggedIn);
+  }, []);
 
+  useEffect(() => {
+    if (!isLoggedIn) return; // 🚨 prevent fetching if user not logged in
 
-const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+    const fetchMembers = async () => {
+      setLoading(true);
+      setError(null);
 
-useEffect(() => {
-  const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-  setIsLoggedIn(loggedIn);
-}, []);
+      const tableName =
+        i18n.language === "gu" ? "members_details_gu" : "members_details_en";
 
+      try {
+        if (debouncedSearchTerm.trim()) {
+          const { data, error } = await supabase.from(tableName).select("*");
+          if (error) throw error;
+          setAllMembers(data || []);
+        } else {
+          const from = (page - 1) * pageSize;
+          const to = from + pageSize - 1;
+          const { data, error } = await supabase
+            .from(tableName)
+            .select("*")
+            .range(from, to);
+          if (error) throw error;
+          setMembers(data || []);
+        }
+      } catch (err: any) {
+        setError(err.message || "Failed to load members.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    const fetchMembersdetails = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
+        const tableName =
+          i18n.language === "gu" ? "members_details_gu" : "members_details_en";
 
- useEffect(() => {
-  if (!isLoggedIn) return; // 🚨 prevent fetching if user not logged in
-
-  const fetchMembers = async () => {
-    setLoading(true);
-    setError(null);
-
-    const tableName = i18n.language === 'gu' ? 'members_details_gu' : 'members_details_en';
-
-    try {
-      if (debouncedSearchTerm.trim()) {
-        const { data, error } = await supabase.from(tableName).select('*');
-        if (error) throw error;
-        setAllMembers(data || []);
-      } else {
         const from = (page - 1) * pageSize;
         const to = from + pageSize - 1;
-        const { data, error } = await supabase
-          .from(tableName)
-          .select('*')
-          .range(from, to);
-        if (error) throw error;
-        setMembers(data || []);
+
+        // Base URL
+        let url = `http://127.0.0.1:8000/${tableName}`;
+
+        // Add query params for search or pagination
+        if (debouncedSearchTerm.trim()) {
+          url += `?search=${encodeURIComponent(
+            debouncedSearchTerm
+          )}&from=${from}&to=${to}`;
+        } else {
+          url += `?from=${from}&to=${to}`;
+        }
+
+        const res = await fetch(url);
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch members");
+        }
+
+        const data: Member[] = await res.json();
+
+        // Sort if needed
+        // data.sort((a, b) => (a.id || 0) - (b.id || 0));
+
+        setMembersdetail(data);
+        console.log("members data:", data);
+        console.log("language:", i18n.language);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+          console.error("Error fetching members:", err.message);
+        } else {
+          setError("Failed to fetch members.");
+        }
+      } finally {
+        setLoading(false);
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to load members.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchMembers();
-}, [page, debouncedSearchTerm, i18n.language, isLoggedIn]);
-
+    fetchMembersdetails();
+    // fetchMembers();
+  }, [page, debouncedSearchTerm, i18n.language]);
 
   const fuse = new Fuse(allMembers, {
     keys: [
-      { name: 'Full Name', weight: 0.7 },
-      { name: 'Address', weight: 0.4 },
-      { name: 'BIRTH DATE', weight: 0.2 },
+      { name: "Full Name", weight: 0.7 },
+      { name: "Address", weight: 0.4 },
+      { name: "BIRTH DATE", weight: 0.2 },
     ],
     threshold: 0.2,
     includeScore: true,
@@ -147,32 +205,36 @@ useEffect(() => {
   });
 
   const buildSearchQuery = (input: string) => {
-    if (!input.trim()) return '';
+    if (!input.trim()) return "";
     return `'${input.trim()}`;
   };
 
   const normalizedSearch = buildSearchQuery(debouncedSearchTerm);
 
   const searchedMembers = useMemo(() => {
-    if (!normalizedSearch) return members;
+    if (!normalizedSearch) return membersdetail;
     return fuse.search(normalizedSearch).map((result) => result.item);
-  }, [normalizedSearch, members, allMembers]);
+  }, [normalizedSearch, membersdetail, allMembers]);
 
   const roleFiltered = useMemo(() => {
-    return roleFilter === 'all'
+    return roleFilter === "all"
       ? searchedMembers
       : searchedMembers.filter((member) => member?.Role === roleFilter);
   }, [searchedMembers, roleFilter]);
 
   const regionFiltered = useMemo(() => {
-    return regionFilter === 'all'
+    return regionFilter === "all"
       ? roleFiltered
-      : roleFiltered.filter((member) => member?.Address?.includes(regionFilter));
+      : roleFiltered.filter((member) =>
+          member?.Address?.includes(regionFilter)
+        );
   }, [roleFiltered, regionFilter]);
 
   const startIndex = (page - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const paginatedMembers = searchTerm ? regionFiltered.slice(startIndex, endIndex) : regionFiltered;
+  const paginatedMembers = searchTerm
+    ? regionFiltered.slice(startIndex, endIndex)
+    : regionFiltered;
 
   const hasNextPage = searchTerm
     ? endIndex < regionFiltered.length
@@ -184,63 +246,58 @@ useEffect(() => {
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
-    membersRef.current?.scrollIntoView({ behavior: 'smooth' });
+    membersRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', {
-      year: 'numeric',
-      month: 'short',
+    return date.toLocaleDateString("en-GB", {
+      year: "numeric",
+      month: "short",
     });
   };
 
-
-
   if (isLoggedIn === null) {
-  return (
-    <div className="flex items-center justify-center py-20">
-      <span className="text-gray-600 dark:text-gray-400">Checking login...</span>
-    </div>
-  );
-}
-
-
-   if (isLoggedIn === false) {         //  Redirect to login if not authenticated 
-  return (
-    <div className="py-16 flex items-center justify-center min-h-[60vh]">
-      <div className="backdrop-blur-md bg-white/30 dark:bg-gray-800/30 p-8 rounded-xl shadow-lg text-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-          Please log in to view this page
-        </h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
-          Members information is only available to registered users.
-        </p>
-        <a
-          href="/login"
-          className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
-        >
-          Log in
-        </a>
+    return (
+      <div className="flex items-center justify-center py-20">
+        <span className="text-gray-600 dark:text-gray-400">
+          Checking login...
+        </span>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-
-
-
-
+  if (isLoggedIn === false) {
+    //  Redirect to login if not authenticated
+    return (
+      <div className="py-16 flex items-center justify-center min-h-[60vh]">
+        <div className="backdrop-blur-md bg-white/30 dark:bg-gray-800/30 p-8 rounded-xl shadow-lg text-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Please log in to view this page
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            Members information is only available to registered users.
+          </p>
+          <a
+            href="/login"
+            className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
+          >
+            Log in
+          </a>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={membersRef} className="py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            {t('members.title')}
+            {t("members.title")}
           </h1>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            {t('members.subtitle')}
+            {t("members.subtitle")}
           </p>
         </div>
 
@@ -252,7 +309,7 @@ useEffect(() => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder={t('members.search.placeholder')}
+                placeholder={t("members.search.placeholder")}
                 value={searchTerm}
                 onChange={(e) => {
                   setPage(1);
@@ -275,7 +332,9 @@ useEffect(() => {
               >
                 {roles.map((role) => (
                   <option key={role} value={role}>
-                    {role === 'all' ? t('members.filter.role') :  t(`members.roles.${role}`)}
+                    {role === "all"
+                      ? t("members.filter.role")
+                      : t(`members.roles.${role}`)}
                   </option>
                 ))}
               </select>
@@ -294,7 +353,9 @@ useEffect(() => {
               >
                 {regions.map((region) => (
                   <option key={region} value={region}>
-                    {region === 'all' ? t('members.filter.region') : t(`members.regions.${region}`)}
+                    {region === "all"
+                      ? t("members.filter.region")
+                      : t(`members.regions.${region}`)}
                   </option>
                 ))}
               </select>
@@ -329,7 +390,9 @@ useEffect(() => {
                     <div className="flex items-center justify-center space-x-1">
                       <Calendar className="h-4 w-4" />
                       <span>
-                        {member["BIRTH DATE"] ? formatDate(member["BIRTH DATE"]) : "N/A"}
+                        {member["BIRTH DATE"]
+                          ? formatDate(member["BIRTH DATE"])
+                          : "N/A"}
                       </span>
                     </div>
                   </div>
@@ -344,10 +407,10 @@ useEffect(() => {
           <div className="text-center py-12">
             <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              {t('members.notFound.title')}
+              {t("members.notFound.title")}
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              {t('members.notFound.subtitle')}
+              {t("members.notFound.subtitle")}
             </p>
           </div>
         )}
@@ -359,14 +422,14 @@ useEffect(() => {
             className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50"
             disabled={page === 1}
           >
-            {t('members.pagination.previous')}
+            {t("members.pagination.previous")}
           </button>
           <button
             onClick={() => handlePageChange(page + 1)}
             className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded disabled:opacity-50"
             disabled={!hasNextPage}
           >
-            {t('members.pagination.next')}
+            {t("members.pagination.next")}
           </button>
         </div>
       </div>
