@@ -100,7 +100,9 @@ const Dashboard: React.FC = () => {
         {/* Grid of cards */}
         <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {sections.map((section) => {
-            const isActive = location.pathname === section.link;
+            // ✅ highlight active section even for nested routes
+            const isActive = location.pathname.startsWith(section.link);
+
             return (
               <Link
                 key={section.name}

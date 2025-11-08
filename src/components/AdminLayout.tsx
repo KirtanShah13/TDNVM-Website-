@@ -1,12 +1,11 @@
 // project/src/components/AdminLayout.tsx
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import {
   LayoutDashboard,
   Calendar,
   Image,
-  UserCircle,
   Users,
   Menu,
   X,
@@ -19,6 +18,7 @@ import {
 const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation(); // ✅ get current route path
 
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -31,11 +31,8 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   // ✅ Prevent body scroll when sidebar is open
   useEffect(() => {
-    if (isMobileOpen) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
+    if (isMobileOpen) document.body.classList.add("overflow-hidden");
+    else document.body.classList.remove("overflow-hidden");
   }, [isMobileOpen]);
 
   // ✅ Fetch pending users count from localStorage
@@ -51,11 +48,12 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     };
 
     fetchPending();
-
-    // update count if localStorage changes (for example when admin approves)
     window.addEventListener("storage", fetchPending);
     return () => window.removeEventListener("storage", fetchPending);
   }, []);
+
+  // ✅ Utility to check active route
+  const isActive = (path: string) => location.pathname.startsWith(path);
 
   return (
     <div className="min-h-screen flex bg-gray-100 dark:bg-gray-900">
@@ -92,8 +90,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 Admin Panel
               </h2>
             )}
-
-            {/* Collapse toggle */}
             <button
               onClick={() =>
                 window.innerWidth < 1024
@@ -125,7 +121,10 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               to="/admin"
               className={`flex items-center ${
                 isCollapsed ? "justify-center" : "gap-3"
-              } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
+              } px-3 py-2 rounded-md transition-colors
+                hover:bg-gray-200 dark:hover:bg-gray-700
+                ${isActive("/admin") && location.pathname === "/admin" ? "bg-gray-200 dark:bg-gray-700 shadow-md" : ""}
+              `}
               onClick={() => setIsMobileOpen(false)}
             >
               <LayoutDashboard size={24} />
@@ -136,7 +135,10 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               to="/admin/events"
               className={`flex items-center ${
                 isCollapsed ? "justify-center" : "gap-3"
-              } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
+              } px-3 py-2 rounded-md transition-colors
+                hover:bg-gray-200 dark:hover:bg-gray-700
+                ${isActive("/admin/events") ? "bg-gray-200 dark:bg-gray-700 shadow-md" : ""}
+              `}
               onClick={() => setIsMobileOpen(false)}
             >
               <Calendar size={24} />
@@ -147,7 +149,10 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               to="/admin/gallery"
               className={`flex items-center ${
                 isCollapsed ? "justify-center" : "gap-3"
-              } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
+              } px-3 py-2 rounded-md transition-colors
+                hover:bg-gray-200 dark:hover:bg-gray-700
+                ${isActive("/admin/gallery") ? "bg-gray-200 dark:bg-gray-700 shadow-md" : ""}
+              `}
               onClick={() => setIsMobileOpen(false)}
             >
               <Image size={24} />
@@ -155,59 +160,66 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </Link>
 
             <Link
-                to="/admin/members"
-                className={`flex items-center ${
-                    isCollapsed ? "justify-center" : "gap-3"
-                } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
-                onClick={() => setIsMobileOpen(false)}
-                >
-                <Users size={24} />   {/* ✅ changed from UserCircle to Users */}
-                {!isCollapsed && <span>Members</span>}
-                </Link>
+              to="/admin/members"
+              className={`flex items-center ${
+                isCollapsed ? "justify-center" : "gap-3"
+              } px-3 py-2 rounded-md transition-colors
+                hover:bg-gray-200 dark:hover:bg-gray-700
+                ${isActive("/admin/members") ? "bg-gray-200 dark:bg-gray-700 shadow-md" : ""}
+              `}
+              onClick={() => setIsMobileOpen(false)}
+            >
+              <Users size={24} />
+              {!isCollapsed && <span>Members</span>}
+            </Link>
 
             <Link
               to="/admin/core-team"
               className={`flex items-center ${
                 isCollapsed ? "justify-center" : "gap-3"
-              } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
+              } px-3 py-2 rounded-md transition-colors
+                hover:bg-gray-200 dark:hover:bg-gray-700
+                ${isActive("/admin/core-team") ? "bg-gray-200 dark:bg-gray-700 shadow-md" : ""}
+              `}
               onClick={() => setIsMobileOpen(false)}
             >
-              <UserCog size={24} /> {/* changed icon */}
+              <UserCog size={24} />
               {!isCollapsed && <span>Core Team</span>}
             </Link>
 
-            {/* ✅ Pending Approvals link */}
             <Link
               to="/admin/pending-users"
               className={`relative flex items-center ${
                 isCollapsed ? "justify-center" : "gap-3"
-              } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
+              } px-3 py-2 rounded-md transition-colors
+                hover:bg-gray-200 dark:hover:bg-gray-700
+                ${isActive("/admin/pending-users") ? "bg-gray-200 dark:bg-gray-700 shadow-md" : ""}
+              `}
               onClick={() => setIsMobileOpen(false)}
             >
-              <UserPlus size={24} /> {/* changed to UserPlus */}
+              <UserPlus size={24} />
               {!isCollapsed && <span>Pending Approvals</span>}
-
-              {/* Badge (only when count > 0 and not collapsed) */}
               {pendingCount > 0 && !isCollapsed && (
                 <span className="ml-auto inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium rounded-full bg-red-500 text-white">
                   {pendingCount}
                 </span>
               )}
-              {/* Collapsed mode → show badge as dot */}
               {pendingCount > 0 && isCollapsed && (
                 <span className="absolute top-1 right-2 w-2 h-2 rounded-full bg-red-500"></span>
               )}
             </Link>
 
-            {/* ✅ Approved Members link */}
             <Link
               to="/admin/approved-members"
               className={`flex items-center ${
                 isCollapsed ? "justify-center" : "gap-3"
-              } px-3 py-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700`}
+              } px-3 py-2 rounded-md transition-colors
+                hover:bg-gray-200 dark:hover:bg-gray-700
+                ${isActive("/admin/approved-members") ? "bg-gray-200 dark:bg-gray-700 shadow-md" : ""}
+              `}
               onClick={() => setIsMobileOpen(false)}
             >
-              <UserCheck size={24} /> {/* changed icon */}
+              <UserCheck size={24} />
               {!isCollapsed && <span>Approved Members</span>}
             </Link>
           </nav>
@@ -230,7 +242,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
       </aside>
 
-      {/* Overlay for mobile */}
       {isMobileOpen && (
         <div
           onClick={() => setIsMobileOpen(false)}
@@ -238,7 +249,6 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         />
       )}
 
-      {/* Main content */}
       <main className="flex-1 p-6 transition-all duration-300 lg:ml-0">
         <div className="mt-14 lg:mt-0">{children}</div>
       </main>
