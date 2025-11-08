@@ -83,11 +83,10 @@ const GalleryAdmin: React.FC = () => {
     if (!validateForm()) return;
 
     if (editId !== null) {
-      setGallery(
-        gallery.map((item) =>
-          item.id === editId ? { id: editId, ...newGallery } : item
-        )
+      const updatedGallery = gallery.map((item) =>
+        item.id === editId ? { ...item, ...newGallery } : item
       );
+      setGallery(updatedGallery);
       toast.success("Gallery event updated successfully!");
     } else {
       setGallery([...gallery, { id: Date.now(), ...newGallery }]);
@@ -114,6 +113,7 @@ const GalleryAdmin: React.FC = () => {
       folderUrl: item.folderUrl,
     });
     setEditId(item.id);
+    toast.info(`Editing "${item.title}"`);
   };
 
   return (
@@ -136,10 +136,14 @@ const GalleryAdmin: React.FC = () => {
                 type="text"
                 placeholder="Event Title"
                 value={newGallery.title}
-                onChange={(e) => setNewGallery({ ...newGallery, title: e.target.value })}
+                onChange={(e) =>
+                  setNewGallery({ ...newGallery, title: e.target.value })
+                }
                 className="input w-full"
               />
-              {errors.title && <p className="text-red-600 text-sm">{errors.title}</p>}
+              {errors.title && (
+                <p className="text-red-600 text-sm">{errors.title}</p>
+              )}
             </div>
 
             {/* Year */}
@@ -147,7 +151,9 @@ const GalleryAdmin: React.FC = () => {
               <label className="block mb-1 text-sm font-medium">Year</label>
               <select
                 value={newGallery.year}
-                onChange={(e) => setNewGallery({ ...newGallery, year: e.target.value })}
+                onChange={(e) =>
+                  setNewGallery({ ...newGallery, year: e.target.value })
+                }
                 className="input w-full"
               >
                 {yearOptions.map((yr) => (
@@ -156,7 +162,9 @@ const GalleryAdmin: React.FC = () => {
                   </option>
                 ))}
               </select>
-              {errors.year && <p className="text-red-600 text-sm">{errors.year}</p>}
+              {errors.year && (
+                <p className="text-red-600 text-sm">{errors.year}</p>
+              )}
             </div>
 
             {/* Tag */}
@@ -164,7 +172,9 @@ const GalleryAdmin: React.FC = () => {
               <label className="block mb-1 text-sm font-medium">Tag</label>
               <select
                 value={newGallery.tag}
-                onChange={(e) => setNewGallery({ ...newGallery, tag: e.target.value })}
+                onChange={(e) =>
+                  setNewGallery({ ...newGallery, tag: e.target.value })
+                }
                 className="input w-full"
               >
                 {tagOptions.map((tag) => (
@@ -173,7 +183,9 @@ const GalleryAdmin: React.FC = () => {
                   </option>
                 ))}
               </select>
-              {errors.tag && <p className="text-red-600 text-sm">{errors.tag}</p>}
+              {errors.tag && (
+                <p className="text-red-600 text-sm">{errors.tag}</p>
+              )}
             </div>
 
             {/* Date */}
@@ -182,10 +194,14 @@ const GalleryAdmin: React.FC = () => {
               <input
                 type="date"
                 value={newGallery.date}
-                onChange={(e) => setNewGallery({ ...newGallery, date: e.target.value })}
+                onChange={(e) =>
+                  setNewGallery({ ...newGallery, date: e.target.value })
+                }
                 className="input w-full"
               />
-              {errors.date && <p className="text-red-600 text-sm">{errors.date}</p>}
+              {errors.date && (
+                <p className="text-red-600 text-sm">{errors.date}</p>
+              )}
             </div>
 
             {/* Location */}
@@ -195,10 +211,14 @@ const GalleryAdmin: React.FC = () => {
                 type="text"
                 placeholder="Enter location"
                 value={newGallery.location}
-                onChange={(e) => setNewGallery({ ...newGallery, location: e.target.value })}
+                onChange={(e) =>
+                  setNewGallery({ ...newGallery, location: e.target.value })
+                }
                 className="input w-full"
               />
-              {errors.location && <p className="text-red-600 text-sm">{errors.location}</p>}
+              {errors.location && (
+                <p className="text-red-600 text-sm">{errors.location}</p>
+              )}
             </div>
 
             {/* Folder URL */}
@@ -208,10 +228,14 @@ const GalleryAdmin: React.FC = () => {
                 type="text"
                 placeholder="Paste folder URL"
                 value={newGallery.folderUrl}
-                onChange={(e) => setNewGallery({ ...newGallery, folderUrl: e.target.value })}
+                onChange={(e) =>
+                  setNewGallery({ ...newGallery, folderUrl: e.target.value })
+                }
                 className="input w-full"
               />
-              {errors.folderUrl && <p className="text-red-600 text-sm">{errors.folderUrl}</p>}
+              {errors.folderUrl && (
+                <p className="text-red-600 text-sm">{errors.folderUrl}</p>
+              )}
             </div>
           </div>
 
@@ -221,18 +245,23 @@ const GalleryAdmin: React.FC = () => {
             <textarea
               placeholder="Event description..."
               value={newGallery.description}
-              onChange={(e) => setNewGallery({ ...newGallery, description: e.target.value })}
+              onChange={(e) =>
+                setNewGallery({ ...newGallery, description: e.target.value })
+              }
               className="input w-full"
               rows={3}
             />
-            {errors.description && <p className="text-red-600 text-sm">{errors.description}</p>}
+            {errors.description && (
+              <p className="text-red-600 text-sm">{errors.description}</p>
+            )}
           </div>
 
           <button
             onClick={handleSaveGallery}
             className="btn-primary mt-4 flex items-center gap-2"
           >
-            <Plus className="h-4 w-4" /> {editId !== null ? "Update Gallery Event" : "Add Gallery Event"}
+            <Plus className="h-4 w-4" />{" "}
+            {editId !== null ? "Update Gallery Event" : "Add Gallery Event"}
           </button>
         </div>
 
