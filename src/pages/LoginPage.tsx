@@ -79,7 +79,7 @@ const LoginPage: React.FC = () => {
               <Heart className="h-7 w-7 text-white" />
             </div>
             <span className="text-2xl font-bold text-gray-900 dark:text-white">
-              Samudaya
+              Shree Thashra Dasha Nagar Vanik Mandad 
             </span>
           </Link>
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">

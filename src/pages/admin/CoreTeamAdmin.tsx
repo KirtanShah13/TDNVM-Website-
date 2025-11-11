@@ -1,6 +1,6 @@
 // project/src/pages/admin/CoreTeamAdmin.tsx
 import React, { useEffect, useState } from "react";
-import { Plus, Trash2, Mail, Phone, Linkedin } from "lucide-react";
+import { Plus, Trash2, Mail, Phone, Linkedin, Pencil, XCircle } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -16,7 +16,7 @@ interface CoreMember {
   email: string;
   phone: string;
   linkedin: string;
-  avatar?: string; // now stores URL instead of uploaded base64
+  avatar?: string;
 }
 
 const CoreTeamAdmin: React.FC = () => {
@@ -33,6 +33,7 @@ const CoreTeamAdmin: React.FC = () => {
     avatar: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [editingMemberId, setEditingMemberId] = useState<string | null>(null);
 
   // ✅ Load from localStorage
   useEffect(() => {
@@ -68,10 +69,25 @@ const CoreTeamAdmin: React.FC = () => {
     return true;
   };
 
-  const handleAddMember = () => {
+  const handleAddOrUpdate = () => {
     if (!validateForm()) return;
 
-    setCoreMembers([...coreMembers, { id: uuidv4(), ...formData }]);
+    if (editingMemberId) {
+      // 🧩 Update existing member
+      setCoreMembers((prev) =>
+        prev.map((m) =>
+          m.id === editingMemberId ? { ...m, ...formData } : m
+        )
+      );
+      toast.success("Core team member updated successfully!");
+      setEditingMemberId(null);
+    } else {
+      // ➕ Add new member
+      setCoreMembers([...coreMembers, { id: uuidv4(), ...formData }]);
+      toast.success("Core team member added successfully!");
+    }
+
+    // Reset form
     setFormData({
       name: "",
       role: "",
@@ -83,12 +99,47 @@ const CoreTeamAdmin: React.FC = () => {
       linkedin: "",
       avatar: "",
     });
-    toast.success("Core team member added successfully!");
+  };
+
+  const handleEdit = (id: string) => {
+    const member = coreMembers.find((m) => m.id === id);
+    if (member) {
+      setFormData({
+        name: member.name,
+        role: member.role,
+        bio: member.bio,
+        experience: member.experience,
+        achievements: member.achievements,
+        email: member.email,
+        phone: member.phone,
+        linkedin: member.linkedin,
+        avatar: member.avatar || "",
+      });
+      setEditingMemberId(id);
+      toast.info("Editing mode activated");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingMemberId(null);
+    setFormData({
+      name: "",
+      role: "",
+      bio: "",
+      experience: "",
+      achievements: "",
+      email: "",
+      phone: "",
+      linkedin: "",
+      avatar: "",
+    });
+    toast.info("Edit cancelled");
   };
 
   const handleDelete = (id: string) => {
     setCoreMembers(coreMembers.filter((member) => member.id !== id));
     toast.info("Core team member deleted");
+    if (editingMemberId === id) handleCancelEdit();
   };
 
   return (
@@ -98,11 +149,22 @@ const CoreTeamAdmin: React.FC = () => {
           Manage Core Team
         </h1>
 
-        {/* Add Core Team Member Form */}
+        {/* Add or Edit Core Team Member Form */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow mb-8">
-          <h2 className="text-lg font-semibold mb-4">
-            Add New Core Team Member
-          </h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold">
+              {editingMemberId ? "Edit Core Team Member" : "Add New Core Team Member"}
+            </h2>
+            {editingMemberId && (
+              <button
+                onClick={handleCancelEdit}
+                className="text-red-600 flex items-center gap-1"
+              >
+                <XCircle className="h-5 w-5" /> Cancel Edit
+              </button>
+            )}
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             {/* Name */}
             <div>
@@ -182,9 +244,7 @@ const CoreTeamAdmin: React.FC = () => {
                 placeholder="example@mail.com"
                 className="input w-full"
               />
-              {errors.email && (
-                <p className="text-red-600 text-sm">{errors.email}</p>
-              )}
+              {errors.email && <p className="text-red-600 text-sm">{errors.email}</p>}
             </div>
 
             {/* Phone */}
@@ -213,7 +273,7 @@ const CoreTeamAdmin: React.FC = () => {
               />
             </div>
 
-            {/* Avatar Image URL */}
+            {/* Avatar */}
             <div>
               <label className="block text-sm font-medium mb-1">Profile Picture (URL)</label>
               <input
@@ -235,14 +295,27 @@ const CoreTeamAdmin: React.FC = () => {
           </div>
 
           <button
-            onClick={handleAddMember}
-            className="mt-6 btn-primary flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" /> Add Core Team Member
-          </button>
+  onClick={handleAddOrUpdate}
+  className={`mt-6 flex items-center gap-2 px-4 py-2 rounded-lg text-white transition ${
+    editingMemberId
+      ? "bg-green-600 hover:bg-green-700"
+      : "bg-orange-500 hover:bg-orange-600"
+  }`}
+>
+  {editingMemberId ? (
+    <>
+      <Pencil className="h-4 w-4" /> Update Member
+    </>
+  ) : (
+    <>
+      <Plus className="h-4 w-4" /> Add Core Team Member
+    </>
+  )}
+</button>
+
         </div>
 
-        {/* Core Team List */}
+        {/* Core Team Cards */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {coreMembers.map((member) => (
             <div
@@ -262,7 +335,6 @@ const CoreTeamAdmin: React.FC = () => {
               </p>
               <p className="text-sm text-gray-500">{member.achievements}</p>
 
-              {/* Social Links */}
               <div className="flex gap-4 mt-3 text-blue-600 dark:text-blue-400">
                 {member.email && (
                   <a href={`mailto:${member.email}`} aria-label="Email">
@@ -286,18 +358,26 @@ const CoreTeamAdmin: React.FC = () => {
                 )}
               </div>
 
-              <button
-                onClick={() => handleDelete(member.id)}
-                className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-2 transition"
-              >
-                <Trash2 className="h-5 w-5" />
-              </button>
+              {/* Edit + Delete buttons */}
+              <div className="absolute top-2 right-2 flex gap-2">
+                <button
+                  onClick={() => handleEdit(member.id)}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white rounded-full p-2 transition"
+                >
+                  <Pencil className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => handleDelete(member.id)}
+                  className="bg-red-600 hover:bg-red-700 text-white rounded-full p-2 transition"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Toast notifications */}
       <ToastContainer
         position="top-center"
         autoClose={5000}
