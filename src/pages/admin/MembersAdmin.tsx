@@ -22,6 +22,11 @@ const MembersAdmin: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [editId, setEditId] = useState<string | null>(null);
 
+  // 🔍 Search states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState<Member[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
   // ✅ Load from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("members");
@@ -83,6 +88,37 @@ const MembersAdmin: React.FC = () => {
   const handleDelete = (id: string) => {
     setMembers(members.filter((member) => member.id !== id));
     toast.info("Member deleted");
+  };
+
+  // 🔍 Handle search input (debounced)
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    const delayDebounce = setTimeout(() => {
+      handleSearch(searchTerm);
+    }, 600); // waits 600ms after typing stops
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm]);
+
+  // 🔍 API call to search members by name
+  const handleSearch = async (term: string) => {
+    try {
+      setIsSearching(true);
+      // Replace this URL with your actual backend endpoint
+      const res = await fetch(`/api/members/search?name=${encodeURIComponent(term)}`);
+      if (!res.ok) throw new Error("Search failed");
+      const data = await res.json();
+      setSearchResults(data);
+    } catch (error) {
+      console.error("Error fetching search results:", error);
+      toast.error("Failed to fetch search results");
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   return (
@@ -147,36 +183,53 @@ const MembersAdmin: React.FC = () => {
           </button>
         </div>
 
+        {/* 🔍 Search Bar */}
+        <div className="mb-8">
+          <input
+            type="text"
+            placeholder="Search members..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
+          />
+        </div>
+
         {/* Members List */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {members.map((member) => (
-            <div
-              key={member.id}
-              className="relative group bg-white dark:bg-gray-800 p-4 rounded-2xl shadow flex flex-col items-center"
-            >
-              <div className="w-24 h-24 rounded-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 mb-3">
-                <User className="h-12 w-12 text-gray-500" />
-              </div>
-              <h3 className="text-lg font-semibold">{member.name}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{member.address}</p>
-              <p className="text-sm text-gray-500">{member.dob}</p>
+          {isSearching ? (
+            <p className="text-center text-gray-500">Searching...</p>
+          ) : searchTerm.trim() && searchResults.length === 0 ? (
+            <p className="text-center text-gray-500">No members found.</p>
+          ) : (
+            (searchTerm.trim() ? searchResults : members).map((member) => (
+              <div
+                key={member.id}
+                className="relative group bg-white dark:bg-gray-800 p-4 rounded-2xl shadow flex flex-col items-center"
+              >
+                <div className="w-24 h-24 rounded-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 mb-3">
+                  <User className="h-12 w-12 text-gray-500" />
+                </div>
+                <h3 className="text-lg font-semibold">{member.name}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{member.address}</p>
+                <p className="text-sm text-gray-500">{member.dob}</p>
 
-              <div className="flex gap-2 mt-2">
-                <button
-                  onClick={() => handleEdit(member)}
-                  className="btn-secondary flex items-center gap-1"
-                >
-                  <Edit className="h-4 w-4" /> Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(member.id)}
-                  className="btn-danger flex items-center gap-1"
-                >
-                  <Trash2 className="h-4 w-4" /> Delete
-                </button>
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => handleEdit(member)}
+                    className="btn-secondary flex items-center gap-1"
+                  >
+                    <Edit className="h-4 w-4" /> Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(member.id)}
+                    className="btn-danger flex items-center gap-1"
+                  >
+                    <Trash2 className="h-4 w-4" /> Delete
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 
