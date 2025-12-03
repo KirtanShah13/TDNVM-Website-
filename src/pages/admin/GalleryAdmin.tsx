@@ -36,7 +36,14 @@ const GalleryAdmin: React.FC = () => {
   // ✅ Load from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("gallery");
-    if (stored) setGallery(JSON.parse(stored));
+    loadGalleryFromBackend();
+    if (stored) {
+    // If local storage has data, load it immediately
+    setGallery(JSON.parse(stored));
+  } else {
+    // If empty → fetch from backend
+    loadGalleryFromBackend();
+  }
   }, []);
 
   // ✅ Save to localStorage
@@ -67,6 +74,25 @@ const GalleryAdmin: React.FC = () => {
     return true;
   };
 
+  const loadGalleryFromBackend = async () => {
+  try {
+    const res = await fetch("http://127.0.0.1:8000/gallery_events_en");
+    const data = await res.json();
+
+    // Adjust depending on your backend response shape
+    const events = data.events || data || [];
+    console.log("Fetched gallery from backend:", events);
+    // Save to localStorage
+    localStorage.setItem("gallery", JSON.stringify(events));
+
+    // Update React state
+    setGallery(events);
+  } catch (error) {
+    console.error("Failed to load gallery from backend:", error);
+  }
+};
+
+
   const resetForm = () => {
     setNewGallery({
       title: "",
@@ -92,9 +118,7 @@ const GalleryAdmin: React.FC = () => {
       location: newGallery.location,
       year: new Date(newGallery.date).getFullYear(),
       category: newGallery.tag?.trim() || "Cultural",
-      images: newGallery.folderUrl
-        ? newGallery.folderUrl.split(",").map((img) => img.trim())
-        : [],
+      folder_url: newGallery.folderUrl
     };
     console.log("Adding event:", payload);
 
