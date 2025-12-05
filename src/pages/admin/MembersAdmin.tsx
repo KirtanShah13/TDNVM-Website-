@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import AdminLayout from "../../components/AdminLayout";
 
 interface Member {
-  srno: number;
+  id: number;
   fullname: string;
   address: string;
   birthdate: string;
@@ -111,8 +111,38 @@ const MembersAdmin: React.FC = () => {
   };
 
   const handleAddMember = () => {
+    console.log("edit id:", editId);
     if (!validateForm()) return;
-
+    if (editId){
+      if (!validateForm() || !editId) return;
+    
+    const tempMember = { id: editId, ...formData };
+    fetch(`http://127.0.0.1:8000/update_member_en`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(tempMember),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.json().then((errorData) => {
+            throw new Error(errorData.detail || "Failed to update member");
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setMembers((prev) =>
+          prev.map((m) => (m.id === editId ? { ...m, ...formData } : m))
+        );
+        toast.success(data.message || "Member updated successfully!");
+        setFormData({ fullname: "", address: "", birthdate: "" });
+        setEditId(null);
+      })
+      .catch((error) => {
+        console.error("Error updating member:", error);
+        toast.error(error.message || "Something went wrong");
+      });
+    } else {
     fetch("http://127.0.0.1:8000/add_member_en", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -137,21 +167,23 @@ const MembersAdmin: React.FC = () => {
         console.error("Error adding member:", error);
         toast.error(error.message || "Failed to add member");
       });
+    };
   };
 
   const handleEdit = (member: Member) => {
     setFormData({
       fullname: member.fullname,
       address: member.address,
-      birthdate: member.birthdate ? member.birthdate.split("T")[0] : "",
+      birthdate: member.birthdate ? member.birthdate.split(" ")[0] : "",
     });
-    setEditId(member.srno);
+    setEditId(member.id);
+    console.log("Editing member with id:", member.id);
   };
 
   const handleUpdateMember = () => {
     if (!validateForm() || !editId) return;
-
-    const tempMember = { srno: editId, ...formData };
+    
+    const tempMember = { id: editId, ...formData };
     fetch(`http://127.0.0.1:8000/update_member_en`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -167,7 +199,7 @@ const MembersAdmin: React.FC = () => {
       })
       .then((data) => {
         setMembers((prev) =>
-          prev.map((m) => (m.srno === editId ? { ...m, ...formData } : m))
+          prev.map((m) => (m.id === editId ? { ...m, ...formData } : m))
         );
         toast.success(data.message || "Member updated successfully!");
         setFormData({ fullname: "", address: "", birthdate: "" });
@@ -179,11 +211,11 @@ const MembersAdmin: React.FC = () => {
       });
   };
 
-  const handleDelete = (srno: number) => {
+  const handleDelete = (id: number) => {
     fetch(`http://127.0.0.1:8000/delete_member_en`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ srno }),
+      body: JSON.stringify({ id }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -194,7 +226,7 @@ const MembersAdmin: React.FC = () => {
         return response.json();
       })
       .then(() => {
-        setMembers((prev) => prev.filter((m) => m.srno !== srno));
+        setMembers((prev) => prev.filter((m) => m.id !== id));
         toast.success("Member deleted successfully!");
       })
       .catch((error) => {
@@ -288,7 +320,7 @@ const MembersAdmin: React.FC = () => {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {members.map((member) => (
             <div
-              key={member.srno}
+              key={member.id}
               className="relative group bg-white dark:bg-gray-800 p-4 rounded-2xl shadow flex flex-col items-center"
             >
               <div className="w-24 h-24 rounded-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 mb-3">
@@ -308,7 +340,7 @@ const MembersAdmin: React.FC = () => {
                   <Edit className="h-4 w-4" /> Edit
                 </button>
                 <button
-                  onClick={() => setConfirmDeleteId(member.srno)}
+                  onClick={() => setConfirmDeleteId(member.id)}
                   className="btn-danger flex items-center gap-1"
                 >
                   <Trash2 className="h-4 w-4" /> Delete
