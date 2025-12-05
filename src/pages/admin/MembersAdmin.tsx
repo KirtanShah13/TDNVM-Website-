@@ -22,6 +22,7 @@ const MembersAdmin: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [editId, setEditId] = useState<number | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Load from localStorage
   useEffect(() => {
@@ -34,6 +35,42 @@ const MembersAdmin: React.FC = () => {
   useEffect(() => {
     localStorage.setItem("members", JSON.stringify(members));
   }, [members]);
+
+  useEffect(() => {
+  const delayDebounce = setTimeout(() => {
+    if (searchTerm.trim() === "") {
+      // reload local copy if empty search
+      const stored = localStorage.getItem("members");
+      loadGalleryFromBackend();
+      if (stored) setMembers(JSON.parse(stored));
+      return;
+    }
+
+    searchMembers(searchTerm);
+  }, 400);
+
+  return () => clearTimeout(delayDebounce);
+}, [searchTerm]);
+
+  const searchMembers = async (query: string) => {
+  try {
+    const res = await fetch("http://127.0.0.1:8000/search_members_en", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: query })
+    });
+
+    const data = await res.json();
+
+    if (Array.isArray(data)) {
+      setMembers(data);
+    } else {
+      setMembers([]);
+    }
+  } catch (error) {
+    console.error("Search failed:", error);
+  }
+};
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -234,6 +271,18 @@ const MembersAdmin: React.FC = () => {
             {editId ? "Update Member" : "Add Member"}
           </button>
         </div>
+        
+        {/* Search Bar */}
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Search members by name"
+            className="input w-full sm:w-1/2 p-2 border rounded"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
 
         {/* Members List */}
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
