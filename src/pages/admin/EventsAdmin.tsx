@@ -34,6 +34,7 @@ const EventsAdmin: React.FC = () => {
   // Load from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("events");
+    loadGalleryFromBackend();
     if (stored) setEvents(JSON.parse(stored));
   }, []);
 
@@ -69,6 +70,25 @@ const EventsAdmin: React.FC = () => {
     }
     return true;
   };
+
+  
+  const loadGalleryFromBackend = async () => {
+  try {
+    const res = await fetch("http://127.0.0.1:8000/events_en");
+    const data = await res.json();
+
+    // Adjust depending on your backend response shape
+    const events = data.events || data || [];
+    console.log("Fetched gallery from backend:", events);
+    // Save to localStorage
+    localStorage.setItem("gallery", JSON.stringify(events));
+
+    // Update React state
+    setEvents(events);
+  } catch (error) {
+    console.error("Failed to load gallery from backend:", error);
+  }
+};
 
   const handleAddEvent = () => {
     if (!validateForm()) return;
@@ -128,11 +148,13 @@ const EventsAdmin: React.FC = () => {
           return res.json().then((errorData) => {
             throw new Error(errorData.detail || "Failed to update event");
           });
+        console.log("Update response:", res);
+
         return res.json();
       })
       .then((data) => {
         setEvents((prev) =>
-          prev.map((e) => (e.id === editId ? { ...e, ...formData } : e))
+          prev.map((e) => (e.id === editId ? { ...e, ...data } : e))
         );
         toast.success(data.message || "Event updated successfully!");
         setFormData({

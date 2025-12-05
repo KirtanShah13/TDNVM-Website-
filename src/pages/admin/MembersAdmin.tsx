@@ -26,6 +26,7 @@ const MembersAdmin: React.FC = () => {
   // Load from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("members");
+    loadGalleryFromBackend();
     if (stored) setMembers(JSON.parse(stored));
   }, []);
 
@@ -39,6 +40,24 @@ const MembersAdmin: React.FC = () => {
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+   const loadGalleryFromBackend = async () => {
+  try {
+    const res = await fetch("http://127.0.0.1:8000/latest_members_details_en");
+    const data = await res.json();
+
+    // Adjust depending on your backend response shape
+    const events = data.events || data || [];
+    console.log("Fetched gallery from backend:", events);
+    // Save to localStorage
+    localStorage.setItem("gallery", JSON.stringify(events));
+
+    // Update React state
+    setMembers(events);
+  } catch (error) {
+    console.error("Failed to load gallery from backend:", error);
+  }
+};
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};

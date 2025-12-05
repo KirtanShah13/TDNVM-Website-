@@ -37,6 +37,7 @@ const CoreTeamAdmin: React.FC = () => {
   // Load from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("coreMembers");
+    loadGalleryFromBackend();
     if (stored) setCoreMembers(JSON.parse(stored));
   }, []);
 
@@ -44,6 +45,25 @@ const CoreTeamAdmin: React.FC = () => {
   useEffect(() => {
     localStorage.setItem("coreMembers", JSON.stringify(coreMembers));
   }, [coreMembers]);
+
+  
+  const loadGalleryFromBackend = async () => {
+  try {
+    const res = await fetch("http://127.0.0.1:8000/core_team_en");
+    const data = await res.json();
+
+    // Adjust depending on your backend response shape
+    const events = data.events || data || [];
+    console.log("Fetched gallery from backend:", events);
+    // Save to localStorage
+    localStorage.setItem("gallery", JSON.stringify(events));
+
+    // Update React state
+    setCoreMembers(events);
+  } catch (error) {
+    console.error("Failed to load gallery from backend:", error);
+  }
+};
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
