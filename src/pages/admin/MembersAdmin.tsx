@@ -177,7 +177,7 @@ const MembersAdmin: React.FC = () => {
       birthdate: member.birthdate ? member.birthdate.split(" ")[0] : "",
     });
     setEditId(member.id);
-    console.log("Editing member with id:", member.id);
+    console.log("Editing member with id:", member);
   };
 
   const handleUpdateMember = () => {
