@@ -55,19 +55,37 @@ const GalleryPage: React.FC = () => {
 
     const fetchGallery = async () => {
       setLoading(true);
-      const tableName = i18n.language === 'gu' ? 'gallery_events_gu' : 'gallery_events';
+      
+      // TODO (Backend): Uncomment below when ready for production
+      // const tableName = i18n.language === 'gu' ? 'gallery_events_gu' : 'gallery_events';
+      // const { data, error } = await supabase.from(tableName).select('*').order('date', { ascending: false });
 
-      const { data, error } = await supabase
-        .from(tableName)
-        .select('*')
-        .order('date', { ascending: false });
+      // 🚀 Local Testing Mode: Read from localStorage populated by Admin Events panel
+      setTimeout(() => {
+        try {
+          const stored = localStorage.getItem("events");
+          const eventsData = stored ? JSON.parse(stored) : [];
+          
+          // Filter out events that don't have gallery images and map them to gallery format
+          const mappedGallery = eventsData
+            .filter((e: any) => e.galleryImages && e.galleryImages.length > 0)
+            .map((e: any) => ({
+              id: e.id,
+              title: e.title,
+              description: e.description,
+              year: new Date(e.date).getFullYear().toString(),
+              category: "community", // Generic fallback since we removed specific categories
+              date: e.date,
+              location: e.location,
+              images: e.galleryImages
+            }));
 
-      if (error) {
-        console.error('Supabase fetch error:', error.message);
-      } else {
-        setGalleryData(data || []);
-      }
-      setLoading(false);
+          setGalleryData(mappedGallery);
+        } catch (err) {
+          console.error("❌ Failed to load local gallery events:", err);
+        }
+        setLoading(false);
+      }, 500);
     };
 
     fetchGallery();

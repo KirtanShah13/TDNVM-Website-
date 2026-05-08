@@ -8,12 +8,18 @@ import { useTranslation } from 'react-i18next';
 import { useDebounce } from 'use-debounce';
 
 interface Member {
+  id: string;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  address: string;
+  gender: string;
+  phone: string;
+  birthdate?: string;
+  marriageDate?: string;
+  deathDate?: string;
+  email: string;
   [key: string]: any;
-  "SR NO"?: string;
-  "Full Name"?: string;
-  "Address"?: string;
-  "BIRTH DATE"?: string;
-  Role?: string;
 }
 
 const BANNER_IMAGES = [
@@ -35,8 +41,6 @@ const MembersPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearchTerm] = useDebounce(searchTerm, 300);
 
-  const [roleFilter, setRoleFilter] = useState('all');
-  const [regionFilter, setRegionFilter] = useState('all');
   const [members, setMembers] = useState<Member[]>([]);
   const [allMembers, setAllMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,47 +48,6 @@ const MembersPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const pageSize = 20;
   const membersRef = useRef<HTMLDivElement>(null);
-
-const roles = useMemo(() => ['all', 'President', 'Treasurer', 'Secretary', 'Coordinator', 'Member', 'Volunteer'], []);
-const regions = useMemo(() => [
-  'all',
-  'Andhra Pradesh',
-  'Arunachal Pradesh',
-  'Assam',
-  'Bihar',
-  'Chhattisgarh',
-  'Goa',
-  'Gujarat',
-  'Haryana',
-  'Himachal Pradesh',
-  'Jharkhand',
-  'Karnataka',
-  'Kerala',
-  'Madhya Pradesh',
-  'Maharashtra',
-  'Manipur',
-  'Meghalaya',
-  'Mizoram',
-  'Nagaland',
-  'Odisha',
-  'Punjab',
-  'Rajasthan',
-  'Sikkim',
-  'Tamil Nadu',
-  'Telangana',
-  'Tripura',
-  'Uttar Pradesh',
-  'Uttarakhand',
-  'West Bengal',
-  'Andaman and Nicobar Islands',
-  'Chandigarh',
-  'Dadra and Nagar Haveli and Daman and Diu',
-  'Delhi',
-  'Jammu and Kashmir',
-  'Ladakh',
-  'Lakshadweep',
-  'Puducherry',
-], []);
 
 
 
@@ -100,45 +63,50 @@ useEffect(() => {
 
 
  useEffect(() => {
-  if (!isLoggedIn) return; // 🚨 prevent fetching if user not logged in
+  if (!isLoggedIn) return;
 
   const fetchMembers = async () => {
     setLoading(true);
     setError(null);
 
-    const tableName = i18n.language === 'gu' ? 'members_details_gu' : 'members_details_en';
+    // 🚀 Local Testing Mode: Read from localStorage populated by Admin Approved Members panel
+    setTimeout(() => {
+      try {
+        const stored = localStorage.getItem("members");
+        let data = stored ? JSON.parse(stored) : [];
 
-    try {
-      if (debouncedSearchTerm.trim()) {
-        const { data, error } = await supabase.from(tableName).select('*');
-        if (error) throw error;
-        setAllMembers(data || []);
-      } else {
-        const from = (page - 1) * pageSize;
-        const to = from + pageSize - 1;
-        const { data, error } = await supabase
-          .from(tableName)
-          .select('*')
-          .range(from, to);
-        if (error) throw error;
-        setMembers(data || []);
+        // Sort ascending by First name, middle name, last name
+        data.sort((a: any, b: any) => {
+          const nameA = `${a.firstName || ''} ${a.middleName || ''} ${a.lastName || ''}`.toLowerCase().trim();
+          const nameB = `${b.firstName || ''} ${b.middleName || ''} ${b.lastName || ''}`.toLowerCase().trim();
+          return nameA.localeCompare(nameB);
+        });
+
+        setAllMembers(data);
+        setMembers(data); 
+      } catch (err: any) {
+        setError(err.message || 'Failed to load members.');
+      } finally {
+        setLoading(false);
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to load members.');
-    } finally {
-      setLoading(false);
-    }
+    }, 500);
   };
 
   fetchMembers();
-}, [page, debouncedSearchTerm, i18n.language, isLoggedIn]);
+}, [isLoggedIn]);
 
 
   const fuse = new Fuse(allMembers, {
     keys: [
-      { name: 'Full Name', weight: 0.7 },
-      { name: 'Address', weight: 0.4 },
-      { name: 'BIRTH DATE', weight: 0.2 },
+      { name: 'firstName', weight: 1 },
+      { name: 'middleName', weight: 0.8 },
+      { name: 'lastName', weight: 1 },
+      { name: 'phone', weight: 1 },
+      { name: 'email', weight: 0.8 },
+      { name: 'address', weight: 0.5 },
+      { name: 'city', weight: 0.5 },
+      { name: 'birthdate', weight: 0.3 },
+      { name: 'marriageDate', weight: 0.3 }
     ],
     threshold: 0.2,
     includeScore: true,
@@ -154,29 +122,15 @@ useEffect(() => {
   const normalizedSearch = buildSearchQuery(debouncedSearchTerm);
 
   const searchedMembers = useMemo(() => {
-    if (!normalizedSearch) return members;
+    if (!normalizedSearch) return allMembers;
     return fuse.search(normalizedSearch).map((result) => result.item);
-  }, [normalizedSearch, members, allMembers]);
-
-  const roleFiltered = useMemo(() => {
-    return roleFilter === 'all'
-      ? searchedMembers
-      : searchedMembers.filter((member) => member?.Role === roleFilter);
-  }, [searchedMembers, roleFilter]);
-
-  const regionFiltered = useMemo(() => {
-    return regionFilter === 'all'
-      ? roleFiltered
-      : roleFiltered.filter((member) => member?.Address?.includes(regionFilter));
-  }, [roleFiltered, regionFilter]);
+  }, [normalizedSearch, allMembers]);
 
   const startIndex = (page - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const paginatedMembers = searchTerm ? regionFiltered.slice(startIndex, endIndex) : regionFiltered;
+  const paginatedMembers = searchedMembers.slice(startIndex, endIndex);
 
-  const hasNextPage = searchTerm
-    ? endIndex < regionFiltered.length
-    : members.length === pageSize;
+  const hasNextPage = endIndex < searchedMembers.length;
 
   const getRandomImage = (index: number): string => {
     return BANNER_IMAGES[index % BANNER_IMAGES.length];
@@ -246,58 +200,20 @@ useEffect(() => {
 
         {/* Filters */}
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-8 shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="max-w-2xl mx-auto">
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder={t('members.search.placeholder')}
+                placeholder={t('members.search.placeholder', 'Search by name, phone, address, birthdate...')}
                 value={searchTerm}
                 onChange={(e) => {
                   setPage(1);
                   setSearchTerm(e.target.value);
                 }}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                className="w-full pl-10 pr-4 py-3 text-lg border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
               />
-            </div>
-
-            {/* Role Filter */}
-            <div className="relative">
-              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <select
-                value={roleFilter}
-                onChange={(e) => {
-                  setPage(1);
-                  setRoleFilter(e.target.value);
-                }}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white appearance-none"
-              >
-                {roles.map((role) => (
-                  <option key={role} value={role}>
-                    {role === 'all' ? t('members.filter.role') :  t(`members.roles.${role}`)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Region Filter */}
-            <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <select
-                value={regionFilter}
-                onChange={(e) => {
-                  setPage(1);
-                  setRegionFilter(e.target.value);
-                }}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white appearance-none"
-              >
-                {regions.map((region) => (
-                  <option key={region} value={region}>
-                    {region === 'all' ? t('members.filter.region') : t(`members.regions.${region}`)}
-                  </option>
-                ))}
-              </select>
             </div>
           </div>
         </div>
@@ -307,7 +223,7 @@ useEffect(() => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
             {paginatedMembers.map((member, index) => (
               <div
-                key={member["SR NO"] || index}
+                key={member.id || index}
                 className="card p-0 rounded-lg overflow-hidden shadow transition-all duration-300 transform hover:shadow-xl hover:ring-2 hover:ring-primary-400 hover:scale-[1.02]"
               >
                 <img
@@ -319,19 +235,19 @@ useEffect(() => {
 
                 <div className="p-6 text-center">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    {member["Full Name"]}
+                    {[member.firstName, member.middleName, member.lastName].filter(Boolean).join(" ")}
                   </h3>
                   <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex items-center justify-center space-x-1">
                       <MapPin className="h-4 w-4" />
-                      <span>{member["Address"] || "N/A"}</span>
+                      <span className="truncate max-w-[200px]" title={member.address}>{member.address || "N/A"}</span>
                     </div>
-                    <div className="flex items-center justify-center space-x-1">
-                      <Calendar className="h-4 w-4" />
-                      <span>
-                        {member["BIRTH DATE"] ? formatDate(member["BIRTH DATE"]) : "N/A"}
-                      </span>
-                    </div>
+                    {member.birthdate && (
+                      <div className="flex items-center justify-center space-x-1">
+                        <Calendar className="h-4 w-4" />
+                        <span>B: {formatDate(member.birthdate)}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -340,7 +256,7 @@ useEffect(() => {
         )}
 
         {/* No Members Found */}
-        {!loading && !error && regionFiltered.length === 0 && (
+        {!loading && !error && searchedMembers.length === 0 && (
           <div className="text-center py-12">
             <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">

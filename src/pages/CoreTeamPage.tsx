@@ -27,7 +27,8 @@ const isGujarati = i18n.language === 'gu';
     const { data, error } = await supabase
       .from(tableName)
       .select('*')
-      .order('id', { ascending: true });
+      // TODO (Backend): Ensure 'displayOrder' column exists in Supabase. Change to snake_case if necessary.
+      .order('displayOrder', { ascending: true });
 
     if (error) {
       console.error(`Error fetching data from ${tableName}:`, error);

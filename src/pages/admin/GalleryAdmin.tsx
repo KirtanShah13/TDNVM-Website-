@@ -97,9 +97,12 @@ const GalleryAdmin: React.FC = () => {
   };
 
   const handleDelete = (id: number) => {
-    setGallery(gallery.filter((item) => item.id !== id));
-    toast.info("Gallery event deleted");
-    if (editId === id) resetForm(); // clear form if deleting item being edited
+    const confirmDelete = window.confirm("Are you sure you want to delete this gallery event? This action cannot be undone.");
+    if (confirmDelete) {
+      setGallery(gallery.filter((item) => item.id !== id));
+      toast.info("Gallery event deleted");
+      if (editId === id) resetForm(); // clear form if deleting item being edited
+    }
   };
 
   const handleEdit = (item: GalleryItem) => {

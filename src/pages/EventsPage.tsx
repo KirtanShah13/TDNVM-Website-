@@ -65,22 +65,22 @@ useEffect(() => {
     setLoading(true);
     setError(null);
 
-    const tableName = i18n.language === 'gu' ? 'events_gu' : 'events';
-    console.log('🌐 Language:', i18n.language);
-    console.log('📦 Fetching from table:', tableName);
+    // TODO (Backend): Uncomment below when ready for production
+    // const tableName = i18n.language === 'gu' ? 'events_gu' : 'events';
+    // const { data, error } = await supabase.from(tableName).select('*');
 
-    const { data, error } = await supabase.from(tableName).select('*');
-
-    if (error) {
-      console.error('❌ Supabase fetch error:', error.message);
-      setError(t('events.error', 'Failed to load events'));
-      setEvents([]);
-    } else {
-      console.log('✅ Data received:', data);
-      setEvents(data || []);
-    }
-
-    setLoading(false);
+    // 🚀 Local Testing Mode: Read from localStorage populated by Admin panel
+    setTimeout(() => {
+      try {
+        const stored = localStorage.getItem("events");
+        const data = stored ? JSON.parse(stored) : [];
+        setEvents(data);
+      } catch (err) {
+        console.error('❌ Failed to load local events:', err);
+        setError(t('events.error', 'Failed to load events'));
+      }
+      setLoading(false);
+    }, 500);
   };
 
   fetchEvents();

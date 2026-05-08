@@ -145,19 +145,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               {!isCollapsed && <span>Events</span>}
             </Link>
 
-            <Link
-              to="/admin/gallery"
-              className={`flex items-center ${
-                isCollapsed ? "justify-center" : "gap-3"
-              } px-3 py-2 rounded-md transition-colors
-                hover:bg-gray-200 dark:hover:bg-gray-700
-                ${isActive("/admin/gallery") ? "bg-gray-200 dark:bg-gray-700 shadow-md" : ""}
-              `}
-              onClick={() => setIsMobileOpen(false)}
-            >
-              <Image size={24} />
-              {!isCollapsed && <span>Gallery</span>}
-            </Link>
+
 
             <Link
               to="/admin/members"
@@ -170,7 +158,7 @@ const AdminLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               onClick={() => setIsMobileOpen(false)}
             >
               <Users size={24} />
-              {!isCollapsed && <span>Members</span>}
+              {!isCollapsed && <span>Add New Member</span>}
             </Link>
 
             <Link

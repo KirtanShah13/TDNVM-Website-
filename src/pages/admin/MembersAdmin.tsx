@@ -1,54 +1,38 @@
 // project/src/pages/admin/MembersAdmin.tsx
-import React, { useState, useEffect } from "react";
-import { Plus, Trash2, User, Edit } from "lucide-react";
+import React, { useState } from "react";
+import { Plus } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AdminLayout from "../../components/AdminLayout";
 
-interface Member {
-  id: string;
-  name: string;
-  address: string;
-  dob: string;
-}
-
 const MembersAdmin: React.FC = () => {
-  const [members, setMembers] = useState<Member[]>([]);
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
     address: "",
-    dob: "",
+    gender: "M",
+    phone: "",
+    birthdate: "",
+    marriageDate: "",
+    deathDate: "",
+    email: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [editId, setEditId] = useState<string | null>(null);
-
-  // 🔍 Search states
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState<Member[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-
-  // ✅ Load from localStorage
-  useEffect(() => {
-    const stored = localStorage.getItem("members");
-    if (stored) setMembers(JSON.parse(stored));
-  }, []);
-
-  // ✅ Save to localStorage
-  useEffect(() => {
-    localStorage.setItem("members", JSON.stringify(members));
-  }, [members]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
     if (!formData.address.trim()) newErrors.address = "Address is required";
-    if (!formData.dob.trim()) newErrors.dob = "Date of birth is required";
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
 
     setErrors(newErrors);
 
@@ -59,181 +43,192 @@ const MembersAdmin: React.FC = () => {
     return true;
   };
 
-  const handleAddMember = () => {
+  const handleAddMember = async () => {
     if (!validateForm()) return;
 
-    setMembers([...members, { id: Date.now().toString(), ...formData }]);
-    setFormData({ name: "", address: "", dob: "" });
-    toast.success("Member added successfully!");
-  };
-
-  const handleEdit = (member: Member) => {
-    setFormData({ name: member.name, address: member.address, dob: member.dob });
-    setEditId(member.id);
-  };
-
-  const handleUpdateMember = () => {
-    if (!validateForm() || !editId) return;
-
-    setMembers(
-      members.map((member) =>
-        member.id === editId ? { id: editId, ...formData } : member
-      )
-    );
-    setFormData({ name: "", address: "", dob: "" });
-    setEditId(null);
-    toast.success("Member updated successfully!");
-  };
-
-  const handleDelete = (id: string) => {
-    setMembers(members.filter((member) => member.id !== id));
-    toast.info("Member deleted");
-  };
-
-  // 🔍 Handle search input (debounced)
-  useEffect(() => {
-    if (searchTerm.trim() === "") {
-      setSearchResults([]);
-      return;
-    }
-
-    const delayDebounce = setTimeout(() => {
-      handleSearch(searchTerm);
-    }, 600); // waits 600ms after typing stops
-
-    return () => clearTimeout(delayDebounce);
-  }, [searchTerm]);
-
-  // 🔍 API call to search members by name
-  const handleSearch = async (term: string) => {
+    setIsSubmitting(true);
     try {
-      setIsSearching(true);
-      // Replace this URL with your actual backend endpoint
-      const res = await fetch(`/api/members/search?name=${encodeURIComponent(term)}`);
-      if (!res.ok) throw new Error("Search failed");
-      const data = await res.json();
-      setSearchResults(data);
+      // TODO (Backend): Add actual database insert logic here.
+      // Example: await supabase.from('members').insert([{ ...formData, status: 'approved' }]);
+
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      setFormData({
+        firstName: "",
+        middleName: "",
+        lastName: "",
+        address: "",
+        gender: "M",
+        phone: "",
+        birthdate: "",
+        marriageDate: "",
+        deathDate: "",
+        email: "",
+      });
+      toast.success("Member added successfully! They will now appear in Approved Members.");
     } catch (error) {
-      console.error("Error fetching search results:", error);
-      toast.error("Failed to fetch search results");
+      console.error("Error adding member:", error);
+      toast.error("Failed to add member.");
     } finally {
-      setIsSearching(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
     <AdminLayout>
-      <div className="py-8">
+      <div className="py-8 px-4 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-          Manage Members
+          Add New Member
         </h1>
 
-        {/* Add/Edit Member Form */}
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow mb-8">
-          <h2 className="text-lg font-semibold mb-4">
-            {editId ? "Edit Member" : "Add New Member"}
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2">
+        <div className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow mb-8 max-w-5xl">
+          <div className="grid gap-6 sm:grid-cols-3">
             <div>
-              <label className="block text-sm font-medium mb-1">Full Name</label>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">First Name *</label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="firstName"
+                value={formData.firstName}
                 onChange={handleChange}
-                placeholder="Enter full name"
-                className="input w-full"
+                placeholder="First Name"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               />
-              {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
+              {errors.firstName && <p className="text-red-600 text-sm mt-1">{errors.firstName}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Address</label>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Middle Name</label>
               <input
                 type="text"
-                name="address"
-                value={formData.address}
+                name="middleName"
+                value={formData.middleName}
                 onChange={handleChange}
-                placeholder="Enter address"
-                className="input w-full"
+                placeholder="Middle Name"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               />
-              {errors.address && (
-                <p className="text-red-600 text-sm">{errors.address}</p>
-              )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Date of Birth</label>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Last Name *</label>
               <input
-                type="date"
-                name="dob"
-                value={formData.dob}
+                type="text"
+                name="lastName"
+                value={formData.lastName}
                 onChange={handleChange}
-                className="input w-full"
+                placeholder="Last Name"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               />
-              {errors.dob && <p className="text-red-600 text-sm">{errors.dob}</p>}
+              {errors.lastName && <p className="text-red-600 text-sm mt-1">{errors.lastName}</p>}
             </div>
           </div>
 
-          <button
-            onClick={editId ? handleUpdateMember : handleAddMember}
-            className="mt-6 btn-primary flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" /> {editId ? "Update Member" : "Add Member"}
-          </button>
-        </div>
+          <div className="grid gap-6 sm:grid-cols-2 mt-6">
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Phone Number *</label>
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                placeholder="Phone Number"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+              {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
+            </div>
 
-        {/* 🔍 Search Bar */}
-        <div className="mb-8">
-          <input
-            type="text"
-            placeholder="Search members..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-800 dark:text-white"
-          />
-        </div>
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Email Address</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Email Address"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+            </div>
+          </div>
 
-        {/* Members List */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {isSearching ? (
-            <p className="text-center text-gray-500">Searching...</p>
-          ) : searchTerm.trim() && searchResults.length === 0 ? (
-            <p className="text-center text-gray-500">No members found.</p>
-          ) : (
-            (searchTerm.trim() ? searchResults : members).map((member) => (
-              <div
-                key={member.id}
-                className="relative group bg-white dark:bg-gray-800 p-4 rounded-2xl shadow flex flex-col items-center"
+          <div className="mt-6">
+            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Address *</label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="Full Address"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            />
+            {errors.address && <p className="text-red-600 text-sm mt-1">{errors.address}</p>}
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mt-6">
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Gender</label>
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               >
-                <div className="w-24 h-24 rounded-full flex items-center justify-center bg-gray-200 dark:bg-gray-700 mb-3">
-                  <User className="h-12 w-12 text-gray-500" />
-                </div>
-                <h3 className="text-lg font-semibold">{member.name}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">{member.address}</p>
-                <p className="text-sm text-gray-500">{member.dob}</p>
+                <option value="M">Male (M)</option>
+                <option value="F">Female (F)</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
 
-                <div className="flex gap-2 mt-2">
-                  <button
-                    onClick={() => handleEdit(member)}
-                    className="btn-secondary flex items-center gap-1"
-                  >
-                    <Edit className="h-4 w-4" /> Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(member.id)}
-                    className="btn-danger flex items-center gap-1"
-                  >
-                    <Trash2 className="h-4 w-4" /> Delete
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Birthdate</label>
+              <input
+                type="date"
+                name="birthdate"
+                value={formData.birthdate}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Marriage Date</label>
+              <input
+                type="date"
+                name="marriageDate"
+                value={formData.marriageDate}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Death Date</label>
+              <input
+                type="date"
+                name="deathDate"
+                value={formData.deathDate}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+              />
+            </div>
+          </div>
+
+          <div className="mt-8 flex justify-end">
+            <button
+              onClick={handleAddMember}
+              disabled={isSubmitting}
+              className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2.5 rounded-lg font-medium transition flex items-center gap-2 disabled:opacity-50"
+            >
+              {isSubmitting ? (
+                <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4 mr-2"></span>
+              ) : (
+                <Plus className="h-5 w-5" />
+              )}
+              {isSubmitting ? "Adding..." : "Add Member"}
+            </button>
+          </div>
         </div>
       </div>
 
-      {/* Toast notifications */}
       <ToastContainer
         position="top-center"
         autoClose={5000}

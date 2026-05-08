@@ -1,86 +1,38 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { User, Phone, MapPin, Heart, CheckCircle } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { User, Phone, Mail, MapPin, Heart, CheckCircle, Calendar, Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-
 import toast from "react-hot-toast";
-
-
 
 interface FormData {
   firstName: string;
+  middleName: string;
   lastName: string;
   phone: string;
-  city: string;
-  state: string;
+  email: string;
+  address: string;
+  gender: string;
+  birthdate: string;
+  marriageDate: string;
   agreeToTerms: boolean;
 }
 
 const SignupPage: React.FC = () => {
   const { t } = useTranslation("signup");
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
+    middleName: "",
     lastName: "",
     phone: "",
-    city: "",
-    state: "",
+    email: "",
+    address: "",
+    gender: "M",
+    birthdate: "",
+    marriageDate: "",
     agreeToTerms: false,
   });
-
-const stateOptions = [
-  // ✅ States
-  { value: "andhraPradesh", label: t("states.AndhraPradesh") },
-  { value: "arunachalPradesh", label: t("states.ArunachalPradesh") },
-  { value: "assam", label: t("states.Assam") },
-  { value: "bihar", label: t("states.Bihar") },
-  { value: "chhattisgarh", label: t("states.Chhattisgarh") },
-  { value: "goa", label: t("states.Goa") },
-  { value: "gujarat", label: t("states.Gujarat") },
-  { value: "haryana", label: t("states.Haryana") },
-  { value: "himachalPradesh", label: t("states.HimachalPradesh") },
-  { value: "jharkhand", label: t("states.Jharkhand") },
-  { value: "karnataka", label: t("states.Karnataka") },
-  { value: "kerala", label: t("states.Kerala") },
-  { value: "madhyaPradesh", label: t("states.MadhyaPradesh") },
-  { value: "maharashtra", label: t("states.Maharashtra") },
-  { value: "manipur", label: t("states.Manipur") },
-  { value: "meghalaya", label: t("states.Meghalaya") },
-  { value: "mizoram", label: t("states.Mizoram") },
-  { value: "nagaland", label: t("states.Nagaland") },
-  { value: "odisha", label: t("states.Odisha") },
-  { value: "punjab", label: t("states.Punjab") },
-  { value: "rajasthan", label: t("states.Rajasthan") },
-  { value: "sikkim", label: t("states.Sikkim") },
-  { value: "tamilNadu", label: t("states.TamilNadu") },
-  { value: "telangana", label: t("states.Telangana") },
-  { value: "tripura", label: t("states.Tripura") },
-  { value: "uttarPradesh", label: t("states.UttarPradesh") },
-  { value: "uttarakhand", label: t("states.Uttarakhand") },
-  { value: "westBengal", label: t("states.WestBengal") },
-
-  // ✅ Union Territories
-  { value: "andamanNicobar", label: t("states.AndamanNicobar") },
-  { value: "chandigarh", label: t("states.Chandigarh") },
-  { value: "dadraNagarHaveliDamanDiu", label: t("states.DadraNagarHaveliDamanDiu") },
-  { value: "delhi", label: t("states.Delhi") },
-  { value: "jammuKashmir", label: t("states.JammuKashmir") },
-  { value: "ladakh", label: t("states.Ladakh") },
-  { value: "lakshadweep", label: t("states.Lakshadweep") },
-  { value: "puducherry", label: t("states.Puducherry") },
-
-  // ✅ Fallback
-  { value: "other", label: t("states.Other") },
-];
-
-  const signupMessages = [
-  "Successfully signed up. After admin approval you will be able to log in.",
-  "Thank you for signing up! You’ll be able to log in once an admin approves your account.",
-  "Signup complete. Login access will be granted after admin approval.",
-  "You’re all set! An admin will review your signup shortly before you can log in.",
-  "Signup submitted. Please wait for admin approval before logging in.",
-];
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -93,54 +45,44 @@ const stateOptions = [
     }));
   };
 
-const navigate = useNavigate();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
-  try {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+      const cleanedPhone = formData.phone.replace(/\s+/g, "");
+      const normalizedPhone = cleanedPhone.startsWith("+91")
+        ? cleanedPhone
+        : `+91${cleanedPhone}`;
 
-    // ✅ Normalize phone (always store with +91 prefix)
-    const cleanedPhone = formData.phone.replace(/\s+/g, "");
-    const normalizedPhone = cleanedPhone.startsWith("+91")
-      ? cleanedPhone
-      : `+91${cleanedPhone}`;
+      // Store in localStorage as 'pendingUsers' array to simulate backend
+      const existingPending = JSON.parse(localStorage.getItem("pendingUsers") || "[]");
+      const newUser = {
+        id: "p" + Date.now(),
+        ...formData,
+        phone: normalizedPhone,
+      };
+      
+      existingPending.push(newUser);
+      localStorage.setItem("pendingUsers", JSON.stringify(existingPending));
 
-    // ✅ Save user with normalized phone
-    const userData = {
-      ...formData,
-      phone: normalizedPhone,
-    };
-    localStorage.setItem("user", JSON.stringify(userData));
+      toast.success(t("signupSuccess", "Signup complete. Please wait for admin approval before logging in."));
 
-    localStorage.setItem("user", JSON.stringify(formData));
-
-    // ✅ random toast message
-    const randomMessage = signupMessages[Math.floor(Math.random() * signupMessages.length)];
-    toast.success(randomMessage);
-
-    setTimeout(() => {
-      navigate("/login");
-    }, 1500);
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    toast.error("Something went wrong. Please try again.");
-  } finally {
-    setIsLoading(false);
-  }
-};
-
-
-
-
-
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error(t("signupError", "Something went wrong. Please try again."));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-   <div className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-
-
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-indian-pattern bg-repeat bg-[length:60px_60px] dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl w-full space-y-8">
         <div className="text-center">
           <Link to="/" className="inline-flex items-center space-x-2 mb-6">
             <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
@@ -151,201 +93,126 @@ const handleSubmit = async (e: React.FormEvent) => {
             </span>
           </Link>
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            {t("title")}
+            {t("title", "Join Our Community")}
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">{t("subtitle")}</p>
+          <p className="text-gray-600 dark:text-gray-400">{t("subtitle", "Fill in your details below.")}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="card p-8 space-y-6">
-          {/* First and Last Name */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="card p-8 space-y-6 bg-white dark:bg-gray-800 rounded-2xl shadow-xl">
+          {/* Names */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label
-                htmlFor="firstName"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
-                {t("firstName")}
-              </label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("firstName", "First Name")} *</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  id="firstName"
-                  name="firstName"
-                  required
-                  placeholder={t("placeholders.firstName")}
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                />
+                <input type="text" name="firstName" required value={formData.firstName} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white" />
               </div>
             </div>
-
             <div>
-              <label
-                htmlFor="lastName"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
-                {t("lastName")}
-              </label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("middleName", "Middle Name")}</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  id="lastName"
-                  name="lastName"
-                  required
-                  placeholder={t("placeholders.lastName")}
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                />
+                <input type="text" name="middleName" value={formData.middleName} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("lastName", "Last Name")} *</label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input type="text" name="lastName" required value={formData.lastName} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white" />
               </div>
             </div>
           </div>
 
-          {/* Phone */}
+          {/* Contact */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("phone", "Phone Number")} *</label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input type="tel" name="phone" required value={formData.phone} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("email", "Email Address")}</label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input type="email" name="email" value={formData.email} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white" />
+              </div>
+            </div>
+          </div>
+
+          {/* Address */}
           <div>
-            <label
-              htmlFor="phone"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-            >
-              {t("phone")}
-            </label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("address", "Full Address")} *</label>
             <div className="relative">
-              <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                required
-                placeholder={t("placeholders.phone")}
-                value={formData.phone}
-                onChange={handleInputChange}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-              />
+              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input type="text" name="address" required value={formData.address} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white" />
             </div>
           </div>
 
-          {/* City and State in the same row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Personal Info */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label
-                htmlFor="city"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
-                {t("city")}
-              </label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("gender", "Gender")}</label>
               <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  id="city"
-                  name="city"
-                  required
-                  placeholder={t("placeholders.city")}
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                />
+                <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <select name="gender" value={formData.gender} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                  <option value="M">{t("genderMale", "Male (M)")}</option>
+                  <option value="F">{t("genderFemale", "Female (F)")}</option>
+                  <option value="Other">{t("genderOther", "Other")}</option>
+                </select>
               </div>
             </div>
-
             <div>
-              <label
-                htmlFor="state"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
-                {t("state")}
-              </label>
-              <select
-                id="state"
-                name="state"
-                required
-                value={formData.state}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-              >
-                <option value="">{t("placeholders.selectState")}</option>
-                {stateOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("birthdate", "Date of Birth")}</label>
+              <div className="relative">
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input type="date" name="birthdate" value={formData.birthdate} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white" />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("marriageDate", "Marriage Date")}</label>
+              <div className="relative">
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input type="date" name="marriageDate" value={formData.marriageDate} onChange={handleInputChange} className="w-full pl-10 pr-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white" />
+              </div>
             </div>
           </div>
 
-          {/* Terms and Conditions */}
-          <div className="space-y-3">
+          {/* Terms */}
+          <div className="space-y-3 pt-2">
             <label className="flex items-start space-x-2 cursor-pointer">
-              <input
-                type="checkbox"
-                name="agreeToTerms"
-                checked={formData.agreeToTerms}
-                onChange={handleInputChange}
-                required
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1"
-              />
+              <input type="checkbox" name="agreeToTerms" checked={formData.agreeToTerms} onChange={handleInputChange} required className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1" />
               <span className="text-sm text-gray-700 dark:text-gray-300">
-                {t("terms")}{" "}
-                <Link
-                  to="/terms-and-conditions"
-                  className="text-primary-600 hover:text-primary-500"
-                >
-                  {t("terms")}
-                </Link>{" "}
-                {t("and")}{" "}
-                <Link
-                  to="/privacy-policy"
-                  className="text-primary-600 hover:text-primary-500"
-                >
-                  {t("privacy")}
-                </Link>
+                {t("terms", "I agree to the")}{" "}
+                <Link to="/terms-and-conditions" className="text-primary-600 hover:text-primary-500">Terms & Conditions</Link>
+                {" "}and{" "}
+                <Link to="/privacy-policy" className="text-primary-600 hover:text-primary-500">Privacy Policy</Link>
               </span>
             </label>
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={isLoading || !formData.agreeToTerms}
-            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 w-full justify-center"
-          >
+          <button type="submit" disabled={isLoading || !formData.agreeToTerms} className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 w-full justify-center py-3">
             {isLoading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>{t("loading")}</span>
-              </>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
-                <span>{t("submit")}</span>
+                <span>{t("submit", "Submit Signup Request")}</span>
                 <CheckCircle className="h-5 w-5" />
               </>
             )}
           </button>
 
-          {/* Login Link */}
-          <div className="mt-6 text-center">
-            <span className="text-gray-600 dark:text-gray-400">
-              {t("loginPrompt")}{" "}
-            </span>
-            <Link
-              to="/login"
-              className="text-primary-600 hover:text-primary-500 dark:text-primary-400 font-medium"
-            >
-              {t("loginLink")}
-            </Link>
+          <div className="text-center pt-4">
+            <span className="text-gray-600 dark:text-gray-400">{t("loginPrompt", "Already have an account?")} </span>
+            <Link to="/login" className="text-primary-600 hover:text-primary-500 dark:text-primary-400 font-medium">{t("loginLink", "Log in here")}</Link>
           </div>
         </form>
 
-        {/* Back to Home */}
-        <div className="text-center">
-          <Link
-            to="/"
-            className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-sm"
-          >
-            {t("backHome")}
+        <div className="text-center pb-8">
+          <Link to="/" className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-sm">
+            {t("backHome", "Back to Home")}
           </Link>
         </div>
       </div>
